@@ -9,6 +9,7 @@ import com.ta2khu75.quiz.exception.InvalidDataException;
 import com.ta2khu75.quiz.mapper.BlogMapper;
 import com.ta2khu75.quiz.mapper.QuizMapper;
 import com.ta2khu75.quiz.mapper.ReportMapper;
+import com.ta2khu75.quiz.model.ReportStatus;
 import com.ta2khu75.quiz.model.TargetType;
 import com.ta2khu75.quiz.model.entity.Account;
 import com.ta2khu75.quiz.model.entity.Blog;
@@ -121,12 +122,26 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 	}
 	@Override
 	public ReportResponse update(String id, @Valid ReportRequest request) {
-		
-		return null;
+		String accountId=SecurityUtil.getCurrentUserLogin();
+		Report report= FunctionUtil.findOrThrow(new ReportId(accountId, id), Report.class, repository::findById);
+		if(report.getReportStatus().equals(ReportStatus.REJECTED)) {
+			throw new InvalidDataException("You can't update rejected report");
+		}else {
+			mapper.update(request, report);
+			report=repository.save(report);
+			return mapper.toResponse(report);
+		}
 	}
 	@Override
 	public ReportResponse read(String id) {
-		return null;
+		String accountId=SecurityUtil.getCurrentUserLogin();
+		Report report= FunctionUtil.findOrThrow(new ReportId(accountId, id), Report.class, repository::findById);
+		return mapper.toResponse(report);
 	}
-
+	@Override
+	public ReportResponse updateStatus(ReportId id, ReportStatus status) {
+		Report report= FunctionUtil.findOrThrow(id, Report.class, repository::findById);
+		report.setReportStatus(status);
+		return toResponse(repository.save(report), getTarget(id.getTargetId(), report.getTargetType()));
+	}
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.ta2khu75.quiz.anotation.EndpointMapping;
 import com.ta2khu75.quiz.model.request.ReportRequest;
 import com.ta2khu75.quiz.model.request.search.ReportSearch;
+import com.ta2khu75.quiz.model.request.update.ReportStatusRequest;
 import com.ta2khu75.quiz.model.response.PageResponse;
 import com.ta2khu75.quiz.model.response.ReportResponse;
 import com.ta2khu75.quiz.service.ReportService;
@@ -45,5 +47,9 @@ public class ReportController extends BaseController<ReportService> {
 	public ResponseEntity<PageResponse<ReportResponse>> get(@ModelAttribute ReportSearch search) {
 		return ResponseEntity.ok(service.search(search));
 	}
-	
+	@PatchMapping("status")
+	@EndpointMapping(name="update report status")
+	public ResponseEntity<ReportResponse> reject(@Valid @RequestBody ReportStatusRequest request) {
+		return ResponseEntity.ok(service.updateStatus(request.getId(), request.getReportStatus()));
+	}
 }
