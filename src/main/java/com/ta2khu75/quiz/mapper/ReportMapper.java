@@ -21,13 +21,14 @@ public interface ReportMapper {
 	
 	@Mapping(target = "target", ignore = true)
 	@Mapping(target = "info", source = "entity")
-	@Mapping(target = "author", source = "author", qualifiedByName = "toAccountResponse")
+	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	ReportResponse toResponse(Report entity);
 	
 	@Mapping(target="id", ignore = true)
 	@Mapping(target = "reportStatus", ignore = true)
 	@Mapping(target = "createdAt", ignore = true)
 	@Mapping(target = "updatedAt", ignore = true)
+	@Mapping(target="author", ignore = true)
 	void update(ReportRequest request, @MappingTarget Report entity);
 
 	@Mapping(target = "page", source = "number")

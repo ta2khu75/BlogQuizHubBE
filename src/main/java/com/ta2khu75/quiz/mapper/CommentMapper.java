@@ -28,7 +28,7 @@ public interface CommentMapper {
 	void update(CommentRequest request, @MappingTarget Comment entity);
 
 	@Mapping(target = "info", source = "comment", qualifiedByName = "toInfoResponse")
-	@Mapping(target = "author", source = "author", qualifiedByName = "toAccountResponse")
+	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	CommentResponse toResponse(Comment comment);
 
 	@Mapping(target = "page", source = "number")

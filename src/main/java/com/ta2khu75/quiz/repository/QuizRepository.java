@@ -35,7 +35,7 @@ public interface QuizRepository extends JpaRepository<Quiz, String>, JpaSpecific
 			@Param("accessModifier") AccessModifier accessModifier,
 			Pageable pageable);
 
-	Page<Quiz> findByAuthorIdAndTitleContainingAndBlogIdIsNull(String authorId, String keyword, Pageable pageable);
+	List<Quiz> findByAuthorIdAndTitleContainingIgnoreCaseAndBlogIsNull(String authorId, String keyword);
 
 	Set<Quiz> findByBlogId(String blogId);
 

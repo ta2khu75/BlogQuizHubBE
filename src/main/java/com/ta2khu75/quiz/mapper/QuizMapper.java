@@ -21,7 +21,7 @@ public interface QuizMapper {
 	
 	@Named("toQuizResponse")
 	@Mapping(target = "info", source = "quiz", qualifiedByName = "toInfoResponse")
-	@Mapping(target = "author", source = "author", qualifiedByName = "toAccountResponse")
+	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "blog", source = "blog")
 	@Mapping(target = "questions", ignore = true)
 	QuizResponse toResponse(Quiz quiz);
@@ -32,7 +32,7 @@ public interface QuizMapper {
 	@Mapping(target = "author", ignore = true)
 	@Mapping(target = "blog", ignore = true)
 	@Mapping(target = "deleted", ignore = true)
-	@Mapping(target = "quizCategory", ignore = true)
+	@Mapping(target = "category", ignore = true)
 	@Mapping(target = "imagePath", ignore = true)
 	@Mapping(target = "questions", ignore = true)
 	Quiz toEntity(QuizRequest request);
@@ -43,14 +43,14 @@ public interface QuizMapper {
 	@Mapping(target = "author", ignore = true)
 	@Mapping(target = "blog", ignore = true)
 	@Mapping(target = "deleted", ignore = true)
-	@Mapping(target = "quizCategory", ignore = true)
+	@Mapping(target = "category", ignore = true)
 	@Mapping(target = "imagePath", ignore = true)
 	@Mapping(target = "questions", ignore = true)
 	void update(QuizRequest request, @MappingTarget Quiz quiz);
 
 	@Mapping(target = "commentCount", source = "comments")
 	@Mapping(target = "info", source = "blog", qualifiedByName = "toInfoResponse")
-	@Mapping(target = "author", source = "author", qualifiedByName = "toAccountResponse")
+	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "content",ignore = true)
 	@Mapping(target = "quizzes",ignore = true)
 	BlogResponse toResponse(Blog blog);
@@ -58,14 +58,14 @@ public interface QuizMapper {
 	@Named("toQuizDetailResponse")
 	@Mapping(target = "questions", source = "questions", qualifiedByName = "toQuestionDetailResponse")
 	@Mapping(target = "info", source = "quiz", qualifiedByName = "toInfoResponse")
-	@Mapping(target = "author", source = "author", qualifiedByName = "toAccountResponse")
+	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "blog", source = "blog")
 	QuizResponse toDetailResponse(Quiz quiz);
 
 	@Named("toQuizQuestionDetailResponse")
 	@Mapping(target = "questions", source = "questions", qualifiedByName = "toQuestionAnswerDetailResponse")
 	@Mapping(target = "info", source = "quiz", qualifiedByName = "toInfoResponse")
-	@Mapping(target = "author", source = "author", qualifiedByName = "toAccountResponse")
+	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "blog", source = "blog")
 	QuizResponse toQuizQuestionDetailResponse(Quiz quiz);
 

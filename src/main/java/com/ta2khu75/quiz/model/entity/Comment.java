@@ -19,7 +19,7 @@ public class Comment extends EntityBaseString {
 	@Column(nullable = false, columnDefinition = "NVARCHAR(255)")
 	String content;
 	@ManyToOne
-	Account author;
+	AccountProfile author;
 	@ManyToOne
 	Blog blog;
 }

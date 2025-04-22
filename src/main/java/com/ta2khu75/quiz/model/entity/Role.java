@@ -26,9 +26,9 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = { "accounts"})
+@ToString(exclude = { "accountStatuses" })
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@EqualsAndHashCode( exclude = {"permissions", "accounts"})
+@EqualsAndHashCode( exclude = {"permissions", "accountStatuses"})
 public class Role {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,8 +37,8 @@ public class Role {
 	String name;
 	@OneToMany(mappedBy = "role")
 	@JsonIgnore
-	List<Account> accounts;
+	List<AccountStatus> accountStatuses;
 	@ManyToMany
 	@Builder.Default
 	Set<Permission> permissions = new HashSet<>();
-}
+	}

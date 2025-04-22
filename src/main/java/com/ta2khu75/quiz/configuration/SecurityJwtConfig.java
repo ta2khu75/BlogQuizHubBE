@@ -22,7 +22,7 @@ public class SecurityJwtConfig {
 	public static final MacAlgorithm JWT_ALGORITHM=MacAlgorithm.HS512;
 	@Bean
 	JwtEncoder jwtEncoder() {
-		return new NimbusJwtEncoder(new ImmutableSecret<>(getSecretKey()));// <>(getSecretKey()));
+		return new NimbusJwtEncoder(new ImmutableSecret<>(getSecretKey()));
 	}
 
 	@Bean

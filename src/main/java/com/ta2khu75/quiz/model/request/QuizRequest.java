@@ -15,8 +15,9 @@ import lombok.experimental.FieldDefaults;
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class QuizRequest extends QuizBase{
+	String blogId;
 	@NotNull(message = "Exam category must not be null")
-	Long quizCategoryId;
+	Long categoryId;
 	@NotEmpty(message = "Quizzzes must not be empty")
 	List<QuestionRequest> questions;
 }

@@ -20,10 +20,10 @@ import com.ta2khu75.quiz.model.request.ReportRequest;
 import com.ta2khu75.quiz.model.request.search.ReportSearch;
 import com.ta2khu75.quiz.model.response.PageResponse;
 import com.ta2khu75.quiz.model.response.ReportResponse;
-import com.ta2khu75.quiz.repository.AccountRepository;
 import com.ta2khu75.quiz.repository.BlogRepository;
 import com.ta2khu75.quiz.repository.QuizRepository;
 import com.ta2khu75.quiz.repository.ReportRepository;
+import com.ta2khu75.quiz.repository.account.AccountRepository;
 import com.ta2khu75.quiz.service.ReportService;
 import com.ta2khu75.quiz.service.base.BaseService;
 import com.ta2khu75.quiz.util.FunctionUtil;
@@ -77,38 +77,38 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 		String authorId;
 		switch (targetType) {
 		case BLOG: {
-			authorId = ((Blog) target).getAuthor().getId();
+//			authorId = ((Blog) target).getAuthor().getId();
 			break;
 		}
 		case QUIZ: {
-			authorId = ((Quiz) target).getAuthor().getId();
+//			authorId = ((Quiz) target).getAuthor().getId();
 			break;
 		}
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + targetType);
 		}
-		if(authorId.equals(authorId)) {
-			throw new InvalidDataException("You can't report your own content");
-		}
+//		if(authorId.equals(authorId)) {
+//			throw new InvalidDataException("You can't report your own content");
+//		}
 	}
 	
 	@Override
 	@Transactional
 	public ReportResponse create(ReportRequest request) {
-		String accountId = SecurityUtil.getCurrentUserLogin();
+		String accountId = SecurityUtil.getIdCurrentUserLogin();
 		Account account = FunctionUtil.findOrThrow(accountId, Account.class, accountRepository::findById);
 		Object target=getTarget(request.getTargetId(), request.getTargetType());
 		checkIsAuthor(target, request.getTargetType(), accountId);
 		Report report= mapper.toEntity(request);
 		report.setId(new ReportId(account.getId(), request.getTargetId()));
-		report.setAuthor(account);
+//		report.setAuthor(account);
 		report=repository.save(report);
 		return toResponse(report, target);
 	}
 
 	@Override
 	public void delete(String id) {
-		String accountId = SecurityUtil.getCurrentUserLogin();
+		String accountId = SecurityUtil.getIdCurrentUserLogin();
 		repository.deleteById(new ReportId(accountId, id));
 	}
 
@@ -122,7 +122,7 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 	}
 	@Override
 	public ReportResponse update(String id, @Valid ReportRequest request) {
-		String accountId=SecurityUtil.getCurrentUserLogin();
+		String accountId=SecurityUtil.getIdCurrentUserLogin();
 		Report report= FunctionUtil.findOrThrow(new ReportId(accountId, id), Report.class, repository::findById);
 		if(report.getReportStatus().equals(ReportStatus.REJECTED)) {
 			throw new InvalidDataException("You can't update rejected report");
@@ -134,7 +134,7 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 	}
 	@Override
 	public ReportResponse read(String id) {
-		String accountId=SecurityUtil.getCurrentUserLogin();
+		String accountId=SecurityUtil.getIdCurrentUserLogin();
 		Report report= FunctionUtil.findOrThrow(new ReportId(accountId, id), Report.class, repository::findById);
 		return mapper.toResponse(report);
 	}

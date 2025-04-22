@@ -29,7 +29,7 @@ public class QuizResult extends EntityBaseString {
 	@Column(nullable = false)
 	Instant endTime;
 	@ManyToOne
-	Account account;
+	AccountProfile account;
 	@ManyToOne
 	@JoinColumn(nullable = false)
 	Quiz quiz;

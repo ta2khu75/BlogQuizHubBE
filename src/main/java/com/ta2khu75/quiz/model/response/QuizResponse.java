@@ -14,8 +14,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class QuizResponse extends QuizBase {
 	String imagePath;
-	AccountResponse author;
-	QuizCategoryResponse quizCategory;
+	AccountProfileResponse author;
+	QuizCategoryResponse category;
 	InfoResponse<String> info;
 	BlogResponse blog;
 	List<QuestionResponse> questions;

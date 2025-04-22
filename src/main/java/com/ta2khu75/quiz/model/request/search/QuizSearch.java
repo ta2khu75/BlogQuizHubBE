@@ -8,7 +8,7 @@ import com.ta2khu75.quiz.model.QuizLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class QuizSearch extends Search {
     private List<QuizLevel> quizLevels;
     private List<Long> quizCategoryIds;

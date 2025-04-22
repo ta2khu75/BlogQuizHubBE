@@ -15,8 +15,8 @@ import lombok.experimental.FieldDefaults;
 public class BlogResponse extends BlogBase {
 	int viewCount;
 	int commentCount;
-	String imagePath;
-	AccountResponse author;
+	
+	AccountProfileResponse author;
 	InfoResponse<String> info;
 	String content;
 	Set<QuizResponse> quizzes;

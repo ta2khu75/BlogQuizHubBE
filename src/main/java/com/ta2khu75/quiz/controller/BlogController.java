@@ -1,6 +1,7 @@
 package com.ta2khu75.quiz.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import com.ta2khu75.quiz.model.request.search.BlogSearch;
 import com.ta2khu75.quiz.model.response.BlogResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
 import com.ta2khu75.quiz.service.BlogService;
+import com.ta2khu75.quiz.util.SecurityUtil;
 
 @RestController
 @RequestMapping("${app.api-prefix}/blogs")
@@ -39,6 +41,13 @@ public class BlogController extends BaseController<BlogService> {
 	@EndpointMapping(name = "Search blog")
 	public ResponseEntity<PageResponse<BlogResponse>> search(@ModelAttribute BlogSearch blogSearch) {
 		return ResponseEntity.ok(service.search(blogSearch));
+	}
+	
+	@GetMapping("/mine/{keywork}")
+	@EndpointMapping(name = "Search my blog by keyword")
+	public ResponseEntity<List<BlogResponse>> searchMyBlog(@PathVariable String keywork) {
+		String authorId = SecurityUtil.getIdCurrentUserLogin();
+		return ResponseEntity.ok(service.readAllByAuthorIdAndKeywork(authorId, keywork));
 	}
 
 	@GetMapping("/{id}")

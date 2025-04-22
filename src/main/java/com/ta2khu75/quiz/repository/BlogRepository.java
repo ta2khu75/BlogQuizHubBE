@@ -20,10 +20,11 @@ public interface BlogRepository extends JpaRepository<Blog, String> {
 			+ "AND (:minView IS NULL OR b.viewCount >= :minView) "
 			+ "AND (:maxView IS NULL OR b.viewCount <= :maxView) "
 			+ "AND (:accessModifier IS NULL OR b.accessModifier = :accessModifier)")
-	Page<Blog> searchBlog(@Param("blogTagNames") List<String> blogTagNames, @Param("keyword") String keyword,
+	Page<Blog> search(@Param("blogTagNames") List<String> blogTagNames, @Param("keyword") String keyword,
 			 @Param("authorId") String authorId,
 			@Param("minView") Integer minView, @Param("maxView") Integer maxView,
 			@Param("accessModifier") AccessModifier accessModifier, Pageable pageable);
+	List<Blog> findAllByAuthorIdAndTitleContainingIgnoreCase(String authorId,String keyword );
 	Long countByAuthorIdAndAccessModifier(String authorId, AccessModifier accessModifier);
 	Long countByAuthorEmail(String authorEmail);
 	Optional<Blog> findByIdAndAuthorId(String blogId, String authorId);

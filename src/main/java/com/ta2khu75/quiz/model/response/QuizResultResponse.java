@@ -13,7 +13,7 @@ public class QuizResultResponse {
 	double point;
 	int correctCount;
 	QuizResponse quiz;
-	AccountResponse account;
+	AccountProfileResponse account;
 	Instant endTime;
 	InfoResponse<String> info;
 	List<UserAnswerResponse> userAnswers;

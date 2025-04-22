@@ -13,13 +13,13 @@ import com.ta2khu75.quiz.model.response.PageResponse;
 public interface QuizResultMapper {
 	@Named("toQuizResultResponse")
 	@Mapping(target = "info", source = "quizResult", qualifiedByName = "toInfoResponse")
-	@Mapping(target = "account", source = "account", qualifiedByName = "toAccountResponse")
+	@Mapping(target = "account", source = "account", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "quiz", source = "quiz", qualifiedByName = "toQuizDetailResponse")
 	@Mapping(target = "userAnswers",ignore = true )
 	QuizResultResponse toResponse(QuizResult quizResult);
 
 	@Mapping(target = "info", source = "quizResult", qualifiedByName = "toInfoResponse")
-	@Mapping(target = "account", source = "account", qualifiedByName = "toAccountResponse")
+	@Mapping(target = "account", source = "account", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "quiz", source = "quiz", qualifiedByName = "toQuizQuestionDetailResponse")
 	@Mapping(target = "userAnswers", source = "userAnswers", qualifiedByName = "toUserAnswerResponse")
 	QuizResultResponse toResultResponse(QuizResult quizResult);
@@ -31,7 +31,7 @@ public interface QuizResultMapper {
 //	QuizResultResponse toAnswerResponse(QuizResult quizResult);
 
 	@Mapping(target = "info", source = "quizResult", qualifiedByName = "toInfoResponse")
-	@Mapping(target = "account", source = "account", qualifiedByName = "toAccountResponse")
+	@Mapping(target = "account", source = "account", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "quiz", source = "quiz", qualifiedByName = "toQuizQuestionDetailResponse")
 	@Mapping(target = "userAnswers", source = "userAnswers", qualifiedByName = "toUserAnswerDetailResponse")
 	QuizResultResponse toDetailResponse(QuizResult quizResult);

@@ -31,12 +31,12 @@ import com.ta2khu75.quiz.model.entity.Quiz;
 import com.ta2khu75.quiz.model.entity.QuizResult;
 import com.ta2khu75.quiz.model.entity.Question;
 import com.ta2khu75.quiz.model.entity.UserAnswer;
-import com.ta2khu75.quiz.repository.AccountRepository;
 import com.ta2khu75.quiz.repository.AnswerRepository;
 import com.ta2khu75.quiz.repository.QuizResultRepository;
 import com.ta2khu75.quiz.repository.QuizRepository;
 import com.ta2khu75.quiz.repository.QuestionRepository;
 import com.ta2khu75.quiz.repository.UserAnswerRepository;
+import com.ta2khu75.quiz.repository.account.AccountRepository;
 import com.ta2khu75.quiz.service.QuizResultService;
 import com.ta2khu75.quiz.service.base.BaseService;
 import com.ta2khu75.quiz.service.util.RedisUtil;
@@ -165,7 +165,7 @@ public class QuizResultServiceImpl extends BaseService<QuizResultRepository, Qui
 
 	@Override
 	public QuizResultResponse read(String quizId) {
-		String accountId = SecurityUtil.getCurrentUserLogin();
+		String accountId = SecurityUtil.getIdCurrentUserLogin();
 		QuizResultResponse response= redisUtil.read(NameModel.QUIZ_RESULT_RESPONSE, accountId+quizId, QuizResultResponse.class);
 //		Optional<QuizResult> quizResult = repository
 //				.findByAccountIdAndQuizIdAndEndTimeAfterAndUpdatedAtIsNull(accountId, quizId, Instant.now());
@@ -177,11 +177,11 @@ public class QuizResultServiceImpl extends BaseService<QuizResultRepository, Qui
 
 	@Override
 	public QuizResultResponse create(String quizId) {
-		String accountId= SecurityUtil.getCurrentUserLogin();
+		String accountId= SecurityUtil.getIdCurrentUserLogin();
 		Account account = FunctionUtil.findOrThrow(accountId, Account.class,
 				accountRepository::findById);
 		Quiz quiz= FunctionUtil.findOrThrow(quizId, Quiz.class, examRepository::findById);
-		QuizResult quizResult = QuizResult.builder().account(account).quiz(quiz)
+		QuizResult quizResult = QuizResult.builder().quiz(quiz)
 				.endTime(Instant.now().plusSeconds(quiz.getDuration() * 60L).plusSeconds(30)).build();
 		QuizResultResponse response=mapper.toResponse(repository.save(quizResult));
 		if(quiz.isShuffleQuestion()) {
@@ -205,7 +205,7 @@ public class QuizResultServiceImpl extends BaseService<QuizResultRepository, Qui
 	public PageResponse<QuizResultResponse> search(QuizResultSearch quizResultSearch) {
 		Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt");
 		Pageable pageable = PageRequest.of(quizResultSearch.getPage()-1, quizResultSearch.getSize(), sort);
-		String accountId = SecurityUtil.getCurrentUserLogin();
+		String accountId = SecurityUtil.getIdCurrentUserLogin();
 		Page<QuizResult> page=repository.search(quizResultSearch.getKeyword(),
 				quizResultSearch.getQuizCategoryIds(), accountId, quizResultSearch.getFromDate(), quizResultSearch.getToDate(), 
 				pageable);

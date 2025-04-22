@@ -31,7 +31,7 @@ import lombok.experimental.FieldDefaults;
 public class Notification extends EntityBaseCustom<NotificationId> {
 	@ManyToOne
 	@MapsId("accountId")
-	Account account;
+	AccountProfile account;
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	TargetType targetType;

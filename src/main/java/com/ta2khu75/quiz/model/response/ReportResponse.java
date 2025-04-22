@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReportResponse extends ReportBase {
 	InfoResponse<ReportId> info;
-	AccountResponse author;
+	AccountProfileResponse author;
 	ReportStatus reportStatus;
 	Object target;
 }

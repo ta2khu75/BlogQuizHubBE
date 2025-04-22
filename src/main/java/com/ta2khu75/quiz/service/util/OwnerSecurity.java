@@ -37,6 +37,6 @@ public class OwnerSecurity {
 	}
 
 	private String getId() {
-		return SecurityUtil.getCurrentUserLogin();
+		return SecurityUtil.getIdCurrentUserLogin();
 	}
 }

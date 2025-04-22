@@ -13,9 +13,9 @@ import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
-	@Mapping(target = "accounts", ignore = true)
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "permissions", ignore = true)
+	@Mapping(target = "accountStatuses", ignore = true)
 	Role toEntity(RoleRequest request);
 	
 	@Named("toRoleResponse")
@@ -25,9 +25,9 @@ public interface RoleMapper {
 	@Mapping(target = "permissionIds", source = "permissions")
 	RoleResponse toDetailResponse(Role role);
 
-	@Mapping(target = "accounts", ignore = true)
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "permissions", ignore = true)
+	@Mapping(target = "accountStatuses", ignore = true)
 	void update(RoleRequest request, @MappingTarget Role role);
 	
 	default Long map(Permission permission) {	

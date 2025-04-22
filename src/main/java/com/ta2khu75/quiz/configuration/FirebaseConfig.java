@@ -29,15 +29,4 @@ public class FirebaseConfig {
 	Storage storage(GoogleCredentials credentials) throws IOException {
 		return StorageOptions.newBuilder().setCredentials(credentials).build().getService();
 	}
-//	@Bean
-//	 FirebaseApp firebaseApp(GoogleCredentials credentials) throws IOException {
-//		if (FirebaseApp.getApps().isEmpty()) {
-//			 FirebaseOptions options = new FirebaseOptions.Builder()
-//	                    .setStorageBucket(storageBucket)
-//	                    .setCredentials(credentials)
-//	                    .build();
-//	            return FirebaseApp.initializeApp(options);
-//		}
-//	        return FirebaseApp.getInstance();
-//	}
 }

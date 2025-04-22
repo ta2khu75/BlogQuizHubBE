@@ -18,5 +18,5 @@ public abstract class BlogBase {
 	@NotNull(message = "Access modifier must not be null")
 	AccessModifier accessModifier;
 	@NotEmpty(message = "Blog tags must not be empty")
-	Set<String> blogTags;
+	Set<String> tags;
 }

@@ -28,28 +28,28 @@ import lombok.experimental.FieldDefaults;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = { "author", "quizzes", "comments", "blogTags" })
+@EqualsAndHashCode(callSuper = true, exclude = { "author", "quizzes", "comments", "tags" })
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @EntityListeners(AuditingEntityListener.class)
 public class Blog extends EntityBaseString {
-	@Column(nullable = false, columnDefinition = "NVARCHAR(MAX)")
+	@Column(nullable = false, columnDefinition = "NVARCHAR(255)")
 	String title;
 	@Column(nullable = false, columnDefinition = "NVARCHAR(MAX)")
 	String content;
-	String imagePath;
 	int viewCount;
 	boolean deleted;
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	AccessModifier accessModifier;
-	@OneToMany(mappedBy = "blog", cascade = CascadeType.ALL)
+
+	@OneToMany(mappedBy = "blog", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	Set<Quiz> quizzes;
-	@ManyToOne
-	Account author;
 	@OneToMany(mappedBy = "blog", orphanRemoval = true, cascade = CascadeType.REMOVE)
 	List<Comment> comments;
-	@ManyToMany
-	Set<BlogTag> blogTags;
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	Set<BlogTag> tags;
+	@ManyToOne
+	AccountProfile author;
 
 	public void addQuiz(Quiz quiz) {
 		quizzes.add(quiz);

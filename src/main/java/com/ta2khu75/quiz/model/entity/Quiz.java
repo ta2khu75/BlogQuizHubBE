@@ -19,8 +19,8 @@ import com.ta2khu75.quiz.model.entity.base.EntityBaseString;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = { "author", "blog", "questions", "quizCategory"})
-@EqualsAndHashCode(callSuper = true, exclude = { "author","blog", "quizCategory", "questions"})
+@ToString(exclude = { "author", "blog", "questions", "category"})
+@EqualsAndHashCode(callSuper = true, exclude = { "author","blog", "category", "questions"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Quiz extends EntityBaseString {
 	@Column(nullable = false, columnDefinition = "NVARCHAR(MAX)")
@@ -44,11 +44,11 @@ public class Quiz extends EntityBaseString {
 	@Enumerated(EnumType.STRING)
 	QuizResultMode quizResultMode=QuizResultMode.ANSWER_VISIBLE;
 	@ManyToOne
-	Account author;
+	AccountProfile author;
 	@ManyToOne
 	Blog blog;
 	@ManyToOne
-	QuizCategory quizCategory;
-	@OneToMany(mappedBy = "quiz", cascade = CascadeType.REMOVE, orphanRemoval = true)
+	QuizCategory category;
+	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<Question> questions;
 }

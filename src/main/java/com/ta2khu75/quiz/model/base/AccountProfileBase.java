@@ -1,6 +1,6 @@
 package com.ta2khu75.quiz.model.base;
 
-import java.time.LocalDate;
+import java.time.Instant;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public abstract class AccountBase {
+public abstract class AccountProfileBase {
 	@NotBlank(message = "First name must not be blank")
 	String firstName;
 
@@ -18,5 +18,5 @@ public abstract class AccountBase {
 	String lastName;
 	
 	@NotNull(message = "Birthday must not be null")
-	LocalDate birthday;
+	Instant birthday;
 }

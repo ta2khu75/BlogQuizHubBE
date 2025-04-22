@@ -14,7 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 //import com.ta2khu75.quiz.entity.response.AccountResponse;
 import com.ta2khu75.quiz.model.entity.Account;
 import com.ta2khu75.quiz.model.entity.Role;
-import com.ta2khu75.quiz.repository.AccountRepository;
+import com.ta2khu75.quiz.repository.account.AccountRepository;
 
 //import lombok.RequiredArgsConstructor;
 

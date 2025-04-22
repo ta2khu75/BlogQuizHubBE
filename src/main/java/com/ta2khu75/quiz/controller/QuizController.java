@@ -1,6 +1,8 @@
 package com.ta2khu75.quiz.controller;
 
 import java.io.IOException;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +19,7 @@ import com.ta2khu75.quiz.model.request.search.QuizSearch;
 import com.ta2khu75.quiz.model.response.QuizResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
 import com.ta2khu75.quiz.service.QuizService;
+import com.ta2khu75.quiz.util.SecurityUtil;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -77,13 +80,12 @@ public class QuizController extends BaseController<QuizService> {
 		return ResponseEntity.ok(service.search(search));
 	}
 
-//	@GetMapping("mine")
-//	@EndpointMapping(name = "Search my exam")
-//	public ResponseEntity<PageResponse<ExamResponse>> mySearch(ExamSearchRequest examSearchRequest) {
-//		examSearchRequest.setAccessModifier(null);
-//		examSearchRequest.setAuthorId(null);
-//		return ResponseEntity.ok(service.searchExam(examSearchRequest));
-//	}
+	@GetMapping("mine/{keyword}")
+	@EndpointMapping(name = "Search my quiz by keyword")
+	public ResponseEntity<List<QuizResponse>> mySearch(@PathVariable String keyword) {
+		String authorId = SecurityUtil.getIdCurrentUserLogin();
+		return ResponseEntity.ok(service.readAllByAuthorIdAndKeywork(authorId, keyword));
+	}
 
 //	@GetMapping("mine/ids")
 //	public ResponseEntity<List<ExamResponse>> myReadAllById(@RequestParam("ids") List<String> ids) {

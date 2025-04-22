@@ -25,9 +25,10 @@ import com.ta2khu75.quiz.model.entity.Account;
 import com.ta2khu75.quiz.model.entity.Quiz;
 import com.ta2khu75.quiz.model.entity.QuizCategory;
 import com.ta2khu75.quiz.model.entity.Question;
-import com.ta2khu75.quiz.repository.AccountRepository;
+import com.ta2khu75.quiz.repository.BlogRepository;
 import com.ta2khu75.quiz.repository.QuizCategoryRepository;
 import com.ta2khu75.quiz.repository.QuizRepository;
+import com.ta2khu75.quiz.repository.account.AccountRepository;
 import com.ta2khu75.quiz.service.QuizService;
 import com.ta2khu75.quiz.service.QuestionService;
 import com.ta2khu75.quiz.service.base.BaseFileService;
@@ -38,6 +39,7 @@ import com.ta2khu75.quiz.util.SecurityUtil;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -49,15 +51,17 @@ public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper>
 	private final AccountRepository accountRepository;
 	private final QuizCategoryRepository quizCategoryRepository;
 	private final QuestionService questionService;
+	private final BlogRepository blogRepository;
 	private final ApplicationEventPublisher applicationEventPublisher;
 
 	public QuizServiceImpl(QuizRepository repository, QuizMapper mapper, AccountRepository accountRepository,
-			QuizCategoryRepository quizCategoryRepository, QuestionService questionService, FileUtil fileUtil,
+			QuizCategoryRepository quizCategoryRepository, QuestionService questionService,BlogRepository blogRepository, FileUtil fileUtil,
 			ApplicationEventPublisher applicationEventPublisher) {
 		super(repository, mapper, fileUtil);
 		this.accountRepository = accountRepository;
 		this.quizCategoryRepository = quizCategoryRepository;
 		this.questionService= questionService;
+		this.blogRepository = blogRepository;
 		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
@@ -69,16 +73,25 @@ public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper>
 	private Quiz findById(String id) {
 		return repository.findById(id).orElseThrow(() -> new NotFoundException("Could not found quiz with id: " + id));
 	}
+	private void setBlog(Quiz quiz, String blogId) {
+		if(blogId != null) {
+			blogRepository.findById(blogId).ifPresent(blog -> quiz.setBlog(blog));
+		}
+	}
 
 	@Override @Transactional
 	@Validated(value = { Default.class })
 	public QuizResponse create(@Valid QuizRequest quizRequest, MultipartFile file) throws IOException {
-		String accountId = SecurityUtil.getCurrentUserLogin();
+		String accountId = SecurityUtil.getIdCurrentUserLogin();
 		Account account = FunctionUtil.findOrThrow(accountId, Account.class, accountRepository::findById);
 		Quiz quiz = mapper.toEntity(quizRequest);
 		fileUtil.saveFile(quiz, file, Folder.QUIZ_FOLDER, Quiz::setImagePath);
-		quiz.setQuizCategory(this.findExamCategoryById(quizRequest.getQuizCategoryId()));
-		quiz.setAuthor(account);
+		quiz.setCategory(this.findExamCategoryById(quizRequest.getCategoryId()));
+//		quiz.setAuthor(account);
+		if(quizRequest.getBlogId() != null) {
+			
+		}
+		setBlog(quiz, quizRequest.getBlogId());
 		Quiz quizSaved = repository.save(quiz);
 		quizRequest.getQuestions().forEach(question-> {
 			question.setQuiz(quizSaved);
@@ -113,9 +126,10 @@ public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper>
 			});
 		}
 		mapper.update(quizRequest, quiz);
+		setBlog(quiz, quizRequest.getBlogId());
 		fileUtil.saveFile(quiz, file, Folder.QUIZ_FOLDER, Quiz::setImagePath);
-		if (quiz.getQuizCategory().getId().equals(quizRequest.getQuizCategoryId()))
-			quiz.setQuizCategory(this.findExamCategoryById(quizRequest.getQuizCategoryId()));
+		if (quiz.getCategory().getId().equals(quizRequest.getCategoryId()))
+			quiz.setCategory(this.findExamCategoryById(quizRequest.getCategoryId()));
 		return mapper.toResponse(repository.save(quiz));
 	}
 
@@ -156,6 +170,11 @@ public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper>
 					search.getCompleted(),
 					search.getMinDuration(),
 					search.getMaxDuration(), search.getAccessModifier(), pageable));
+	}
+
+	@Override
+	public List<QuizResponse> readAllByAuthorIdAndKeywork(String authorId, String keyword) {
+		return repository.findByAuthorIdAndTitleContainingIgnoreCaseAndBlogIsNull(authorId, keyword).stream().map(mapper::toResponse).collect(Collectors.toList());
 	}
 
 //	@Override

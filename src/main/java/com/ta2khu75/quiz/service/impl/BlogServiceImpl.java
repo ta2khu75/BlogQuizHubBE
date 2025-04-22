@@ -23,9 +23,9 @@ import com.ta2khu75.quiz.model.request.BlogRequest;
 import com.ta2khu75.quiz.model.request.search.BlogSearch;
 import com.ta2khu75.quiz.model.response.BlogResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
-import com.ta2khu75.quiz.repository.AccountRepository;
 import com.ta2khu75.quiz.repository.BlogRepository;
 import com.ta2khu75.quiz.repository.QuizRepository;
+import com.ta2khu75.quiz.repository.account.AccountRepository;
 import com.ta2khu75.quiz.service.BlogService;
 import com.ta2khu75.quiz.service.BlogTagService;
 import com.ta2khu75.quiz.service.base.BaseFileService;
@@ -61,12 +61,11 @@ public class BlogServiceImpl extends BaseFileService<BlogRepository, BlogMapper>
 	@Transactional
 	public BlogResponse create(@Valid BlogRequest request, MultipartFile file) throws IOException {
 		Blog blog = mapper.toEntity(request);
-		Account account = FunctionUtil.findOrThrow(SecurityUtil.getCurrentUserLogin(), Account.class,
+		Account account = FunctionUtil.findOrThrow(SecurityUtil.getIdCurrentUserLogin(), Account.class,
 				accountRepository::findById);
-		blog.setAuthor(account);
-		fileUtil.saveFile(blog, file, Folder.BLOG_FOLDER, Blog::setImagePath);
-		Set<BlogTag> blogTags =blogTagService.createOrReadAll(request.getBlogTags());
-		blog.setBlogTags(blogTags);
+//		blog.setAuthor(account);
+		Set<BlogTag> blogTags =blogTagService.createOrReadAll(request.getTags());
+		blog.setTags(blogTags);
 		this.addQuizzes(blog, request);
 		return this.save(blog);
 	}
@@ -77,9 +76,8 @@ public class BlogServiceImpl extends BaseFileService<BlogRepository, BlogMapper>
 	public BlogResponse update(String id, @Valid BlogRequest request, MultipartFile file) throws IOException {
 		Blog blog = FunctionUtil.findOrThrow(id, Blog.class, repository::findById);
 		mapper.update(request, blog);
-		fileUtil.saveFile(blog, file, Folder.BLOG_FOLDER, Blog::setImagePath);
-		Set<BlogTag> blogTags = blogTagService.createOrReadAll(request.getBlogTags());
-		blog.setBlogTags(blogTags);
+		Set<BlogTag> blogTags = blogTagService.createOrReadAll(request.getTags());
+		blog.setTags(blogTags);
 		// Xóa các Exams cũ
 		blog.getQuizzes().forEach(exam -> exam.setBlog(null));
 		blog.getQuizzes().clear();
@@ -108,7 +106,7 @@ public class BlogServiceImpl extends BaseFileService<BlogRepository, BlogMapper>
 	public PageResponse<BlogResponse> search(BlogSearch blogSearchRequest) {
 		if(!SecurityUtil.isAuthor(blogSearchRequest.getAuthorId())) blogSearchRequest.setAccessModifier(AccessModifier.PUBLIC);
 		Pageable pageable = Pageable.ofSize(blogSearchRequest.getSize()).withPage(blogSearchRequest.getPage() - 1);
-		return mapper.toPageResponse(repository.searchBlog(blogSearchRequest.getBlogTagNames(),
+		return mapper.toPageResponse(repository.search(blogSearchRequest.getTagNames(),
 				blogSearchRequest.getKeyword(), blogSearchRequest.getAuthorId(),
 				blogSearchRequest.getMinView(), blogSearchRequest.getMaxView(), blogSearchRequest.getAccessModifier(),
 				pageable));
@@ -138,5 +136,11 @@ public class BlogServiceImpl extends BaseFileService<BlogRepository, BlogMapper>
 		Blog blogSaved=repository.save(blog);
 		applicationEventPublisher.publishEvent(new NotificationEvent(this, blog.getId(), TargetType.BLOG));
 		return mapper.toResponse(blogSaved);
+	}
+
+
+	@Override
+	public List<BlogResponse> readAllByAuthorIdAndKeywork(String authorId, String keyword) {
+		return repository.findAllByAuthorIdAndTitleContainingIgnoreCase(authorId, keyword).stream().map(mapper::toResponse).toList();
 	}
 }

@@ -28,7 +28,7 @@ import lombok.experimental.FieldDefaults;
 public class Report extends EntityBaseCustom<ReportId> {
 	@ManyToOne
 	@MapsId("authorId")
-	Account author;
+	AccountProfile author;
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	ReportType reportType;

@@ -6,7 +6,7 @@ import java.util.Set;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class QuizResultSearch extends Search {
 	private Instant fromDate;
 	private Instant toDate;

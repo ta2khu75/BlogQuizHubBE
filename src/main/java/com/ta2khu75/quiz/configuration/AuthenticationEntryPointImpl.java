@@ -40,5 +40,4 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 		response.setStatus(444);
 		objectMapper.writeValue(response.getWriter(), apiResponse);
 	}
-
 }

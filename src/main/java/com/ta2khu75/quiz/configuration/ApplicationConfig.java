@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.boot.actuate.endpoint.web.EndpointMediaTypes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -24,6 +25,11 @@ public class ApplicationConfig implements WebMvcConfigurer {
 	public void addCorsMappings(@NonNull CorsRegistry registry) {
 		registry.addMapping("/api/**").allowedOrigins("http://localhost:3000").allowedMethods("*").allowedHeaders("*")
 				.allowCredentials(true);
+	}
+	
+	@Bean
+	AuditorAware<String> auditorAware() {
+		return new ApplicationAuditAware();
 	}
 
 	@Bean

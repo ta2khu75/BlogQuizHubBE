@@ -49,7 +49,7 @@ public class DynamicallySecurityConfig implements AuthorizationManager<HttpServl
 		String requestUrl = object.getRequestURI();
 		String httpMethod = object.getMethod();
 		try {
-			String accountId = SecurityUtil.getCurrentUserLogin();
+			String accountId = SecurityUtil.getIdCurrentUserLogin();
 			Account account = null;
 			account = redisUtil.read(NameModel.ACCOUNT, accountId, Account.class);
 			if (account != null) {

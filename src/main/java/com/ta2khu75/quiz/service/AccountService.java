@@ -1,21 +1,21 @@
 package com.ta2khu75.quiz.service;
 
-import org.springframework.data.domain.Pageable;
 
-import com.ta2khu75.quiz.model.request.AccountRequest;
-import com.ta2khu75.quiz.model.request.update.AccountInfoRequest;
-import com.ta2khu75.quiz.model.request.update.AccountStatusRequest;
+import com.ta2khu75.quiz.model.request.AccountCreateRequest;
+import com.ta2khu75.quiz.model.request.AccountPasswordRequest;
+import com.ta2khu75.quiz.model.request.AccountProfileRequest;
+import com.ta2khu75.quiz.model.request.AccountStatusRequest;
+import com.ta2khu75.quiz.model.request.search.AccountSearch;
+import com.ta2khu75.quiz.model.response.AccountProfileResponse;
 import com.ta2khu75.quiz.model.response.AccountResponse;
-import com.ta2khu75.quiz.model.response.ManagedAccountResponse;
-import com.ta2khu75.quiz.model.response.PageResponse;
-import com.ta2khu75.quiz.model.response.details.AccountDetailResponse;
+import com.ta2khu75.quiz.model.response.AccountStatusResponse;
+import com.ta2khu75.quiz.service.base.SearchService;
 
-public interface AccountService{
-	AccountResponse create(AccountRequest request);
-    AccountDetailResponse read(String id);
+public interface AccountService extends SearchService<AccountResponse, AccountSearch>{
+	AccountResponse create(AccountCreateRequest request);
+	AccountProfileResponse updateProfile(Long id,AccountProfileRequest request);
+	AccountResponse updatePassword(String id,AccountPasswordRequest request);
+    AccountStatusResponse updateStatus(Long id,AccountStatusRequest request);
+    AccountProfileResponse readProfile(Long id);
 	void delete(String id);
-    ManagedAccountResponse updateStatus(String id,AccountStatusRequest request);
-    AccountResponse updateInfo(AccountInfoRequest request);
-    PageResponse<ManagedAccountResponse> readPage(String search,Pageable pageable);
-    ManagedAccountResponse updateLock(String id);
 }

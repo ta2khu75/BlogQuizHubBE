@@ -4,17 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ta2khu75.quiz.model.entity.base.EntityBaseString;
 
 @Data
@@ -22,49 +19,25 @@ import com.ta2khu75.quiz.model.entity.base.EntityBaseString;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = { "role", "blogs", "quizzes", "followers", "following" })
-@EqualsAndHashCode(callSuper = true, exclude = { "role", "blogs", "quizzes", "followers", "following" })
+@ToString(exclude = { "status"})
+@EqualsAndHashCode(callSuper = true, exclude = { "status"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Account extends EntityBaseString implements UserDetails {
 	private static final long serialVersionUID = -6436446209727776976L;
 	@Column(unique = true, nullable = false)
 	String email;
-	@Column(unique = true, nullable = false)
-	String displayName;
-	@Column(nullable = false)
-	String firstName;
-	@Column(nullable = false)
-	String lastName;
 	@Column(nullable = false)
 	String password;
-	@Column(nullable = false)
-	LocalDate birthday;
-	String codeVerify;
-	String refreshToken;
-	boolean enabled;
-	@Builder.Default
-	boolean nonLocked = true;
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true)
+	AccountStatus status;
+	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+	AccountProfile profile;
 
-	@ManyToOne
-	Role role;
-	@OneToMany(mappedBy = "author")
-	List<Blog> blogs;
-	@OneToMany(mappedBy = "author")
-	@JsonIgnore
-	List<Quiz> quizzes;
-	@OneToMany(mappedBy = "following")
-	@JsonIgnore
-	Set<Follow> followers;
-	@OneToMany(mappedBy = "follower")
-	@JsonIgnore
-	Set<Follow> following;
-
-	@JsonIgnore
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-		authorities.add(new SimpleGrantedAuthority(String.format("ROLE_%s", role.getName()))); // Add role as authority
-		authorities.addAll(role.getPermissions().stream()
+		authorities.add(new SimpleGrantedAuthority(String.format("ROLE_%s", status.getRole().getName())));
+		authorities.addAll(status.getRole().getPermissions().stream()
 				.map(permission -> new SimpleGrantedAuthority(permission.getName())).toList());
 		return authorities;
 	}
@@ -76,11 +49,11 @@ public class Account extends EntityBaseString implements UserDetails {
 
 	@Override
 	public boolean isAccountNonLocked() {
-		return nonLocked;
+		return status.isNonLocked();
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return enabled;
+		return status.isEnabled();
 	}
 }

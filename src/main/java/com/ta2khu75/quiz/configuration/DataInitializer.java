@@ -1,7 +1,7 @@
 package com.ta2khu75.quiz.configuration;
 
 import java.lang.reflect.Method;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -20,13 +20,15 @@ import com.ta2khu75.quiz.anotation.EndpointMapping;
 import com.ta2khu75.quiz.exception.NotFoundException;
 import com.ta2khu75.quiz.model.RoleDefault;
 import com.ta2khu75.quiz.model.entity.Account;
+import com.ta2khu75.quiz.model.entity.AccountProfile;
+import com.ta2khu75.quiz.model.entity.AccountStatus;
 import com.ta2khu75.quiz.model.entity.Permission;
 import com.ta2khu75.quiz.model.entity.PermissionGroup;
 import com.ta2khu75.quiz.model.entity.Role;
-import com.ta2khu75.quiz.repository.AccountRepository;
 import com.ta2khu75.quiz.repository.PermissionGroupRepository;
 import com.ta2khu75.quiz.repository.PermissionRepository;
 import com.ta2khu75.quiz.repository.RoleRepository;
+import com.ta2khu75.quiz.repository.account.AccountRepository;
 import com.ta2khu75.quiz.service.util.EndpointUtil;
 import com.ta2khu75.quiz.util.StringUtil;
 
@@ -125,9 +127,15 @@ public class DataInitializer implements CommandLineRunner {
 	@Transactional
 	public void run(String... args) throws Exception {
 		if (accountRepository.count() == 0) {
-			Account account = Account.builder().email("admin@g.com").password(passwordEncoder.encode("123"))
-					.displayName("admin").firstName("admin").lastName("admin").enabled(true).birthday(LocalDate.now())
-					.role(initRole()).build();
+			AccountStatus status= new AccountStatus();
+			status.setRole(initRole());
+			AccountProfile profile=new AccountProfile();
+			profile.setFirstName("admin");
+			profile.setLastName("admin");
+			profile.setDisplayName("admin");
+			profile.setBirthday(Instant.now());
+
+			Account account = Account.builder().email("admin@g.com").password(passwordEncoder.encode("123")).status(status).profile(profile).build();
 			accountRepository.save(account);
 		}
 		Set<Permission> permissionSet = initPermission();

@@ -1,5 +1,7 @@
 package com.ta2khu75.quiz.model.entity.base;
 
+import java.io.Serializable;
+
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
@@ -12,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 @MappedSuperclass
 @EqualsAndHashCode(callSuper = false)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class EntityBaseCustom<T extends Object> extends EntityBase  {
+public class EntityBaseCustom<T extends Serializable> extends EntityBase  {
 	@Id
 	@EmbeddedId
 	T id;

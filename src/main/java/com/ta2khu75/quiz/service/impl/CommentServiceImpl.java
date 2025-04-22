@@ -12,9 +12,9 @@ import com.ta2khu75.quiz.model.entity.Comment;
 import com.ta2khu75.quiz.model.request.CommentRequest;
 import com.ta2khu75.quiz.model.response.CommentResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
-import com.ta2khu75.quiz.repository.AccountRepository;
 import com.ta2khu75.quiz.repository.BlogRepository;
 import com.ta2khu75.quiz.repository.CommentRepository;
+import com.ta2khu75.quiz.repository.account.AccountRepository;
 import com.ta2khu75.quiz.service.CommentService;
 import com.ta2khu75.quiz.service.base.BaseService;
 import com.ta2khu75.quiz.util.FunctionUtil;
@@ -35,10 +35,10 @@ public class CommentServiceImpl extends BaseService<CommentRepository, CommentMa
 	@Override
 	@Transactional
 	public CommentResponse create(CommentRequest request) {
-		Account account = FunctionUtil.findOrThrow(SecurityUtil.getCurrentUserLogin(), Account.class,
+		Account account = FunctionUtil.findOrThrow(SecurityUtil.getIdCurrentUserLogin(), Account.class,
 				accountRepository::findById);
 		Comment comment = mapper.toEntity(request);
-		comment.setAuthor(account);
+//		comment.setAuthor(account);
 		comment.setBlog(FunctionUtil.findOrThrow(request.getBlogId(), Blog.class, blogRepository::findById));
 		return mapper.toResponse(repository.save(comment));
 	}

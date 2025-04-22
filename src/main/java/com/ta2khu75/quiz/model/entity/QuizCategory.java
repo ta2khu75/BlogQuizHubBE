@@ -28,6 +28,6 @@ public class QuizCategory{
 	Long id;
 	@Column(nullable = false)
 	String name;
-	@OneToMany(mappedBy = "quizCategory")
+	@OneToMany(mappedBy = "category")
 	List<Quiz> quizzes;
 }

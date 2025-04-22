@@ -1,21 +1,25 @@
 package com.ta2khu75.quiz.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.groups.Default;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.ta2khu75.quiz.anotation.EndpointMapping;
-import com.ta2khu75.quiz.model.request.AccountRequest;
-import com.ta2khu75.quiz.model.request.update.AccountInfoRequest;
-import com.ta2khu75.quiz.model.request.update.AccountStatusRequest;
+import com.ta2khu75.quiz.model.group.Admin;
+import com.ta2khu75.quiz.model.request.AccountCreateRequest;
+import com.ta2khu75.quiz.model.request.AccountProfileRequest;
+import com.ta2khu75.quiz.model.request.AccountPasswordRequest;
+import com.ta2khu75.quiz.model.request.AccountStatusRequest;
+import com.ta2khu75.quiz.model.request.search.AccountSearch;
+import com.ta2khu75.quiz.model.response.AccountProfileResponse;
 import com.ta2khu75.quiz.model.response.AccountResponse;
-import com.ta2khu75.quiz.model.response.ManagedAccountResponse;
+import com.ta2khu75.quiz.model.response.AccountStatusResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
-import com.ta2khu75.quiz.model.response.details.AccountDetailResponse;
 import com.ta2khu75.quiz.service.AccountService;
 
 @RestController
@@ -26,8 +30,9 @@ public class AccountController extends BaseController<AccountService> {
 	}
 
 	@PostMapping
+	@Validated(value = { Default.class, Admin.class })
 	@EndpointMapping(name = "Create account")
-	public ResponseEntity<AccountResponse> create(@Valid @RequestBody AccountRequest request) {
+	public ResponseEntity<AccountResponse> create(@Valid @RequestBody AccountCreateRequest request) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
 	}
 
@@ -40,43 +45,34 @@ public class AccountController extends BaseController<AccountService> {
 
 	@GetMapping("{id}")
 	@EndpointMapping(name = "Read account")
-	ResponseEntity<AccountDetailResponse> read(@PathVariable String id) {
-		return ResponseEntity.ok(service.read(id));
+	ResponseEntity<AccountProfileResponse> read(@PathVariable Long id) {
+		return ResponseEntity.ok(service.readProfile(id));
 	}
-//	@GetMapping("{id}/detail")
-//	@EndpointMapping(name = "Read account")
-//	ResponseEntity<AccountDetailResponse> readDetails(@PathVariable String id) {
-//		return ResponseEntity.ok(service.read(id));
-//	}
 
 	@GetMapping
 	@EndpointMapping(name = "Search account status")
-	public ResponseEntity<PageResponse<ManagedAccountResponse>> searchStatus(
-			@RequestParam(name = "search", required = false, defaultValue = "") String search,
-			@RequestParam(name = "size", required = false, defaultValue = "5") int size,
-			@RequestParam(name = "page", required = false, defaultValue = "1") int page) {
-		Pageable pageable = Pageable.ofSize(size).withPage(page - 1);
-		return ResponseEntity.ok(service.readPage(search, pageable));
+	public ResponseEntity<PageResponse<AccountResponse>> search(@ModelAttribute AccountSearch search) {
+		return ResponseEntity.ok(service.search(search));
 	}
 
-	@PutMapping
-	@EndpointMapping(name = "Update account info")
-	public ResponseEntity<AccountResponse> updateInfo(@Valid @RequestBody AccountInfoRequest request) {
-		return ResponseEntity.ok(service.updateInfo(request));
+	@PutMapping("profile/{id")
+	@EndpointMapping(name = "Update account profile")
+	public ResponseEntity<AccountProfileResponse> updateProfile(@PathVariable Long id,
+			@Valid @RequestBody AccountProfileRequest request) {
+		return ResponseEntity.ok(service.updateProfile(id, request));
 	}
 
-	@PutMapping("/{id}")
+	@PutMapping("status/{id}")
 	@EndpointMapping(name = "Update account status")
-	public ResponseEntity<ManagedAccountResponse> updateStatus(@PathVariable String id,
+	public ResponseEntity<AccountStatusResponse> updateStatus(@PathVariable Long id,
 			@Valid @RequestBody AccountStatusRequest request) {
 		return ResponseEntity.ok(service.updateStatus(id, request));
 	}
 
-//
-//	@PatchMapping("/{id}/lock")
-//	public ResponseEntity<AccountAuthDetailsResponse> updateLockAccount(@PathVariable("id") String id) {
-//		return ResponseEntity.ok(service.updateLock(id));
-//
-//	}
-
+	@PutMapping("password/{id}")
+	@EndpointMapping(name = "Update account status")
+	public ResponseEntity<AccountResponse> updateStatus(@PathVariable String id,
+			@Valid @RequestBody AccountPasswordRequest request) {
+		return ResponseEntity.ok(service.updatePassword(id, request));
+	}
 }

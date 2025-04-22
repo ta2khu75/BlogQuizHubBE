@@ -1,105 +1,63 @@
 package com.ta2khu75.quiz.mapper;
 
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.springframework.data.domain.Page;
 
 import com.ta2khu75.quiz.model.entity.Account;
-import com.ta2khu75.quiz.model.request.AccountRequest;
-import com.ta2khu75.quiz.model.request.update.AccountInfoRequest;
-import com.ta2khu75.quiz.model.request.update.AccountStatusRequest;
+import com.ta2khu75.quiz.model.entity.AccountProfile;
+import com.ta2khu75.quiz.model.entity.AccountStatus;
+import com.ta2khu75.quiz.model.request.AccountCreateRequest;
+import com.ta2khu75.quiz.model.request.AccountProfileRequest;
+import com.ta2khu75.quiz.model.request.AccountStatusRequest;
+import com.ta2khu75.quiz.model.response.AccountProfileResponse;
 import com.ta2khu75.quiz.model.response.AccountResponse;
-import com.ta2khu75.quiz.model.response.ManagedAccountResponse;
+import com.ta2khu75.quiz.model.response.AccountStatusResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
-import com.ta2khu75.quiz.model.response.details.AccountDetailResponse;
 
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = { InfoMapper.class, RoleMapper.class })
 public interface AccountMapper{
-	@Named("toAccountResponse")
-	@Mapping(target = "username", source = "displayName")
-	@Mapping(target = "info", source = "account", qualifiedByName = "toInfoResponse")
-	AccountResponse toResponse(Account account);
+	@Mapping(target="birthday", source = "birthday")
+	@Mapping(target="lastName", source = "lastName")
+	@Mapping(target="firstName", source = "firstName")
+	@BeanMapping(ignoreByDefault = true)
+	AccountProfile toProfileEntity(AccountCreateRequest request);
 	
-	@Mapping(target = "followers", ignore = true)
-	@Mapping(target = "following", ignore = true)
-	@Mapping(target = "displayName", ignore = true)
-	@Mapping(target = "blogs", ignore = true)
-	@Mapping(target = "codeVerify", ignore = true)
-	@Mapping(target = "enabled", ignore = true)
-	@Mapping(target = "quizzes", ignore = true)
-	@Mapping(target = "nonLocked", ignore = true)
-	@Mapping(target = "refreshToken", ignore = true)
-	@Mapping(target = "role", ignore = true)
-	Account toEntity(AccountRequest request);
+	@Mapping(target="birthday", source = "birthday")
+	@Mapping(target="lastName", source = "lastName")
+	@Mapping(target="firstName", source = "firstName")
+	@Mapping(target="displayName", source = "displayName")
+	@BeanMapping(ignoreByDefault = true)
+	void update(AccountProfileRequest request, @MappingTarget AccountProfile entity);
+	
+	@Named("toProfileResponse")
+	@Mapping(target = "blogCount", ignore = true)
+	@Mapping(target = "quizCount", ignore = true)
+	@Mapping(target = "followCount", ignore = true)
+	AccountProfileResponse toResponse(AccountProfile entity);
 
-	@Mapping(target = "username", source = "displayName")
-	@Mapping(target = "info", source = "account", qualifiedByName = "toInfoResponse")
-	@Mapping(target = "role", source = "role", qualifiedByName = "toRoleResponse")
-	ManagedAccountResponse toManagedResponse(Account account);
-
-	@Mapping(target = "username", source = "displayName")
-	@Mapping(target = "info", source = "account", qualifiedByName = "toInfoResponse")
 	@Mapping(target = "blogCount", expression = "java(account.getBlogs() != null ? account.getBlogs().size() : 0)")
 	@Mapping(target = "quizCount", expression = "java(account.getQuizzes() != null ? account.getQuizzes().size() : 0)")
 	@Mapping(target = "followCount", expression = "java(account.getFollowers() != null ? account.getFollowers().size() : 0)")
-	AccountDetailResponse toDetailsResponse(Account account);
+	AccountProfileResponse toDetailProfileResponse(AccountProfile account);
 
-	@Mapping(target = "followers", ignore = true)
-	@Mapping(target = "following", ignore = true)
-	@Mapping(target = "createdAt", ignore = true)
-	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "updatedAt", ignore = true)
-	@Mapping(target = "blogs", ignore = true)
-	@Mapping(target = "codeVerify", ignore = true)
-	@Mapping(target = "displayName", ignore = true)
-	@Mapping(target = "enabled", ignore = true)
-	@Mapping(target = "quizzes", ignore = true)
-	@Mapping(target = "nonLocked", ignore = true)
-	@Mapping(target = "refreshToken", ignore = true)
-	@Mapping(target = "role", ignore = true)
-	@Mapping(target = "authorities", ignore = true)
-	void update(AccountRequest request, @MappingTarget Account account);
-
-	@Mapping(target = "followers", ignore = true)
-	@Mapping(target = "following", ignore = true)
-	@Mapping(target = "createdAt", ignore = true)
-	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "updatedAt", ignore = true)
-	@Mapping(target = "blogs", ignore = true)
-	@Mapping(target = "codeVerify", ignore = true)
-	@Mapping(target = "email", ignore = true)
-	@Mapping(target = "enabled", ignore = true)
-	@Mapping(target = "quizzes", ignore = true)
-	@Mapping(target = "nonLocked", ignore = true)
-	@Mapping(target = "password", ignore = true)
-	@Mapping(target = "refreshToken", ignore = true)
-	@Mapping(target = "role", ignore = true)
-	@Mapping(target = "authorities", ignore = true)
-	@Mapping(target = "displayName", source = "username")
-	void update(AccountInfoRequest request, @MappingTarget Account account);
-
-	@Mapping(target = "followers", ignore = true)
-	@Mapping(target = "following", ignore = true)
-	@Mapping(target = "createdAt", ignore = true)
-	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "updatedAt", ignore = true)
-	@Mapping(target = "birthday", ignore = true)
-	@Mapping(target = "blogs", ignore = true)
-	@Mapping(target = "codeVerify", ignore = true)
-	@Mapping(target = "displayName", ignore = true)
-	@Mapping(target = "email", ignore = true)
-	@Mapping(target = "quizzes", ignore = true)
-	@Mapping(target = "firstName", ignore = true)
-	@Mapping(target = "lastName", ignore = true)
-	@Mapping(target = "password", ignore = true)
-	@Mapping(target = "refreshToken", ignore = true)
-	@Mapping(target = "role", ignore = true)
-	@Mapping(target = "authorities", ignore = true)
-	void update(AccountStatusRequest request, @MappingTarget Account account);
+	@Mapping(target = "role", source = "role", qualifiedByName = "toRoleResponse")
+	AccountStatusResponse toResponse(AccountStatus entity);
 	
+	@Mapping(target="nonLocked", source = "nonLocked")
+	@Mapping(target="enabled", source = "enabled")
+	@BeanMapping(ignoreByDefault = true)
+	void update(AccountStatusRequest request, @MappingTarget AccountStatus entity);
+	
+	@Named("toAccountResponse")
+	@Mapping(target = "info", source = "entity", qualifiedByName = "toInfoResponse")
+	AccountResponse toResponse(Account entity);
+
 	@Mapping(target = "page", source = "number")
-	PageResponse<ManagedAccountResponse> toPageResponse(Page<Account> response);
+	@Mapping(target="content", source = "content", qualifiedByName = "toAccountResponse")
+	PageResponse<AccountResponse> toPageResponse(Page<Account> response);
 }

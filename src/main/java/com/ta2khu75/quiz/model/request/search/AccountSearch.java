@@ -1,0 +1,12 @@
+package com.ta2khu75.quiz.model.request.search;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class AccountSearch extends Search {
+	private Boolean nonLocked;
+	private Boolean enabled;
+	private Long roleId;
+}

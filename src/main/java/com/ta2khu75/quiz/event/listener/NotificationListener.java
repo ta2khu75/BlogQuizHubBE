@@ -33,7 +33,7 @@ public class NotificationListener implements ApplicationListener<NotificationEve
 
 	@Override
 	public void onApplicationEvent(@NonNull NotificationEvent event) {
-		String accountId = SecurityUtil.getCurrentUserLogin();
+		String accountId = SecurityUtil.getIdCurrentUserLogin();
 		Set<Follow> followers = followRepository.findByFollowingId(accountId);
 		Set<Notification> notificationSet = followers.stream().map(follow -> {
 			Notification notification = new Notification();

@@ -1,8 +1,10 @@
 package com.ta2khu75.quiz.service.base;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import com.ta2khu75.quiz.service.util.FileUtil;
 
-public abstract class BaseFileService<Repository, Mapper> extends BaseService<Repository, Mapper> {
+public abstract class BaseFileService<Repository extends JpaRepository<?,?>, Mapper> extends BaseService<Repository, Mapper> {
 
 	protected final FileUtil fileUtil;
 
