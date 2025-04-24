@@ -1,8 +1,9 @@
-package com.ta2khu75.quiz.model.response;
+package com.ta2khu75.quiz.model.response.account;
 
 import java.time.Instant;
 
 import com.ta2khu75.quiz.model.base.AccountStatusBase;
+import com.ta2khu75.quiz.model.response.RoleResponse;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

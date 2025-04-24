@@ -21,20 +21,17 @@ import com.ta2khu75.quiz.exception.NotFoundException;
 import com.ta2khu75.quiz.mapper.QuizMapper;
 import com.ta2khu75.quiz.model.AccessModifier;
 import com.ta2khu75.quiz.model.TargetType;
-import com.ta2khu75.quiz.model.entity.Account;
 import com.ta2khu75.quiz.model.entity.Quiz;
 import com.ta2khu75.quiz.model.entity.QuizCategory;
 import com.ta2khu75.quiz.model.entity.Question;
 import com.ta2khu75.quiz.repository.BlogRepository;
 import com.ta2khu75.quiz.repository.QuizCategoryRepository;
 import com.ta2khu75.quiz.repository.QuizRepository;
-import com.ta2khu75.quiz.repository.account.AccountRepository;
 import com.ta2khu75.quiz.service.QuizService;
 import com.ta2khu75.quiz.service.QuestionService;
 import com.ta2khu75.quiz.service.base.BaseFileService;
 import com.ta2khu75.quiz.service.util.FileUtil;
 import com.ta2khu75.quiz.service.util.FileUtil.Folder;
-import com.ta2khu75.quiz.util.FunctionUtil;
 import com.ta2khu75.quiz.util.SecurityUtil;
 
 import java.io.IOException;
@@ -48,17 +45,15 @@ import java.util.stream.Collectors;
 @Slf4j
 @Validated
 public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper> implements QuizService {
-	private final AccountRepository accountRepository;
 	private final QuizCategoryRepository quizCategoryRepository;
 	private final QuestionService questionService;
 	private final BlogRepository blogRepository;
 	private final ApplicationEventPublisher applicationEventPublisher;
 
-	public QuizServiceImpl(QuizRepository repository, QuizMapper mapper, AccountRepository accountRepository,
+	public QuizServiceImpl(QuizRepository repository, QuizMapper mapper,
 			QuizCategoryRepository quizCategoryRepository, QuestionService questionService,BlogRepository blogRepository, FileUtil fileUtil,
 			ApplicationEventPublisher applicationEventPublisher) {
 		super(repository, mapper, fileUtil);
-		this.accountRepository = accountRepository;
 		this.quizCategoryRepository = quizCategoryRepository;
 		this.questionService= questionService;
 		this.blogRepository = blogRepository;
@@ -82,12 +77,10 @@ public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper>
 	@Override @Transactional
 	@Validated(value = { Default.class })
 	public QuizResponse create(@Valid QuizRequest quizRequest, MultipartFile file) throws IOException {
-		String accountId = SecurityUtil.getIdCurrentUserLogin();
-		Account account = FunctionUtil.findOrThrow(accountId, Account.class, accountRepository::findById);
 		Quiz quiz = mapper.toEntity(quizRequest);
 		fileUtil.saveFile(quiz, file, Folder.QUIZ_FOLDER, Quiz::setImagePath);
 		quiz.setCategory(this.findExamCategoryById(quizRequest.getCategoryId()));
-//		quiz.setAuthor(account);
+		quiz.setAuthor(SecurityUtil.getCurrentProfile());
 		if(quizRequest.getBlogId() != null) {
 			
 		}
@@ -173,7 +166,7 @@ public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper>
 	}
 
 	@Override
-	public List<QuizResponse> readAllByAuthorIdAndKeywork(String authorId, String keyword) {
+	public List<QuizResponse> readAllByAuthorIdAndKeywork(Long authorId, String keyword) {
 		return repository.findByAuthorIdAndTitleContainingIgnoreCaseAndBlogIsNull(authorId, keyword).stream().map(mapper::toResponse).collect(Collectors.toList());
 	}
 

@@ -1,7 +1,6 @@
 package com.ta2khu75.quiz.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
@@ -33,7 +32,6 @@ public class AdviceException implements ResponseBodyAdvice<Object> {
 				.body(new ExceptionResponse(ex.getConstraintViolations().iterator().next().getMessage()));
 	}
 
-	@SuppressWarnings("null")
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ExceptionResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
 		return ResponseEntity.badRequest()
@@ -78,10 +76,9 @@ public class AdviceException implements ResponseBodyAdvice<Object> {
 		int statusCode = servletResponse.getStatus();
 		if (selectedContentType.includes(MediaType.APPLICATION_JSON)) {
 			if (statusCode < HttpStatus.BAD_REQUEST.value()) {
-				return ApiResponse.builder().data(body).statusCode(statusCode).success(true).build();
+				return new ApiResponse(body, null, statusCode);
 			} else if (body instanceof ExceptionResponse exceptionResponse) {
-				return ApiResponse.builder().statusCode(statusCode).messageError(exceptionResponse.messageError)
-						.success(false).build();
+				return new ApiResponse(null, exceptionResponse.messageError, statusCode);
 			}
 		}
 		return body;
@@ -90,19 +87,11 @@ public class AdviceException implements ResponseBodyAdvice<Object> {
 	@AllArgsConstructor
 	@NoArgsConstructor
 	@Data
-	@Builder
 	@FieldDefaults(level = AccessLevel.PRIVATE)
-	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public static class ApiResponse {
-		@Builder.Default
-		@JsonProperty("status_code")
-		int statusCode = 200;
-		@Builder.Default
-		boolean success = true;
 		Object data;
 		String message;
-		@JsonProperty("message_error")
-		String messageError;
+		int statusCode;
 	}
 
 	public record ExceptionResponse(String messageError) {

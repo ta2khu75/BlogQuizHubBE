@@ -10,7 +10,7 @@ import com.ta2khu75.quiz.model.entity.Follow;
 import com.ta2khu75.quiz.model.entity.id.FollowId;
 
 public interface FollowRepository extends JpaRepository<Follow, FollowId> {
-	Page<Follow> findByFollowingId(String followingId, Pageable pageable);
+	Page<Follow> findByFollowingId(Long followingId, Pageable pageable);
 
-	Set<Follow> findByFollowingId(String followingId);
+	Set<Follow> findByFollowingId(Long followingId);
 }

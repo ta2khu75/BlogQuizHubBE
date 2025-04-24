@@ -1,17 +1,17 @@
 package com.ta2khu75.quiz.service;
 
-import com.ta2khu75.quiz.model.request.AccountCreateRequest;
-import com.ta2khu75.quiz.model.request.AccountPasswordRequest;
 import com.ta2khu75.quiz.model.request.AuthRequest;
-import com.ta2khu75.quiz.model.response.AccountResponse;
+import com.ta2khu75.quiz.model.request.account.AccountPasswordRequest;
+import com.ta2khu75.quiz.model.request.account.AccountRequest;
 import com.ta2khu75.quiz.model.response.AuthResponse;
+import com.ta2khu75.quiz.model.response.account.AccountResponse;
 
 import jakarta.mail.MessagingException;
 
 public interface AuthService {
 	AuthResponse login(AuthRequest authRequest);
 
-	AccountResponse register(AccountCreateRequest accountRequest) throws MessagingException;
+	AccountResponse register(AccountRequest accountRequest) throws MessagingException;
 
 	AccountResponse changePassword(AccountPasswordRequest request);
 

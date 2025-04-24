@@ -13,6 +13,6 @@ public class BlogSearch extends Search {
 	private List<String> tagNames;
 	private Integer minView;
 	private Integer maxView;
-	private String authorId;
+	private Long authorId;
 	private AccessModifier accessModifier;
 }

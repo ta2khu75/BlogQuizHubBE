@@ -1,4 +1,4 @@
-package com.ta2khu75.quiz.model.request;
+package com.ta2khu75.quiz.model.request.account;
 
 import com.ta2khu75.quiz.model.base.AccountProfileBase;
 import com.ta2khu75.quiz.model.group.Admin;
@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AccountCreateRequest extends AccountProfileBase {
+public class AccountRequest extends AccountProfileBase {
 	@NotBlank(message = "Email must not be blank")
 	@Email(message = "Email should be a valid email address")
 	String email;

@@ -1,4 +1,4 @@
-package com.ta2khu75.quiz.model.response;
+package com.ta2khu75.quiz.model.response.account;
 
 import java.time.Instant;
 
@@ -19,8 +19,8 @@ import lombok.experimental.FieldDefaults;
 public class AccountProfileResponse extends AccountProfileBase{
 	Long id;
 	String displayName;	
-	int blogCount;
-	int quizCount;
-	int followCount;
+	Integer blogCount;
+	Integer quizCount;
+	Integer followCount;
 	Instant updatedAt;
 }

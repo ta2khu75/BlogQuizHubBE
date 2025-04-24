@@ -51,11 +51,11 @@ public class RedisUtil {
 		}
 	}
 
-	public void delete(NameModel nameModel, String key) {
+	public void delete(NameModel nameModel, Object key) {
 		redisTemplate.opsForHash().delete(nameModel.getValue(), key);
 	}
 	public enum NameModel {
-		ROLE("ROLE"), ACCOUNT("ACCOUNT"), QUIZ_RESULT_RESPONSE("QUIZ_RESULT_RESPONSE");
+		ROLE("ROLE"), ACCOUNT_LOCK("ACCOUNT_LOCK"), QUIZ_RESULT_RESPONSE("QUIZ_RESULT_RESPONSE");
 
 		private final String value;
 

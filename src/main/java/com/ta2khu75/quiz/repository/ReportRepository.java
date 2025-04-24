@@ -22,5 +22,5 @@ public interface ReportRepository extends JpaRepository<Report, ReportId>{
 			+ "AND (:reportStatus IS NULL or r.reportStatus = :reportStatus) "
 			+ "AND (:fromDate IS NULL or r.createdAt >= :fromDate) "
 			+ "AND (:toDate IS NULL or r.createdAt <= :toDate) ")
-	Page<Report> search(@Param("authorId") String authorId,@Param("targetType") TargetType targetType, @Param("reportType") ReportType reportType, @Param("reportStatus") ReportStatus reportStatus, @Param("fromDate") Instant fromDate, @Param("toDate") Instant toDate, Pageable pageable);
+	Page<Report> search(@Param("authorId") Long authorId,@Param("targetType") TargetType targetType, @Param("reportType") ReportType reportType, @Param("reportStatus") ReportStatus reportStatus, @Param("fromDate") Instant fromDate, @Param("toDate") Instant toDate, Pageable pageable);
 }

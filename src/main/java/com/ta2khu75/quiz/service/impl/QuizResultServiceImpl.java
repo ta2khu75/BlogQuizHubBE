@@ -25,7 +25,7 @@ import com.ta2khu75.quiz.model.response.QuizResponse;
 import com.ta2khu75.quiz.mapper.QuizResultMapper;
 import com.ta2khu75.quiz.model.QuestionType;
 import com.ta2khu75.quiz.model.QuizResultMode;
-import com.ta2khu75.quiz.model.entity.Account;
+import com.ta2khu75.quiz.model.entity.AccountProfile;
 import com.ta2khu75.quiz.model.entity.Answer;
 import com.ta2khu75.quiz.model.entity.Quiz;
 import com.ta2khu75.quiz.model.entity.QuizResult;
@@ -51,7 +51,6 @@ public class QuizResultServiceImpl extends BaseService<QuizResultRepository, Qui
 	private final QuestionRepository questionRepository;
 	private final AnswerRepository answerRepository;
 	private final UserAnswerRepository userAnswerRepository;
-	private final AccountRepository accountRepository;
 	private final RedisUtil redisUtil;
 
 	public QuizResultServiceImpl(QuizResultRepository repository, QuizResultMapper mapper,
@@ -62,7 +61,6 @@ public class QuizResultServiceImpl extends BaseService<QuizResultRepository, Qui
 		this.questionRepository= questionRepository;
 		this.answerRepository = answerRepository;
 		this.userAnswerRepository = userAnswerRepository;
-		this.accountRepository = accountRepository;
 		this.redisUtil = redisUtil;
 	}
 
@@ -91,7 +89,7 @@ public class QuizResultServiceImpl extends BaseService<QuizResultRepository, Qui
 				if (questionAnswers == null)
 					continue;
 				boolean isCorrect;
-				if(question.getQuestionType().equals(QuestionType.SINGLE_CHOICE)) {
+				if(question.getType().equals(QuestionType.SINGLE_CHOICE)) {
 					isCorrect = checkSingleChoice(questionAnswers, answerUserRequest.getAnswerIds());
 				}else {
 					isCorrect = checkMultiChoice(questionAnswers, answerUserRequest.getAnswerIds());
@@ -165,8 +163,8 @@ public class QuizResultServiceImpl extends BaseService<QuizResultRepository, Qui
 
 	@Override
 	public QuizResultResponse read(String quizId) {
-		String accountId = SecurityUtil.getIdCurrentUserLogin();
-		QuizResultResponse response= redisUtil.read(NameModel.QUIZ_RESULT_RESPONSE, accountId+quizId, QuizResultResponse.class);
+		Long accountId= SecurityUtil.getCurrentProfileId();
+		QuizResultResponse response= redisUtil.read(NameModel.QUIZ_RESULT_RESPONSE, String.format("%d%s", accountId,quizId), QuizResultResponse.class);
 //		Optional<QuizResult> quizResult = repository
 //				.findByAccountIdAndQuizIdAndEndTimeAfterAndUpdatedAtIsNull(accountId, quizId, Instant.now());
 		if (response != null) {
@@ -177,11 +175,9 @@ public class QuizResultServiceImpl extends BaseService<QuizResultRepository, Qui
 
 	@Override
 	public QuizResultResponse create(String quizId) {
-		String accountId= SecurityUtil.getIdCurrentUserLogin();
-		Account account = FunctionUtil.findOrThrow(accountId, Account.class,
-				accountRepository::findById);
+		AccountProfile account = SecurityUtil.getCurrentProfile();
 		Quiz quiz= FunctionUtil.findOrThrow(quizId, Quiz.class, examRepository::findById);
-		QuizResult quizResult = QuizResult.builder().quiz(quiz)
+		QuizResult quizResult = QuizResult.builder().quiz(quiz).account(account)
 				.endTime(Instant.now().plusSeconds(quiz.getDuration() * 60L).plusSeconds(30)).build();
 		QuizResultResponse response=mapper.toResponse(repository.save(quizResult));
 		if(quiz.isShuffleQuestion()) {
@@ -197,7 +193,7 @@ public class QuizResultServiceImpl extends BaseService<QuizResultRepository, Qui
 			Collections.shuffle(questions);
 			quizResponse.setQuestions(questions);
 		}
-		redisUtil.create(NameModel.QUIZ_RESULT_RESPONSE, accountId+quizId, response);
+		redisUtil.create(NameModel.QUIZ_RESULT_RESPONSE, String.format("%d_%s", account.getId(), quiz.getId()), response);
 		return response;
 	}
 
@@ -205,7 +201,7 @@ public class QuizResultServiceImpl extends BaseService<QuizResultRepository, Qui
 	public PageResponse<QuizResultResponse> search(QuizResultSearch quizResultSearch) {
 		Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt");
 		Pageable pageable = PageRequest.of(quizResultSearch.getPage()-1, quizResultSearch.getSize(), sort);
-		String accountId = SecurityUtil.getIdCurrentUserLogin();
+		Long accountId = SecurityUtil.getCurrentProfileId();
 		Page<QuizResult> page=repository.search(quizResultSearch.getKeyword(),
 				quizResultSearch.getQuizCategoryIds(), accountId, quizResultSearch.getFromDate(), quizResultSearch.getToDate(), 
 				pageable);

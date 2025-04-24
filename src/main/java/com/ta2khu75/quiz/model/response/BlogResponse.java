@@ -3,6 +3,7 @@ package com.ta2khu75.quiz.model.response;
 import java.util.Set;
 
 import com.ta2khu75.quiz.model.base.BlogBase;
+import com.ta2khu75.quiz.model.response.account.AccountProfileResponse;
 
 import lombok.AccessLevel;
 import lombok.Data;

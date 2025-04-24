@@ -22,21 +22,18 @@ public class OwnerSecurity {
 	CommentRepository commentRepository;
 
 	public boolean isBlogOwner(String blogId) {
-		Optional<?> optional = blogRepository.findByIdAndAuthorId(blogId, getId());
+		Optional<?> optional = blogRepository.findByIdAndAuthorId(blogId, SecurityUtil.getCurrentProfileId());
 		return optional.isPresent();
 	}
 
 	public boolean isExamOwner(String examId) {
-		Optional<?> optional = examRepository.findByIdAndAuthorId(examId, getId());
+		Optional<?> optional = examRepository.findByIdAndAuthorId(examId, SecurityUtil.getCurrentProfileId());
 		return optional.isPresent();
 	}
 
 	public boolean isCommentOwner(String commentId) {
-		Optional<?> optional = commentRepository.findByIdAndAuthorId(commentId, getId());
+		Optional<?> optional = commentRepository.findByIdAndAuthorId(commentId, SecurityUtil.getCurrentProfileId());
 		return optional.isPresent();
 	}
 
-	private String getId() {
-		return SecurityUtil.getIdCurrentUserLogin();
-	}
 }

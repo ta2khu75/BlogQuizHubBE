@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,9 +21,10 @@ import com.ta2khu75.quiz.model.entity.base.EntityBaseString;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = { "status"})
-@EqualsAndHashCode(callSuper = true, exclude = { "status"})
+@ToString(exclude = { "status", "profile"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@EntityListeners(AuditingEntityListener.class)
+@EqualsAndHashCode(callSuper = true, exclude = { "status", "profile"})
 public class Account extends EntityBaseString implements UserDetails {
 	private static final long serialVersionUID = -6436446209727776976L;
 	@Column(unique = true, nullable = false)
@@ -32,7 +35,9 @@ public class Account extends EntityBaseString implements UserDetails {
 	AccountStatus status;
 	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
 	AccountProfile profile;
-
+	@CreatedBy
+	String createdBy;
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<SimpleGrantedAuthority> authorities = new ArrayList<>();

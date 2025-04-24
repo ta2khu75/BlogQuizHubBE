@@ -1,80 +1,74 @@
 package com.ta2khu75.quiz.util;
 
-import java.util.Optional;
-
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import com.ta2khu75.quiz.exception.UnAuthenticatedException;
-import com.ta2khu75.quiz.model.entity.Account;
+import com.ta2khu75.quiz.model.RoleDefault;
+import com.ta2khu75.quiz.model.entity.AccountProfile;
 
 public final class SecurityUtil {
 	private SecurityUtil() {
 		throw new IllegalStateException("Utility class");
 	}
 
-	/**
-	 * Get the login of the current user.
-	 *
-	 * @return the login of the current user.
-	 */
-	public static String getIdCurrentUserLogin() {
-		SecurityContext securityContext = SecurityContextHolder.getContext();
-		String accountId = extractPrincipal(securityContext.getAuthentication());
-		if (accountId != null) {
-			return accountId;
+	private static Jwt getJwtToken() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication instanceof JwtAuthenticationToken jwtAuth) {
+			return jwtAuth.getToken();
 		}
 		throw new UnAuthenticatedException("You must be login");
 	}
-	public static Account getCurrentUserLogin() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if(authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
-			throw new UnAuthenticatedException("You must be login");
+
+	private static <T> T getClaim(String claimName, Class<T> clazz) {
+		Jwt jwt = getJwtToken();
+		T claim = jwt.getClaim(claimName);
+		if (claim == null) {
+			throw new UnAuthenticatedException("Missing claim: " + claimName);
 		}
-		return (Account) authentication.getPrincipal();
+		return claim;
 	}
+
+	public static String getCurrentAccountId() {
+		return getJwtToken().getSubject();
+	}
+
+	public static Long getCurrentProfileId() {
+		return getClaim("profileId", Long.class);
+	}
+
+	public static Long getCurrentStatusId() {
+		return getClaim("statusId", Long.class);
+	}
+
+	public static AccountProfile getCurrentProfile() {
+		AccountProfile profile = new AccountProfile();
+		profile.setId(getClaim("profileId", Long.class));
+		return profile;
+	}
+
 	private static String extractAuthorities(Authentication authentication) {
 		return authentication.getAuthorities().iterator().next().getAuthority().replace("ROLE_", "");
 	}
 
-	private static String extractPrincipal(Authentication authentication) {
-		if (authentication.getPrincipal() instanceof Jwt jwt) {
-			return jwt.getSubject();
-		}
-		return null;
-	}
-
-	/**
-	 * Get the login of the current role.
-	 *
-	 * @return the login of the current role.
-	 */
-	public static String getCurrentRoleLogin() {
+	public static String getCurrentRole() {
 		SecurityContext securityContext = SecurityContextHolder.getContext();
 		return extractAuthorities(securityContext.getAuthentication());
 	}
-	public static boolean isAuthor(String id) {
+
+	public static boolean isAuthor(Long id) {
 		try {
-			String accountId = getIdCurrentUserLogin();
+			Long accountId = getCurrentProfileId();
 			return accountId.equals(id);
 		} catch (Exception e) {
 			return false;
 		}
 	}
 
-
-	/**
-	 * Get the JWT of the current user.
-	 *
-	 * @return the JWT of the current user.
-	 */
-	public static Optional<String> getCurrentUserJWT() {
-		SecurityContext securityContext = SecurityContextHolder.getContext();
-		return Optional.ofNullable(securityContext.getAuthentication())
-				.filter(authentication -> authentication.getCredentials() instanceof String)
-				.map(authentication -> (String) authentication.getCredentials());
+	public static boolean isAdmin() {
+		return getCurrentRole().equals(RoleDefault.ADMIN.name());
 	}
 }

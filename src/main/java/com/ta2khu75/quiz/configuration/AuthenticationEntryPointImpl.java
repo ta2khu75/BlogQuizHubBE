@@ -30,11 +30,9 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 		String exceptionString = authException.getMessage();
 		AdviceException.ApiResponse apiResponse;
 		if (exceptionString.contains("Jwt expired at")) {
-			apiResponse = AdviceException.ApiResponse.builder().statusCode(444).success(false)
-					.messageError(authException.getMessage()).build();
+			apiResponse = new AdviceException.ApiResponse(null, authException.getMessage(), 444);
 		} else {
-			apiResponse = AdviceException.ApiResponse.builder().statusCode(HttpStatus.UNAUTHORIZED.value()).success(false)
-					.messageError(authException.getMessage()).build();
+			apiResponse = new AdviceException.ApiResponse(null, authException.getMessage(), HttpStatus.UNAUTHORIZED.value());
 		}
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setStatus(444);

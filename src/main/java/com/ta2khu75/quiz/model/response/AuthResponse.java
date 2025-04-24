@@ -1,5 +1,7 @@
 package com.ta2khu75.quiz.model.response;
 
+import com.ta2khu75.quiz.model.response.account.AccountProfileResponse;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +14,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuthResponse {
 	AccountProfileResponse profile;
-	TokenResponse accessToken;
+	String accessToken;
 	TokenResponse refreshToken;
 }

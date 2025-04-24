@@ -1,1 +1,38 @@
 * text eol=lf
+# Đảm bảo tất cả các file text dùng LF (Unix-style line endings)
+* text=auto
+
+# Java source code - luôn dùng LF
+*.java text eol=lf
+
+# Các file cấu hình thường dùng trong Java
+*.xml   text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.properties text eol=lf
+*.gradle text eol=lf
+
+# Shell scripts nên luôn là LF (Linux)
+*.sh    text eol=lf
+
+# Windows batch files - nếu cần CRLF thì khai rõ
+*.bat   text eol=crlf
+
+# Đảm bảo tất cả các file text dùng LF (Unix-style line endings)
+* text=auto
+
+# Java source code - luôn dùng LF
+*.java text eol=lf
+
+# Các file cấu hình thường dùng trong Java
+*.xml   text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.properties text eol=lf
+*.gradle text eol=lf
+
+# Shell scripts nên luôn là LF (Linux)
+*.sh    text eol=lf
+
+# Windows batch files - nếu cần CRLF thì khai rõ
+*.bat   text eol=crlf

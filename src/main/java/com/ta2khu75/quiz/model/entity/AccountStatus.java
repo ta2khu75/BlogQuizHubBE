@@ -30,6 +30,7 @@ public class AccountStatus {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 	String codeVerify;
+	@Column(columnDefinition = "VARCHAR(500)")
 	String refreshToken;
     boolean enabled; 
     boolean nonLocked = true;

@@ -61,5 +61,4 @@ private QuizCategoryResponse save(QuizCategory quizCategory) {
 	public List<QuizCategoryResponse> readAll() {
 		return repository.findAll().stream().map(mapper::toResponse).toList();
 	}
-
 }

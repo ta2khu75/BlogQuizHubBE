@@ -17,16 +17,16 @@ import com.ta2khu75.quiz.model.entity.Quiz;
 
 public interface QuizRepository extends JpaRepository<Quiz, String>, JpaSpecificationExecutor<Quiz> {
 	@Query("SELECT q FROM Quiz q WHERE "
-			+ "(:keyword IS NULL OR q.title LIKE %:keyword% OR q.description LIKE %:keyword% OR q.author.displayName LIKE %:keyword% OR q.quizCategory.name LIKE %:keyword%) "
+			+ "(:keyword IS NULL OR q.title LIKE %:keyword% OR q.description LIKE %:keyword% OR q.author.displayName LIKE %:keyword% OR q.category.name LIKE %:keyword%) "
 			+ "AND (:authorId IS NULL OR q.author.id = :authorId) "
-			+ "AND (:quizCategoryIds IS NULL OR q.quizCategory.id IN (:quizCategoryIds)) "
-			+ "AND (:quizLevels IS NULL OR q.quizLevel IN (:quizLevels))"
+			+ "AND (:quizCategoryIds IS NULL OR q.category.id IN (:quizCategoryIds)) "
+			+ "AND (:quizLevels IS NULL OR q.level IN (:quizLevels))"
 			+ "AND (:completed IS NULL OR q.completed = :completed) "
 			+ "AND (:minDuration IS NULL OR q.duration >= :minDuration) "
 			+ "AND (:maxDuration IS NULL OR q.duration <= :maxDuration) "
 			+ "AND (:accessModifier IS NULL OR q.accessModifier = :accessModifier) ")
 	Page<Quiz> search(@Param("keyword") String keyword, 
-			@Param("authorId") String authorId,
+			@Param("authorId") Long authorId,
 			@Param("quizCategoryIds") List<Long> quizCategoryIds,
 			@Param("quizLevels") List<QuizLevel> quizLevel,
 			@Param("completed") Boolean completed,
@@ -35,13 +35,11 @@ public interface QuizRepository extends JpaRepository<Quiz, String>, JpaSpecific
 			@Param("accessModifier") AccessModifier accessModifier,
 			Pageable pageable);
 
-	List<Quiz> findByAuthorIdAndTitleContainingIgnoreCaseAndBlogIsNull(String authorId, String keyword);
+	List<Quiz> findByAuthorIdAndTitleContainingIgnoreCaseAndBlogIsNull(Long authorId, String keyword);
 
 	Set<Quiz> findByBlogId(String blogId);
 
-	Long countByAuthorIdAndAccessModifier(String authorId, AccessModifier accessModifier);
+	Long countByAuthorIdAndAccessModifier(Long authorId, AccessModifier accessModifier);
 
-	Long countByAuthorEmail(String authorEmail);
-
-	Optional<Quiz> findByIdAndAuthorId(String examId, String authorId);
+	Optional<Quiz> findByIdAndAuthorId(String examId, Long authorId);
 }

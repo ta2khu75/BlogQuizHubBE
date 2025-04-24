@@ -11,7 +11,7 @@ import org.springframework.util.AntPathMatcher;
 
 import com.ta2khu75.quiz.exception.UnAuthenticatedException;
 import com.ta2khu75.quiz.model.RoleDefault;
-import com.ta2khu75.quiz.model.entity.Account;
+import com.ta2khu75.quiz.model.entity.AccountStatus;
 import com.ta2khu75.quiz.model.entity.Role;
 import com.ta2khu75.quiz.service.RoleService;
 import com.ta2khu75.quiz.service.util.RedisUtil;
@@ -49,10 +49,10 @@ public class DynamicallySecurityConfig implements AuthorizationManager<HttpServl
 		String requestUrl = object.getRequestURI();
 		String httpMethod = object.getMethod();
 		try {
-			String accountId = SecurityUtil.getIdCurrentUserLogin();
-			Account account = null;
-			account = redisUtil.read(NameModel.ACCOUNT, accountId, Account.class);
-			if (account != null) {
+			Long statusId= SecurityUtil.getCurrentStatusId();
+			AccountStatus status= null;
+			status= redisUtil.read(NameModel.ACCOUNT_LOCK, statusId, AccountStatus.class);
+			if (status!= null) {
 				throw new AccessDeniedException("Account locked");
 			}
 		} catch (UnAuthenticatedException e) {
@@ -60,7 +60,7 @@ public class DynamicallySecurityConfig implements AuthorizationManager<HttpServl
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String roleName = SecurityUtil.getCurrentRoleLogin();
+		String roleName = SecurityUtil.getCurrentRole();
 		if (isAdmin(roleName)) {
 			return new AuthorizationDecision(true);
 		}

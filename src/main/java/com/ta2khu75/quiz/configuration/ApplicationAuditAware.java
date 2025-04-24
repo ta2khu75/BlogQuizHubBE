@@ -11,7 +11,7 @@ public class ApplicationAuditAware implements AuditorAware<String> {
 	@Override
 	public Optional<String> getCurrentAuditor() {
 		try {
-			return Optional.ofNullable(SecurityUtil.getCurrentUserLogin().getUsername());
+			return Optional.ofNullable(SecurityUtil.getCurrentAccountId());
 		} catch (Exception e) {
 			return Optional.empty();
 		}

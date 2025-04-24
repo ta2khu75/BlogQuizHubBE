@@ -24,26 +24,26 @@ public class FollowController extends BaseController<FollowService> {
 
 	@GetMapping("/account/{accountId}")
 	@EndpointMapping(name="Follow account")
-	public ResponseEntity<FollowResponse> create(@PathVariable String accountId) {
+	public ResponseEntity<FollowResponse> create(@PathVariable Long accountId) {
 		return ResponseEntity.ok(service.create(accountId));
 	}
 
 	@DeleteMapping("/account/{accountId}")
 	@EndpointMapping(name="Unfollow account")
-	public ResponseEntity<Void> delete(@PathVariable String accountId) {
+	public ResponseEntity<Void> delete(@PathVariable Long accountId) {
 		service.delete(accountId);
 		return ResponseEntity.noContent().build();
 	}
 
 	@GetMapping("/account/{accountId}/check")
 	@EndpointMapping(name="Check follow account")
-	public ResponseEntity<BooleanResponse> check(@PathVariable String accountId) {
+	public ResponseEntity<BooleanResponse> check(@PathVariable Long accountId) {
 		return ResponseEntity.ok(new BooleanResponse(service.read(accountId)!=null));
 	}
 
 	@GetMapping("/follower/{followingId}")
 	@EndpointMapping(name="Read page follower")
-	public ResponseEntity<PageResponse<FollowResponse>> readPage(@PathVariable("followingId") String followingId,
+	public ResponseEntity<PageResponse<FollowResponse>> readPage(@PathVariable("followingId") Long followingId,
 			@RequestParam(name = "size", required = false, defaultValue = "5") int size,
 			@RequestParam(name = "page", required = false, defaultValue = "1") int page) {
 		Pageable pageable = Pageable.ofSize(size).withPage(page - 1);

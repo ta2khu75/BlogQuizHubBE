@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.ta2khu75.quiz.anotation.EndpointMapping;
 import com.ta2khu75.quiz.model.group.Admin;
-import com.ta2khu75.quiz.model.request.AccountCreateRequest;
-import com.ta2khu75.quiz.model.request.AccountProfileRequest;
-import com.ta2khu75.quiz.model.request.AccountPasswordRequest;
-import com.ta2khu75.quiz.model.request.AccountStatusRequest;
+import com.ta2khu75.quiz.model.request.account.AccountPasswordRequest;
+import com.ta2khu75.quiz.model.request.account.AccountProfileRequest;
+import com.ta2khu75.quiz.model.request.account.AccountRequest;
+import com.ta2khu75.quiz.model.request.account.AccountStatusRequest;
 import com.ta2khu75.quiz.model.request.search.AccountSearch;
-import com.ta2khu75.quiz.model.response.AccountProfileResponse;
-import com.ta2khu75.quiz.model.response.AccountResponse;
-import com.ta2khu75.quiz.model.response.AccountStatusResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
+import com.ta2khu75.quiz.model.response.account.AccountProfileResponse;
+import com.ta2khu75.quiz.model.response.account.AccountResponse;
+import com.ta2khu75.quiz.model.response.account.AccountStatusResponse;
 import com.ta2khu75.quiz.service.AccountService;
 
 @RestController
@@ -32,7 +32,7 @@ public class AccountController extends BaseController<AccountService> {
 	@PostMapping
 	@Validated(value = { Default.class, Admin.class })
 	@EndpointMapping(name = "Create account")
-	public ResponseEntity<AccountResponse> create(@Valid @RequestBody AccountCreateRequest request) {
+	public ResponseEntity<AccountResponse> create(@Valid @RequestBody AccountRequest request) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
 	}
 
@@ -55,7 +55,7 @@ public class AccountController extends BaseController<AccountService> {
 		return ResponseEntity.ok(service.search(search));
 	}
 
-	@PutMapping("profile/{id")
+	@PutMapping("profile/{id}")
 	@EndpointMapping(name = "Update account profile")
 	public ResponseEntity<AccountProfileResponse> updateProfile(@PathVariable Long id,
 			@Valid @RequestBody AccountProfileRequest request) {

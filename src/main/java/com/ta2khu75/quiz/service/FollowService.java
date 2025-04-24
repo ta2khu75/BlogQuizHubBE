@@ -6,11 +6,11 @@ import com.ta2khu75.quiz.model.response.FollowResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
 
 public interface FollowService {
-	FollowResponse create(String followingId);
+	FollowResponse create(Long followingId);
 
-	void delete(String followingId);
+	void delete(Long followingId);
 
-	FollowResponse read(String followingId);
+	FollowResponse read(Long followingId);
 
-	PageResponse<FollowResponse> readPage(String followingId, Pageable pageable);
+	PageResponse<FollowResponse> readPage(Long followingId, Pageable pageable);
 }

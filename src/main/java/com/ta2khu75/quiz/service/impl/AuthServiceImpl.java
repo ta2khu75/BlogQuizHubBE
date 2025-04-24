@@ -8,15 +8,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
-import com.ta2khu75.quiz.model.request.AccountCreateRequest;
-import com.ta2khu75.quiz.model.request.AccountPasswordRequest;
 import com.ta2khu75.quiz.model.request.AuthRequest;
-import com.ta2khu75.quiz.model.response.AccountResponse;
+import com.ta2khu75.quiz.model.request.account.AccountPasswordRequest;
+import com.ta2khu75.quiz.model.request.account.AccountRequest;
 import com.ta2khu75.quiz.model.response.AuthResponse;
 import com.ta2khu75.quiz.model.response.TokenResponse;
+import com.ta2khu75.quiz.model.response.account.AccountResponse;
 import com.ta2khu75.quiz.exception.ExistingException;
 import com.ta2khu75.quiz.exception.NotMatchesException;
 import com.ta2khu75.quiz.mapper.AccountMapper;
@@ -82,7 +81,7 @@ public class AuthServiceImpl extends BaseService<AccountRepository, AccountMappe
 	}
 
 	@Override
-	public AccountResponse register(AccountCreateRequest request) throws MessagingException {
+	public AccountResponse register(AccountRequest request) throws MessagingException {
 		if (!request.getPassword().equals(request.getConfirmPassword()))
 			throw new NotMatchesException("password and confirm password not matches");
 		if (repository.existsByEmail(request.getEmail()))
@@ -118,9 +117,9 @@ public class AuthServiceImpl extends BaseService<AccountRepository, AccountMappe
 
 	private AuthResponse makeAuthResponse(Account account) {
 		AccountResponse response= mapper.toResponse(account);
-		TokenResponse refreshToken = jwtUtil.createRefreshToken(account);
+		TokenResponse refreshToken = jwtUtil.createRefreshToken(response);
 		this.updateRefreshToken(account.getStatus(), refreshToken.getToken());
-		return new AuthResponse(response.getProfile(), jwtUtil.createToken(response), refreshToken);
+		return new AuthResponse(response.getProfile(), jwtUtil.createAccessToken(response), refreshToken);
 	}
 
 	private void updateRefreshToken(AccountStatus status, String token) {
@@ -136,7 +135,7 @@ public class AuthServiceImpl extends BaseService<AccountRepository, AccountMappe
 	}
 
 	private Account findById() {
-		return FunctionUtil.findOrThrow(SecurityUtil.getIdCurrentUserLogin(), Account.class, repository::findById);
+		return FunctionUtil.findOrThrow(SecurityUtil.getCurrentAccountId(), Account.class, repository::findById);
 	}
 
 	@Override
@@ -149,20 +148,19 @@ public class AuthServiceImpl extends BaseService<AccountRepository, AccountMappe
 
 	@Override
 	public boolean verify(String code) {
-		Account account = repository.findByCodeVerify(code).orElse(null);
-		if (account != null) {
-			AccountStatus accountStatus = account.getStatus();
-			accountStatus.setEnabled(true);
-			accountStatus.setCodeVerify(null);
-			statusRepository.save(accountStatus);
-			return true;
-		}
+//		Account account = repository.findByCodeVerify(code).orElse(null);
+//		if (account != null) {
+//			AccountStatus accountStatus = account.getStatus();
+//			accountStatus.setEnabled(true);
+//			accountStatus.setCodeVerify(null);
+//			statusRepository.save(accountStatus);
+//			return true;
+//		}
 		return false;
 	}
 
 	@Override
 	public boolean checkAdmin() {
-		String accountId = SecurityUtil.getIdCurrentUserLogin();
-		return repository.existsByIdAndRoleName(accountId, RoleDefault.ADMIN.name());
+		return SecurityUtil.getCurrentRole().equals(RoleDefault.ADMIN.name());
 	}
 }

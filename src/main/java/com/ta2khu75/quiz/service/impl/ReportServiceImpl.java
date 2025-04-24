@@ -11,7 +11,7 @@ import com.ta2khu75.quiz.mapper.QuizMapper;
 import com.ta2khu75.quiz.mapper.ReportMapper;
 import com.ta2khu75.quiz.model.ReportStatus;
 import com.ta2khu75.quiz.model.TargetType;
-import com.ta2khu75.quiz.model.entity.Account;
+import com.ta2khu75.quiz.model.entity.AccountProfile;
 import com.ta2khu75.quiz.model.entity.Blog;
 import com.ta2khu75.quiz.model.entity.Quiz;
 import com.ta2khu75.quiz.model.entity.Report;
@@ -36,7 +36,6 @@ import lombok.experimental.FieldDefaults;
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ReportServiceImpl extends BaseService<ReportRepository, ReportMapper> implements ReportService{
-	AccountRepository accountRepository;
 	BlogRepository blogRepository;
 	BlogMapper blogMapper;
 	QuizRepository quizRepository;
@@ -45,7 +44,6 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 	public ReportServiceImpl(ReportRepository repository, ReportMapper mapper, AccountRepository accountRepository,
 			BlogRepository blogRepository, BlogMapper blogMapper, QuizRepository quizRepository, QuizMapper quizMapper) {
 		super(repository, mapper);
-		this.accountRepository = accountRepository;
 		this.blogRepository = blogRepository;
 		this.blogMapper = blogMapper;
 		this.quizRepository = quizRepository;
@@ -73,43 +71,41 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 		return response;
 	}
 	
-	private void checkIsAuthor(Object target, TargetType targetType, String accountId) {
-		String authorId;
+	private void isAuthor(Object target, TargetType targetType, Long accountId) {
+		Long authorId;
 		switch (targetType) {
 		case BLOG: {
-//			authorId = ((Blog) target).getAuthor().getId();
+			authorId = ((Blog) target).getAuthor().getId();
 			break;
 		}
 		case QUIZ: {
-//			authorId = ((Quiz) target).getAuthor().getId();
+			authorId = ((Quiz) target).getAuthor().getId();
 			break;
 		}
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + targetType);
 		}
-//		if(authorId.equals(authorId)) {
-//			throw new InvalidDataException("You can't report your own content");
-//		}
+		if(authorId.equals(authorId)) {
+			throw new InvalidDataException("You can't report your own content");
+		}
 	}
 	
 	@Override
 	@Transactional
 	public ReportResponse create(ReportRequest request) {
-		String accountId = SecurityUtil.getIdCurrentUserLogin();
-		Account account = FunctionUtil.findOrThrow(accountId, Account.class, accountRepository::findById);
+		AccountProfile account = SecurityUtil.getCurrentProfile();
 		Object target=getTarget(request.getTargetId(), request.getTargetType());
-		checkIsAuthor(target, request.getTargetType(), accountId);
+		isAuthor(target, request.getTargetType(), account.getId());
 		Report report= mapper.toEntity(request);
-		report.setId(new ReportId(account.getId(), request.getTargetId()));
-//		report.setAuthor(account);
+		report.setId(new ReportId(1L, request.getTargetId()));
+		report.setAuthor(account);
 		report=repository.save(report);
 		return toResponse(report, target);
 	}
 
 	@Override
 	public void delete(String id) {
-		String accountId = SecurityUtil.getIdCurrentUserLogin();
-		repository.deleteById(new ReportId(accountId, id));
+		repository.deleteById(new ReportId(SecurityUtil.getCurrentProfileId(), id));
 	}
 
 	@Override
@@ -122,8 +118,8 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 	}
 	@Override
 	public ReportResponse update(String id, @Valid ReportRequest request) {
-		String accountId=SecurityUtil.getIdCurrentUserLogin();
-		Report report= FunctionUtil.findOrThrow(new ReportId(accountId, id), Report.class, repository::findById);
+		Long authorId=SecurityUtil.getCurrentProfileId();
+		Report report= FunctionUtil.findOrThrow(new ReportId(authorId, id), Report.class, repository::findById);
 		if(report.getReportStatus().equals(ReportStatus.REJECTED)) {
 			throw new InvalidDataException("You can't update rejected report");
 		}else {
@@ -132,10 +128,11 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 			return mapper.toResponse(report);
 		}
 	}
+	
 	@Override
 	public ReportResponse read(String id) {
-		String accountId=SecurityUtil.getIdCurrentUserLogin();
-		Report report= FunctionUtil.findOrThrow(new ReportId(accountId, id), Report.class, repository::findById);
+		Long authorId=SecurityUtil.getCurrentProfileId();
+		Report report= FunctionUtil.findOrThrow(new ReportId(authorId, id), Report.class, repository::findById);
 		return mapper.toResponse(report);
 	}
 	@Override

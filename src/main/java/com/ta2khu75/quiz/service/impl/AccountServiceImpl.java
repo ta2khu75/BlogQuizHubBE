@@ -10,21 +10,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.ta2khu75.quiz.model.request.AccountCreateRequest;
-import com.ta2khu75.quiz.model.request.AccountProfileRequest;
-import com.ta2khu75.quiz.model.request.AccountPasswordRequest;
-import com.ta2khu75.quiz.model.request.AccountStatusRequest;
+import com.ta2khu75.quiz.model.request.account.AccountPasswordRequest;
+import com.ta2khu75.quiz.model.request.account.AccountProfileRequest;
+import com.ta2khu75.quiz.model.request.account.AccountRequest;
+import com.ta2khu75.quiz.model.request.account.AccountStatusRequest;
 import com.ta2khu75.quiz.model.request.search.AccountSearch;
-import com.ta2khu75.quiz.model.response.AccountProfileResponse;
-import com.ta2khu75.quiz.model.response.AccountResponse;
-import com.ta2khu75.quiz.model.response.AccountStatusResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
+import com.ta2khu75.quiz.model.response.account.AccountProfileResponse;
+import com.ta2khu75.quiz.model.response.account.AccountResponse;
+import com.ta2khu75.quiz.model.response.account.AccountStatusResponse;
 import com.ta2khu75.quiz.exception.ExistingException;
 import com.ta2khu75.quiz.exception.InvalidDataException;
 import com.ta2khu75.quiz.exception.NotMatchesException;
+import com.ta2khu75.quiz.exception.UnAuthorizedException;
 import com.ta2khu75.quiz.mapper.AccountMapper;
 import com.ta2khu75.quiz.mapper.PageMapper;
-import com.ta2khu75.quiz.model.RoleDefault;
 import com.ta2khu75.quiz.model.entity.Account;
 import com.ta2khu75.quiz.model.entity.AccountProfile;
 import com.ta2khu75.quiz.model.entity.AccountStatus;
@@ -36,6 +36,7 @@ import com.ta2khu75.quiz.repository.account.AccountStatusReporitory;
 import com.ta2khu75.quiz.service.AccountService;
 import com.ta2khu75.quiz.service.base.BaseService;
 import com.ta2khu75.quiz.service.util.RedisUtil;
+import com.ta2khu75.quiz.service.util.RedisUtil.NameModel;
 import com.ta2khu75.quiz.util.FunctionUtil;
 import com.ta2khu75.quiz.util.SecurityUtil;
 
@@ -62,7 +63,7 @@ public class AccountServiceImpl extends BaseService<AccountRepository, AccountMa
 
 
 	@Override
-	public AccountResponse create(AccountCreateRequest request) {
+	public AccountResponse create(AccountRequest request) {
 		if (!request.getPassword().equals(request.getConfirmPassword()))
 			throw new NotMatchesException("password and confirm password not matches");
 		if (repository.existsByEmail(request.getEmail()))
@@ -105,13 +106,20 @@ public class AccountServiceImpl extends BaseService<AccountRepository, AccountMa
 		if (!status.getRole().getId().equals(request.getRoleId())) {
 			status.setRole(FunctionUtil.findOrThrow(request.getRoleId(), Role.class, roleRepository::findById));
 		}
-		return mapper.toResponse(statusRepository.save(status));
+		status =statusRepository.save(status);
+		if (status.isNonLocked()) {
+			redisUtil.delete(NameModel.ACCOUNT_LOCK, status.getId());
+		} else {
+			redisUtil.create(NameModel.ACCOUNT_LOCK, status.getId(), status);
+		}
+		return mapper.toResponse(status);
 	}
 	@Override
 	public AccountResponse updatePassword(String id, AccountPasswordRequest request) {
 		if (!request.getPassword().equals(request.getConfirmPassword()))
 			throw new NotMatchesException("New password and confirm password not matches");
 		Account account = FunctionUtil.findOrThrow(id, Account.class, repository::findById);
+		if(account.getCreatedBy()==null) throw new UnAuthorizedException("You can't change password");
 		if (!passwordEncoder.matches(request.getPassword(), account.getPassword()))
 			throw new NotMatchesException("Password not matches");
 		account.setPassword(passwordEncoder.encode(request.getNewPassword()));
@@ -120,11 +128,10 @@ public class AccountServiceImpl extends BaseService<AccountRepository, AccountMa
 	}
 
 	@Override
-	public AccountProfileResponse updateProfile(Long id, AccountProfileRequest request) {
-		String accountId = SecurityUtil.getIdCurrentUserLogin();
-		AccountProfile profile = FunctionUtil.findOrThrow(id, AccountProfile.class, profileRepository::findById);
-		if (!profile.getAccount().getId().equals(accountId))
+	public AccountProfileResponse updateProfile(Long profileId, AccountProfileRequest request) {
+		if(!SecurityUtil.getCurrentProfileId().equals(profileId)) 
 			throw new InvalidDataException("You can't update other's profile");
+		AccountProfile profile = FunctionUtil.findOrThrow(profileId, AccountProfile.class, profileRepository::findById);
 		mapper.update(request, profile);
 		return mapper.toResponse(profile);
 	}

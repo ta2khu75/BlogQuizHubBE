@@ -1,6 +1,7 @@
 package com.ta2khu75.quiz.model.response;
 
 import com.ta2khu75.quiz.model.base.CommentBase;
+import com.ta2khu75.quiz.model.response.account.AccountProfileResponse;
 
 import lombok.AccessLevel;
 import lombok.Data;

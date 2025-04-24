@@ -13,10 +13,8 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
 import com.ta2khu75.quiz.configuration.SecurityJwtConfig;
-import com.ta2khu75.quiz.mapper.AccountMapper;
-import com.ta2khu75.quiz.model.entity.Account;
-import com.ta2khu75.quiz.model.response.AccountResponse;
 import com.ta2khu75.quiz.model.response.TokenResponse;
+import com.ta2khu75.quiz.model.response.account.AccountResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,23 +28,24 @@ public class JWTUtil {
 	private final JwtEncoder jwtEncoder;
 	private final JwtDecoder jwtDecoder;
 
-	public TokenResponse createToken(AccountResponse response) {
+	public String createAccessToken(AccountResponse response) {
 		Instant now = Instant.now();
 		Instant validity = now.plus(this.expiration, ChronoUnit.SECONDS);
 		JwtClaimsSet claims = JwtClaimsSet.builder().issuer("com.ta2khu75").issuedAt(now).expiresAt(validity)
 				.subject(response.getInfo().getId())
-				.claim("profile", response.getProfile())
+				.claim("profileId", response.getProfile().getId())
+				.claim("statusId",response.getStatus().getId())
 				.claim("scope", "ROLE_" + response.getStatus().getRole().getName()).build();
 		JwsHeader jwsHeader = JwsHeader.with(SecurityJwtConfig.JWT_ALGORITHM).build();
-		String token = jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
-		return new TokenResponse(token, validity.toEpochMilli());
+		return jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
 	}
 
-	public TokenResponse createRefreshToken(Account response) {
+	public TokenResponse createRefreshToken(AccountResponse response) {
 		Instant now = Instant.now();
 		Instant validity = now.plus(this.refreshExpiration, ChronoUnit.SECONDS);
 		JwtClaimsSet claims = JwtClaimsSet.builder().issuer("com.ta2khu75").issuedAt(now).expiresAt(validity)
-				.subject(response.getId()).build();
+				.subject(response.getInfo().getId())
+				.claim("statusId",response.getStatus().getId()).build();
 		JwsHeader jwsHeader = JwsHeader.with(SecurityJwtConfig.JWT_ALGORITHM).build();
 		String token=jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
 		return new TokenResponse(token, validity.toEpochMilli());

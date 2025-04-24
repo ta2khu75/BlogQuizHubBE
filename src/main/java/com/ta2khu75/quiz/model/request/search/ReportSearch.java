@@ -17,5 +17,5 @@ public class ReportSearch extends Search {
 	private ReportStatus reportStatus;
 	private Instant fromDate;
 	private Instant toDate;
-	private String authorId;
+	private Long authorId;
 }

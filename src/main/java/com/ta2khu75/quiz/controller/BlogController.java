@@ -43,10 +43,11 @@ public class BlogController extends BaseController<BlogService> {
 		return ResponseEntity.ok(service.search(blogSearch));
 	}
 	
-	@GetMapping("/mine/{keywork}")
+	@GetMapping("mine/{keywork}")
 	@EndpointMapping(name = "Search my blog by keyword")
 	public ResponseEntity<List<BlogResponse>> searchMyBlog(@PathVariable String keywork) {
-		String authorId = SecurityUtil.getIdCurrentUserLogin();
+		Long authorId = SecurityUtil.getCurrentProfileId();
+
 		return ResponseEntity.ok(service.readAllByAuthorIdAndKeywork(authorId, keywork));
 	}
 

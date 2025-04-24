@@ -1,4 +1,4 @@
-package com.ta2khu75.quiz.model.request;
+package com.ta2khu75.quiz.model.request.account;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;

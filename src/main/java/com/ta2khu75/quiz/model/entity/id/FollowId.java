@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FollowId implements Serializable {
 	private static final long serialVersionUID = -4996620440907249903L;
-	private String followerId;
-	private String followingId;
+	private Long followerId;
+	private Long followingId;
 }

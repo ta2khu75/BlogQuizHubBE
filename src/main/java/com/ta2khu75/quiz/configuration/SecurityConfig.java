@@ -45,16 +45,17 @@ public class SecurityConfig {
 				.addFilterBefore(new AuthorizationFilter(authorizationManager), AuthorizationFilter.class)
 				.exceptionHandling(exception -> exception.accessDeniedHandler(accessDeniedHandler))
 				.authorizeHttpRequests(authz ->
-//				authz.requestMatchers("/ws").permitAll()
-//						.requestMatchers(HttpMethod.POST, endpointUtil.getPublicEndpoint(EndpointType.POST)).permitAll()
-//						.requestMatchers(HttpMethod.GET, endpointUtil.getPublicEndpoint(EndpointType.GET)).permitAll()
-//						.requestMatchers("/").permitAll().anyRequest().authenticated()
-				authz.anyRequest().permitAll()).oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
+				authz.anyRequest().permitAll())
+				.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
 						.authenticationEntryPoint(authenticationEntryPoint))
 				.formLogin(login -> login.disable());
 		return http.build();
 	}
 
+//				authz.requestMatchers("/ws").permitAll()
+//						.requestMatchers(HttpMethod.POST, endpointUtil.getPublicEndpoint(EndpointType.POST)).permitAll()
+//						.requestMatchers(HttpMethod.GET, endpointUtil.getPublicEndpoint(EndpointType.GET)).permitAll()
+//						.requestMatchers("/").permitAll().anyRequest().authenticated()
 	@Bean
 	UserDetailsService userDetailsService() {
 		return email -> {

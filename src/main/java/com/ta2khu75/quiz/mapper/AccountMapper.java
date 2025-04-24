@@ -9,13 +9,13 @@ import org.springframework.data.domain.Page;
 import com.ta2khu75.quiz.model.entity.Account;
 import com.ta2khu75.quiz.model.entity.AccountProfile;
 import com.ta2khu75.quiz.model.entity.AccountStatus;
-import com.ta2khu75.quiz.model.request.AccountCreateRequest;
-import com.ta2khu75.quiz.model.request.AccountProfileRequest;
-import com.ta2khu75.quiz.model.request.AccountStatusRequest;
-import com.ta2khu75.quiz.model.response.AccountProfileResponse;
-import com.ta2khu75.quiz.model.response.AccountResponse;
-import com.ta2khu75.quiz.model.response.AccountStatusResponse;
+import com.ta2khu75.quiz.model.request.account.AccountProfileRequest;
+import com.ta2khu75.quiz.model.request.account.AccountRequest;
+import com.ta2khu75.quiz.model.request.account.AccountStatusRequest;
 import com.ta2khu75.quiz.model.response.PageResponse;
+import com.ta2khu75.quiz.model.response.account.AccountProfileResponse;
+import com.ta2khu75.quiz.model.response.account.AccountResponse;
+import com.ta2khu75.quiz.model.response.account.AccountStatusResponse;
 
 import org.mapstruct.Mapping;
 
@@ -25,7 +25,7 @@ public interface AccountMapper{
 	@Mapping(target="lastName", source = "lastName")
 	@Mapping(target="firstName", source = "firstName")
 	@BeanMapping(ignoreByDefault = true)
-	AccountProfile toProfileEntity(AccountCreateRequest request);
+	AccountProfile toProfileEntity(AccountRequest request);
 	
 	@Mapping(target="birthday", source = "birthday")
 	@Mapping(target="lastName", source = "lastName")
@@ -55,6 +55,7 @@ public interface AccountMapper{
 	
 	@Named("toAccountResponse")
 	@Mapping(target = "info", source = "entity", qualifiedByName = "toInfoResponse")
+	@Mapping(target = "profile" , source = "profile", qualifiedByName = "toProfileResponse")
 	AccountResponse toResponse(Account entity);
 
 	@Mapping(target = "page", source = "number")

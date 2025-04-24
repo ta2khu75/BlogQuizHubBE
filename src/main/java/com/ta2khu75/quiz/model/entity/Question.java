@@ -27,7 +27,7 @@ public class Question {
 	boolean shuffleAnswer;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    QuestionType questionType;
+    QuestionType type;
     @ManyToOne
     Quiz quiz;
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)

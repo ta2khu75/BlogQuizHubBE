@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReportId implements Serializable {
 	private static final long serialVersionUID = -6196953391029199691L;
-	private String authorId;
+	private Long authorId;
 	private String targetId;
 }

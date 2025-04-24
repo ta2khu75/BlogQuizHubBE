@@ -36,7 +36,7 @@ public class Quiz extends EntityBaseString {
 	boolean completed;
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	QuizLevel quizLevel;
+	QuizLevel level;
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	AccessModifier accessModifier=AccessModifier.PRIVATE;

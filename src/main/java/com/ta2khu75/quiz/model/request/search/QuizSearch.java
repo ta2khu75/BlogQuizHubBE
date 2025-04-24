@@ -14,7 +14,7 @@ public class QuizSearch extends Search {
     private List<Long> quizCategoryIds;
     private Integer minDuration;
 	private Integer maxDuration;
-	private String authorId;
+	private Long authorId;
 	private Boolean completed;
 	private AccessModifier accessModifier;
 }

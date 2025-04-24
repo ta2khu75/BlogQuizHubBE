@@ -20,7 +20,7 @@ public abstract class QuizBase {
 	@NotBlank(message = "Description must not be blank")
 	String description;
 	@NotNull(message = "Exam level must not be null")
-	QuizLevel quizLevel;
+	QuizLevel level;
 	AccessModifier accessModifier=AccessModifier.PRIVATE;
 	QuizResultMode quizResultMode=QuizResultMode.ANSWER_VISIBLE;
 	boolean shuffleQuestion=true;

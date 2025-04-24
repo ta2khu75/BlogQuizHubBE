@@ -14,13 +14,13 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 	@Query("SELECT a FROM Account a JOIN FETCH a.profile JOIN FETCH a.status WHERE a.email = :email")
 	Optional<Account> findByEmailWithProfileWithStatus(@Param("email") String email);
 
-	boolean existsByIdAndRoleName(String accountId, String roleName);
+//	boolean existsByIdAndRoleName(String accountId, String roleName);
 
 	boolean existsByEmail(String email);
 
-	Optional<Account> findByEmailAndRefreshToken(String email, String refreshToken);
+//	Optional<Account> findByEmailAndRefreshToken(String email, String refreshToken);
 
-	Optional<Account> findByCodeVerify(String codeVerify);
+//	Optional<Account> findByCodeVerify(String codeVerify);
 	
 	@Query("SELECT a FROM Account a JOIN a.profile p JOIN a.status s JOIN s.role r WHERE "
 			+ "(:keyword IS NULL OR p.displayName LIKE %:keyword% OR a.email LIKE %:keyword%) "

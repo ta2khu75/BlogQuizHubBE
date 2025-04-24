@@ -1,4 +1,6 @@
-package com.ta2khu75.quiz.model.response;
+package com.ta2khu75.quiz.model.response.account;
+
+import com.ta2khu75.quiz.model.response.InfoResponse;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

@@ -129,6 +129,7 @@ public class DataInitializer implements CommandLineRunner {
 		if (accountRepository.count() == 0) {
 			AccountStatus status= new AccountStatus();
 			status.setRole(initRole());
+			status.setEnabled(true);
 			AccountProfile profile=new AccountProfile();
 			profile.setFirstName("admin");
 			profile.setLastName("admin");

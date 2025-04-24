@@ -83,7 +83,7 @@ public class QuizController extends BaseController<QuizService> {
 	@GetMapping("mine/{keyword}")
 	@EndpointMapping(name = "Search my quiz by keyword")
 	public ResponseEntity<List<QuizResponse>> mySearch(@PathVariable String keyword) {
-		String authorId = SecurityUtil.getIdCurrentUserLogin();
+		Long authorId = SecurityUtil.getCurrentProfileId();
 		return ResponseEntity.ok(service.readAllByAuthorIdAndKeywork(authorId, keyword));
 	}
 

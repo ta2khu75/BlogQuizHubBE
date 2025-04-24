@@ -15,18 +15,18 @@ import com.ta2khu75.quiz.model.entity.QuizResult;
 
 public interface QuizResultRepository extends JpaRepository<QuizResult, String> {
 
-	Optional<QuizResult> findByAccountIdAndQuizIdAndEndTimeAfterAndUpdatedAtIsNull(String id, String examId,
+	Optional<QuizResult> findByAccountIdAndQuizIdAndEndTimeAfterAndUpdatedAtIsNull(Long id, String examId,
 			Instant now);
 
 	List<QuizResult> findByEndTimeBeforeAndUpdatedAtIsNull(Instant now);
 	@Query("SELECT q FROM QuizResult q WHERE "
 			+ "(:keyword IS NULL OR q.quiz.title LIKE %:keyword%) "
-			+ "AND (:quizCategoryIds IS NULL OR q.quiz.quizCategory.id IN (:quizCategoryIds)) "
+			+ "AND (:quizCategoryIds IS NULL OR q.quiz.category.id IN (:quizCategoryIds)) "
 			+ "AND (:accountId IS NULL OR q.account.id= :accountId) "
 			+ "AND (:fromDate IS NULL OR q.updatedAt >= :fromDate) AND (:toDate IS NULL OR q.updatedAt <= :toDate) ")
 	Page<QuizResult> search(@Param("keyword") String keyword, 
 			@Param("quizCategoryIds") Set<Long> quizCategoryIds,
-			@Param("accountId") String accountId,
+			@Param("accountId") Long accountId,
 			@Param("fromDate") Instant fromDate, @Param("toDate") Instant toDate,
 			Pageable pageable);
 //	Page<ExamResult> findByAccountIdAndUpdatedAtIsNotNull(String accountId, Pageable pageable);

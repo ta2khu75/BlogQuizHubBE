@@ -33,8 +33,8 @@ public class NotificationListener implements ApplicationListener<NotificationEve
 
 	@Override
 	public void onApplicationEvent(@NonNull NotificationEvent event) {
-		String accountId = SecurityUtil.getIdCurrentUserLogin();
-		Set<Follow> followers = followRepository.findByFollowingId(accountId);
+		Long profileId= SecurityUtil.getCurrentProfileId();
+		Set<Follow> followers = followRepository.findByFollowingId(profileId);
 		Set<Notification> notificationSet = followers.stream().map(follow -> {
 			Notification notification = new Notification();
 			notification.setId(new NotificationId(follow.getId().getFollowerId(), event.getTargetId()));
@@ -44,7 +44,7 @@ public class NotificationListener implements ApplicationListener<NotificationEve
 		}).collect(Collectors.toSet());
 		List<Notification> notifications = repository.saveAll(notificationSet);
 		notifications.forEach(notification -> {
-			messagingTemplate.convertAndSendToUser(notification.getId().getAccountId(), "/queue/notifications", notification);
+			messagingTemplate.convertAndSendToUser(notification.getId().getAccountId().toString(), "/queue/notifications", notification);
 		});
 	}
 }

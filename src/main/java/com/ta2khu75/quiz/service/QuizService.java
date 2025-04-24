@@ -10,7 +10,7 @@ import com.ta2khu75.quiz.service.base.SearchService;
 
 public interface QuizService extends CrudFileService<QuizRequest, QuizResponse, String>, SearchService<QuizResponse, QuizSearch> {
 	QuizResponse readDetail(String id);
-	List<QuizResponse> readAllByAuthorIdAndKeywork(String authorId,String keyword);
+	List<QuizResponse> readAllByAuthorIdAndKeywork(Long authorId,String keyword);
 //	List<QuizResponse> myReadAllById(List<String> ids);
 //	Long countByAuthorEmail(String authorEmail);
 //	Long countByAuthorIdAndAccessModifier(String authorId, AccessModifier accessModifier);

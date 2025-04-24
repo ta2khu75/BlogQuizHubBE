@@ -15,7 +15,6 @@ import com.ta2khu75.quiz.event.NotificationEvent;
 import com.ta2khu75.quiz.mapper.BlogMapper;
 import com.ta2khu75.quiz.model.AccessModifier;
 import com.ta2khu75.quiz.model.TargetType;
-import com.ta2khu75.quiz.model.entity.Account;
 import com.ta2khu75.quiz.model.entity.Blog;
 import com.ta2khu75.quiz.model.entity.BlogTag;
 import com.ta2khu75.quiz.model.entity.Quiz;
@@ -25,12 +24,10 @@ import com.ta2khu75.quiz.model.response.BlogResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
 import com.ta2khu75.quiz.repository.BlogRepository;
 import com.ta2khu75.quiz.repository.QuizRepository;
-import com.ta2khu75.quiz.repository.account.AccountRepository;
 import com.ta2khu75.quiz.service.BlogService;
 import com.ta2khu75.quiz.service.BlogTagService;
 import com.ta2khu75.quiz.service.base.BaseFileService;
 import com.ta2khu75.quiz.service.util.FileUtil;
-import com.ta2khu75.quiz.service.util.FileUtil.Folder;
 import com.ta2khu75.quiz.util.FunctionUtil;
 import com.ta2khu75.quiz.util.SecurityUtil;
 
@@ -40,16 +37,13 @@ import jakarta.validation.groups.Default;
 @Service
 @Validated
 public class BlogServiceImpl extends BaseFileService<BlogRepository, BlogMapper> implements BlogService {
-	private final AccountRepository accountRepository;
 	private final BlogTagService blogTagService;
 	private final QuizRepository examRepository;
 	private final ApplicationEventPublisher applicationEventPublisher;
 
-	public BlogServiceImpl(BlogRepository repository, BlogMapper mapper, FileUtil fileUtil,
-			AccountRepository accountRepository, BlogTagService blogTagService, QuizRepository examRepository,
+	public BlogServiceImpl(BlogRepository repository, BlogMapper mapper, FileUtil fileUtil, BlogTagService blogTagService, QuizRepository examRepository,
 			ApplicationEventPublisher applicationEventPublisher) {
 		super(repository, mapper, fileUtil);
-		this.accountRepository = accountRepository;
 		this.blogTagService = blogTagService;
 		this.applicationEventPublisher = applicationEventPublisher;
 		this.examRepository = examRepository;
@@ -60,11 +54,9 @@ public class BlogServiceImpl extends BaseFileService<BlogRepository, BlogMapper>
 	@Validated({ Default.class })
 	@Transactional
 	public BlogResponse create(@Valid BlogRequest request, MultipartFile file) throws IOException {
-		Blog blog = mapper.toEntity(request);
-		Account account = FunctionUtil.findOrThrow(SecurityUtil.getIdCurrentUserLogin(), Account.class,
-				accountRepository::findById);
-//		blog.setAuthor(account);
 		Set<BlogTag> blogTags =blogTagService.createOrReadAll(request.getTags());
+		Blog blog = mapper.toEntity(request);
+		blog.setAuthor(SecurityUtil.getCurrentProfile());
 		blog.setTags(blogTags);
 		this.addQuizzes(blog, request);
 		return this.save(blog);
@@ -112,15 +104,6 @@ public class BlogServiceImpl extends BaseFileService<BlogRepository, BlogMapper>
 				pageable));
 	}
 
-	@Override
-	public Long countByAuthorEmail(String authorEmail) {
-		return repository.countByAuthorEmail(authorEmail);
-	}
-
-	@Override
-	public Long countByAuthorIdAndAccessModifier(String authorId, AccessModifier accessModifier) {
-		return repository.countByAuthorIdAndAccessModifier(authorId, accessModifier);
-	}
 	private void addQuizzes( Blog blog, BlogRequest request) {
 		Set<String> quizIds=request.getQuizIds();
 		if (quizIds != null && !quizIds.isEmpty()) {
@@ -140,7 +123,7 @@ public class BlogServiceImpl extends BaseFileService<BlogRepository, BlogMapper>
 
 
 	@Override
-	public List<BlogResponse> readAllByAuthorIdAndKeywork(String authorId, String keyword) {
+	public List<BlogResponse> readAllByAuthorIdAndKeywork(Long authorId, String keyword) {
 		return repository.findAllByAuthorIdAndTitleContainingIgnoreCase(authorId, keyword).stream().map(mapper::toResponse).toList();
 	}
 }
