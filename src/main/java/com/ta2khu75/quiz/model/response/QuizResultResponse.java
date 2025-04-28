@@ -12,8 +12,8 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class QuizResultResponse {
-	double point;
-	int correctCount;
+	Float point;
+	Integer correctCount;
 	QuizResponse quiz;
 	AccountProfileResponse account;
 	Instant endTime;

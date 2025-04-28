@@ -22,7 +22,7 @@ public class Question {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
-    String questionString;
+    String content;
     String filePath;
 	boolean shuffleAnswer;
     @Column(nullable = false)
@@ -32,6 +32,6 @@ public class Question {
     Quiz quiz;
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Answer> answers;
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE, orphanRemoval = true)
     List<UserAnswer> userAnswers;
 }

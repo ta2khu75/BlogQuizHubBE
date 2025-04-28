@@ -35,4 +35,9 @@ public class BlogTag {
             name = name.trim().toLowerCase(); // chuẩn hóa
         }
     }
+	public BlogTag(String name) {
+		super();
+		this.name = name;
+	}
+	
 }

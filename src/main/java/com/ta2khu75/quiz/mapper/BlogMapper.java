@@ -15,6 +15,28 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = { InfoMapper.class, QuizMapper.class, AccountMapper.class })
 public interface BlogMapper {
 	
+	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "createdAt", ignore = true)
+	@Mapping(target = "updatedAt", ignore = true)
+	@Mapping(target = "author", ignore = true)
+	@Mapping(target = "comments", ignore = true)
+	@Mapping(target = "deleted", ignore = true)
+	@Mapping(target = "quizzes", ignore = true)
+	@Mapping(target = "viewCount", ignore = true)
+	@Mapping(target = "tags", ignore = true)
+	Blog toEntity(BlogRequest blogResponse);
+	
+	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "createdAt", ignore = true)
+	@Mapping(target = "updatedAt", ignore = true)
+	@Mapping(target = "author", ignore = true)
+	@Mapping(target = "comments", ignore = true)
+	@Mapping(target = "deleted", ignore = true)
+	@Mapping(target = "quizzes", ignore = true)
+	@Mapping(target = "viewCount", ignore = true)
+	@Mapping(target = "tags", ignore = true)
+	void update(BlogRequest blogResponse, @MappingTarget Blog blog);
+
 	@Named("toBlogResponse")
 	@Mapping(target = "commentCount", source = "comments")
 	@Mapping(target = "info", source = "blog", qualifiedByName = "toInfoResponse")
@@ -30,27 +52,7 @@ public interface BlogMapper {
 	@Mapping(target = "quizzes", source = "quizzes", qualifiedByName = "toQuizResponse")
 	BlogResponse toDetailsResponse(Blog blog);
 
-	@Mapping(target = "tags", ignore = true)
-	@Mapping(target = "createdAt", ignore = true)
-	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "updatedAt", ignore = true)
-	@Mapping(target = "author", ignore = true)
-	@Mapping(target = "comments", ignore = true)
-	@Mapping(target = "deleted", ignore = true)
-	@Mapping(target = "quizzes", ignore = true)
-	@Mapping(target = "viewCount", ignore = true)
-	Blog toEntity(BlogRequest blogResponse);
 
-	@Mapping(target = "tags", ignore = true)
-	@Mapping(target = "createdAt", ignore = true)
-	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "updatedAt", ignore = true)
-	@Mapping(target = "author", ignore = true)
-	@Mapping(target = "comments", ignore = true)
-	@Mapping(target = "deleted", ignore = true)
-	@Mapping(target = "quizzes", ignore = true)
-	@Mapping(target = "viewCount", ignore = true)
-	void update(BlogRequest blogResponse, @MappingTarget Blog blog);
 
 	@Mapping(target = "page", source = "number")
 	@Mapping(target = "content", source = "content", qualifiedByName = "toBlogResponse")

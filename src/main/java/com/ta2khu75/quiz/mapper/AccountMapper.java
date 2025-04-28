@@ -25,8 +25,14 @@ public interface AccountMapper{
 	@Mapping(target="lastName", source = "lastName")
 	@Mapping(target="firstName", source = "firstName")
 	@BeanMapping(ignoreByDefault = true)
-	AccountProfile toProfileEntity(AccountRequest request);
+	AccountProfile toEntity(AccountProfileRequest request);
 	
+	@Mapping(target="nonLocked", source = "nonLocked")
+	@Mapping(target="enabled", source = "enabled")
+	
+	@BeanMapping(ignoreByDefault = true)
+	void update(AccountStatusRequest request, @MappingTarget AccountStatus entity);
+
 	@Mapping(target="birthday", source = "birthday")
 	@Mapping(target="lastName", source = "lastName")
 	@Mapping(target="firstName", source = "firstName")
@@ -40,18 +46,14 @@ public interface AccountMapper{
 	@Mapping(target = "followCount", ignore = true)
 	AccountProfileResponse toResponse(AccountProfile entity);
 
-	@Mapping(target = "blogCount", expression = "java(account.getBlogs() != null ? account.getBlogs().size() : 0)")
-	@Mapping(target = "quizCount", expression = "java(account.getQuizzes() != null ? account.getQuizzes().size() : 0)")
-	@Mapping(target = "followCount", expression = "java(account.getFollowers() != null ? account.getFollowers().size() : 0)")
-	AccountProfileResponse toDetailProfileResponse(AccountProfile account);
+	@Mapping(target = "blogCount", expression = "java(entity.getBlogs().size())")
+	@Mapping(target = "quizCount", expression = "java(entity.getQuizzes().size())")
+	@Mapping(target = "followCount", expression = "java(entity.getFollowers().size())")
+	AccountProfileResponse toDetailProfileResponse(AccountProfile entity);
 
 	@Mapping(target = "role", source = "role", qualifiedByName = "toRoleResponse")
 	AccountStatusResponse toResponse(AccountStatus entity);
 	
-	@Mapping(target="nonLocked", source = "nonLocked")
-	@Mapping(target="enabled", source = "enabled")
-	@BeanMapping(ignoreByDefault = true)
-	void update(AccountStatusRequest request, @MappingTarget AccountStatus entity);
 	
 	@Named("toAccountResponse")
 	@Mapping(target = "info", source = "entity", qualifiedByName = "toInfoResponse")

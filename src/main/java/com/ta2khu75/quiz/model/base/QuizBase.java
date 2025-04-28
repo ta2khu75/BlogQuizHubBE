@@ -24,6 +24,6 @@ public abstract class QuizBase {
 	AccessModifier accessModifier=AccessModifier.PRIVATE;
 	QuizResultMode quizResultMode=QuizResultMode.ANSWER_VISIBLE;
 	boolean shuffleQuestion=true;
-	boolean isCompleted;
+	boolean completed;
 	
 }

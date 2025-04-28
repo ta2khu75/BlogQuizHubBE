@@ -3,6 +3,7 @@ package com.ta2khu75.quiz.model.base;
 import java.util.Set;
 
 import com.ta2khu75.quiz.model.AccessModifier;
+import com.ta2khu75.quiz.model.entity.BlogTag;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -18,5 +19,5 @@ public abstract class BlogBase {
 	@NotNull(message = "Access modifier must not be null")
 	AccessModifier accessModifier;
 	@NotEmpty(message = "Blog tags must not be empty")
-	Set<String> tags;
+	Set<BlogTag> tags;
 }

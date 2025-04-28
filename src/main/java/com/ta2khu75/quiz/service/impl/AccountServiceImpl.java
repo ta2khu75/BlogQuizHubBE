@@ -68,7 +68,7 @@ public class AccountServiceImpl extends BaseService<AccountRepository, AccountMa
 			throw new NotMatchesException("password and confirm password not matches");
 		if (repository.existsByEmail(request.getEmail()))
 			throw new ExistingException("Email already exists");
-		AccountProfile profile = mapper.toProfileEntity(request);
+		AccountProfile profile = mapper.toEntity(request.getProfile());
 		profile.setDisplayName(profile.getFirstName() + " " + profile.getLastName());
 		Role role = FunctionUtil.findOrThrow(request.getRoleId(), Role.class, roleRepository::findById);
 		AccountStatus status = new AccountStatus();

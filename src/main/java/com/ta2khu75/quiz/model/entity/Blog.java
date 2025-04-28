@@ -44,7 +44,7 @@ public class Blog extends EntityBaseString {
 
 	@OneToMany(mappedBy = "blog", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	Set<Quiz> quizzes;
-	@OneToMany(mappedBy = "blog", orphanRemoval = true, cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	List<Comment> comments;
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	Set<BlogTag> tags;

@@ -12,7 +12,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ta2khu75.quiz.model.request.QuizRequest;
-import com.ta2khu75.quiz.model.request.QuestionRequest;
 import com.ta2khu75.quiz.model.request.search.QuizSearch;
 import com.ta2khu75.quiz.model.response.QuizResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
@@ -22,76 +21,65 @@ import com.ta2khu75.quiz.mapper.QuizMapper;
 import com.ta2khu75.quiz.model.AccessModifier;
 import com.ta2khu75.quiz.model.TargetType;
 import com.ta2khu75.quiz.model.entity.Quiz;
-import com.ta2khu75.quiz.model.entity.QuizCategory;
-import com.ta2khu75.quiz.model.entity.Question;
-import com.ta2khu75.quiz.repository.BlogRepository;
-import com.ta2khu75.quiz.repository.QuizCategoryRepository;
 import com.ta2khu75.quiz.repository.QuizRepository;
 import com.ta2khu75.quiz.service.QuizService;
-import com.ta2khu75.quiz.service.QuestionService;
 import com.ta2khu75.quiz.service.base.BaseFileService;
 import com.ta2khu75.quiz.service.util.FileUtil;
 import com.ta2khu75.quiz.service.util.FileUtil.Folder;
 import com.ta2khu75.quiz.util.SecurityUtil;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @Validated
 public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper> implements QuizService {
-	private final QuizCategoryRepository quizCategoryRepository;
-	private final QuestionService questionService;
-	private final BlogRepository blogRepository;
 	private final ApplicationEventPublisher applicationEventPublisher;
 
-	public QuizServiceImpl(QuizRepository repository, QuizMapper mapper,
-			QuizCategoryRepository quizCategoryRepository, QuestionService questionService,BlogRepository blogRepository, FileUtil fileUtil,
+	public QuizServiceImpl(QuizRepository repository, QuizMapper mapper, FileUtil fileUtil,
 			ApplicationEventPublisher applicationEventPublisher) {
 		super(repository, mapper, fileUtil);
-		this.quizCategoryRepository = quizCategoryRepository;
-		this.questionService= questionService;
-		this.blogRepository = blogRepository;
 		this.applicationEventPublisher = applicationEventPublisher;
-	}
-
-	private QuizCategory findExamCategoryById(Long id) {
-		return quizCategoryRepository.findById(id)
-				.orElseThrow(() -> new NotFoundException("Could not found quiz category with id: " + id));
 	}
 
 	private Quiz findById(String id) {
 		return repository.findById(id).orElseThrow(() -> new NotFoundException("Could not found quiz with id: " + id));
 	}
-	private void setBlog(Quiz quiz, String blogId) {
-		if(blogId != null) {
-			blogRepository.findById(blogId).ifPresent(blog -> quiz.setBlog(blog));
-		}
+
+	private QuizResponse save(Quiz quiz) {
+		Quiz quizSaved = repository.save(quiz);
+		applicationEventPublisher.publishEvent(new NotificationEvent(this, quizSaved.getId(), TargetType.QUIZ));
+		return mapper.toResponse(quizSaved);
 	}
 
-	@Override @Transactional
+	@Override
+	@Transactional
 	@Validated(value = { Default.class })
 	public QuizResponse create(@Valid QuizRequest quizRequest, MultipartFile file) throws IOException {
 		Quiz quiz = mapper.toEntity(quizRequest);
-		fileUtil.saveFile(quiz, file, Folder.QUIZ_FOLDER, Quiz::setImagePath);
-		quiz.setCategory(this.findExamCategoryById(quizRequest.getCategoryId()));
 		quiz.setAuthor(SecurityUtil.getCurrentProfile());
-		if(quizRequest.getBlogId() != null) {
-			
-		}
-		setBlog(quiz, quizRequest.getBlogId());
-		Quiz quizSaved = repository.save(quiz);
-		quizRequest.getQuestions().forEach(question-> {
-			question.setQuiz(quizSaved);
-			questionService.create(question);
-		});
-		applicationEventPublisher.publishEvent(new NotificationEvent(this, quizSaved.getId(), TargetType.QUIZ));
-		return mapper.toResponse(repository.save(quizSaved));
+		fileUtil.saveFile(quiz, file, Folder.QUIZ_FOLDER, Quiz::setImagePath);
+		return this.save(quiz);
+//		Quiz quizSaved = repository.save(quiz);
+//		applicationEventPublisher.publishEvent(new NotificationEvent(this, quizSaved.getId(), TargetType.QUIZ));
+//		return mapper.toResponse(quizSaved);
+//		Quiz quiz = mapper.toEntity(quizRequest);
+//		fileUtil.saveFile(quiz, file, Folder.QUIZ_FOLDER, Quiz::setImagePath);
+//		quiz.setCategory(this.findExamCategoryById(quizRequest.getCategoryId()));
+//		quiz.setAuthor(SecurityUtil.getCurrentProfile());
+//		if(quizRequest.getBlogId() != null) {
+//			
+//		}
+//		setBlog(quiz, quizRequest.getBlogId());
+//		Quiz quizSaved = repository.save(quiz);
+//		quizRequest.getQuestions().forEach(question-> {
+//			question.setQuiz(quizSaved);
+//			questionService.create(question);
+//		});
+//		applicationEventPublisher.publishEvent(new NotificationEvent(this, quizSaved.getId(), TargetType.QUIZ));
+//		return mapper.toResponse(repository.save(quizSaved));
 	}
 
 	@Override
@@ -99,31 +87,34 @@ public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper>
 	@Validated(value = { Default.class })
 	public QuizResponse update(String id, @Valid QuizRequest quizRequest, MultipartFile file) throws IOException {
 		Quiz quiz = this.findById(id);
-		Map<Long, QuestionRequest> requestQuestionMap = quizRequest.getQuestions().stream().filter(question -> question.getId() != null)
-				.collect(Collectors.toMap(QuestionRequest::getId, Function.identity()));
-		if (!quiz.isCompleted()) {
-			Iterator<Question> questionIterable = quiz.getQuestions().iterator();
-			while (questionIterable.hasNext()) {
-				Question existingQuestion = questionIterable.next();
-				QuestionRequest questionRequest= requestQuestionMap.get(existingQuestion.getId());
-				if (questionRequest!= null) {
-					questionService.update(questionRequest.getId(), questionRequest);
-				} else {
-					questionIterable.remove();
-					questionService.delete(existingQuestion.getId());
-				}
-			}
-			quizRequest.getQuestions().stream().filter(question -> question.getId() == null).forEach(question-> {
-				question.setQuiz(quiz);
-				questionService.create(question);
-			});
-		}
-		mapper.update(quizRequest, quiz);
-		setBlog(quiz, quizRequest.getBlogId());
+
+//		Map<Long, QuestionRequest> requestQuestionMap = quizRequest.getQuestions().stream().filter(question -> question.getId() != null)
+//				.collect(Collectors.toMap(QuestionRequest::getId, Function.identity()));
+//		if (!quiz.isCompleted()) {
+//			Iterator<Question> questionIterable = quiz.getQuestions().iterator();
+//			while (questionIterable.hasNext()) {
+//				Question existingQuestion = questionIterable.next();
+//				QuestionRequest questionRequest= requestQuestionMap.get(existingQuestion.getId());
+//				if (questionRequest!= null) {
+//					questionService.update(questionRequest.getId(), questionRequest);
+//				} else {
+//					questionIterable.remove();
+//					questionService.delete(existingQuestion.getId());
+//				}
+//			}
+//			quizRequest.getQuestions().stream().filter(question -> question.getId() == null).forEach(question-> {
+//				question.setQuiz(quiz);
+//				questionService.create(question);
+//			});
+//		}
+//		mapper.update(quizRequest, quiz);
+//		setBlog(quiz, quizRequest.getBlogId());
 		fileUtil.saveFile(quiz, file, Folder.QUIZ_FOLDER, Quiz::setImagePath);
-		if (quiz.getCategory().getId().equals(quizRequest.getCategoryId()))
-			quiz.setCategory(this.findExamCategoryById(quizRequest.getCategoryId()));
-		return mapper.toResponse(repository.save(quiz));
+		mapper.update(quizRequest, quiz);
+//		if (quiz.getCategory().getId().equals(quizRequest.getCategoryId()))
+//			quiz.setCategory(this.findExamCategoryById(quizRequest.getCategoryId()));
+		// mapper.toResponse(repository.save(quiz));
+		return this.save(quiz);
 	}
 
 	@Override
@@ -154,20 +145,18 @@ public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper>
 
 	@Override
 	public PageResponse<QuizResponse> search(QuizSearch search) {
-		if(!SecurityUtil.isAuthor(search.getAuthorId())) search.setAccessModifier(AccessModifier.PUBLIC);
-			Pageable pageable = Pageable.ofSize(search.getSize()).withPage(search.getPage() - 1);
-			return mapper.toPageResponse(repository.search(search.getKeyword(),
-					search.getAuthorId(),
-					search.getQuizCategoryIds(),
-					search.getQuizLevels(),
-					search.getCompleted(),
-					search.getMinDuration(),
-					search.getMaxDuration(), search.getAccessModifier(), pageable));
+		if (!SecurityUtil.isAuthor(search.getAuthorId()))
+			search.setAccessModifier(AccessModifier.PUBLIC);
+		Pageable pageable = Pageable.ofSize(search.getSize()).withPage(search.getPage() - 1);
+		return mapper.toPageResponse(repository.search(search.getKeyword(), search.getAuthorId(),
+				search.getQuizCategoryIds(), search.getQuizLevels(), search.getCompleted(), search.getMinDuration(),
+				search.getMaxDuration(), search.getAccessModifier(), pageable));
 	}
 
 	@Override
 	public List<QuizResponse> readAllByAuthorIdAndKeywork(Long authorId, String keyword) {
-		return repository.findByAuthorIdAndTitleContainingIgnoreCaseAndBlogIsNull(authorId, keyword).stream().map(mapper::toResponse).collect(Collectors.toList());
+		return repository.findByAuthorIdAndTitleContainingIgnoreCaseAndBlogIsNull(authorId, keyword).stream()
+				.map(mapper::toResponse).collect(Collectors.toList());
 	}
 
 //	@Override

@@ -19,11 +19,11 @@ public class Answer {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
     @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
-	String answerString;
+	String content;
 	@Column(nullable = false)
 	boolean correct;
 	@ManyToOne
 	Question question;
-	@ManyToMany(mappedBy = "answers", cascade = CascadeType.ALL)
+	@ManyToMany(mappedBy = "answers", cascade = CascadeType.REMOVE)
     List<UserAnswer> userAnswers = new ArrayList<>();
 }

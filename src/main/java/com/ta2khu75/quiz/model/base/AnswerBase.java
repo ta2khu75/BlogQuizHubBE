@@ -8,6 +8,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public abstract class AnswerBase {
 	@NotBlank
-	String answer;
+	String content;
 	boolean correct;
 }

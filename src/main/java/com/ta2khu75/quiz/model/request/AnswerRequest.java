@@ -11,12 +11,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AnswerRequest extends AnswerBase{
-	@NotNull(message = "Answer Id must not be null", groups = Update.class)
 	Long id;
-	boolean correct;
-	@NotNull(message = "Question must not be null", groups=Create.class)
-	Question question;
 }

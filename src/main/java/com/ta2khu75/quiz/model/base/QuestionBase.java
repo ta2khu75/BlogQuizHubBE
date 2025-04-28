@@ -10,8 +10,9 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public abstract class QuestionBase {
+	Long id;
 	@NotBlank(message = "Question must not be blank")
-	String question;
+	String content;
 	boolean shuffleAnswer;
 	@NotNull(message = "Question type must not be null")
 	QuestionType type;

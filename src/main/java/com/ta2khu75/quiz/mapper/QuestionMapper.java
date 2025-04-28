@@ -11,33 +11,22 @@ import com.ta2khu75.quiz.model.entity.Question;
 
 @Mapper(componentModel = "spring", uses = { AnswerMapper.class })
 public interface QuestionMapper {
+	@Named("toQuestion")
+	@Mapping(target = "filePath", ignore = true)
+	@Mapping(target = "quiz", ignore = true)
+	@Mapping(target = "userAnswers", ignore = true)
+	@Mapping(target = "answers", source = "answers", qualifiedByName = "toAnswer")
+	Question toEntity(QuestionRequest request);
+	
 	@Named("toQuestionResponse")
 	@Mapping(target = "answers", ignore = true)
-	@Mapping(target = "question", source = "questionString")
 	QuestionResponse toResponse(Question question);
-
-	@Mapping(target = "filePath", ignore = true)
-	@Mapping(target = "answers", ignore = true)
-	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "userAnswers", ignore = true)
-	@Mapping(target = "questionString", source = "question")
-	Question toEntity(QuestionRequest request);
-
-	@Mapping(target = "filePath", ignore = true)
-	@Mapping(target = "answers", ignore = true)
-	@Mapping(target = "quiz", ignore = true)
-	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "userAnswers", ignore = true)
-	@Mapping(target = "questionString", source = "question")
-	void update(QuestionRequest request, @MappingTarget Question question);
 	
 	@Named("toQuestionDetailResponse")
 	@Mapping(target = "answers", source = "answers", qualifiedByName = "toAnswerResponse")
-	@Mapping(target = "question", source = "questionString")
 	QuestionResponse toDetailResponse(Question question);
 	
 	@Named("toQuestionAnswerDetailResponse")
 	@Mapping(target = "answers", source = "answers", qualifiedByName = "toAnswerDetailResponse")
-	@Mapping(target = "question", source = "questionString")
 	QuestionResponse toQuestionAnswerDetailResponse(Question question);
 }
