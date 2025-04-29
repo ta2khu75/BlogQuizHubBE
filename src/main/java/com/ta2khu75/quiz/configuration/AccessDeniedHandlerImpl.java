@@ -20,7 +20,7 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response,
 			AccessDeniedException accessDeniedException) throws IOException, ServletException {
-		AdviceException.ApiResponse apiResponse=new AdviceException.ApiResponse(null, accessDeniedException.getMessage(), 403);
+		AdviceException.ApiResponse apiResponse=new AdviceException.ApiResponse(null, accessDeniedException.getMessage(), false, 403);
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setStatus(403);
 		objectMapper.writeValue(response.getWriter(), apiResponse);

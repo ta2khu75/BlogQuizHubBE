@@ -6,10 +6,10 @@ import org.mapstruct.Mapping;
 import com.ta2khu75.quiz.model.entity.Notification;
 import com.ta2khu75.quiz.model.response.NotificationResponse;
 
-@Mapper(componentModel = "spring", uses = { AccountMapper.class, InfoMapperFactory.class })
-
-public interface NotificationMapper {
+@Mapper(componentModel = "spring", uses = { AccountMapper.class })
+public interface NotificationMapper
+		extends PageMapper<Notification, NotificationResponse>, InfoMapper<Notification, NotificationResponse> {
 	@Mapping(target = "target", ignore = true)
-	@Mapping(target = "info", source = "entity")
+//	@Mapping(target = "info", source = "entity")
 	NotificationResponse toResponse(Notification entity);
 }

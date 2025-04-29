@@ -15,8 +15,8 @@ import com.ta2khu75.quiz.model.entity.QuizCategory;
 
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = { InfoMapper.class, QuestionMapper.class, AccountMapper.class })
-public interface QuizMapper {
+@Mapper(componentModel = "spring", uses = { QuestionMapper.class, AccountMapper.class })
+public interface QuizMapper extends PageMapper<Quiz, QuizResponse>, InfoMapper<Quiz, QuizResponse> {
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "createdAt", ignore = true)
@@ -52,23 +52,24 @@ public interface QuizMapper {
 	}
 
 	default Blog makeBlog(String blogId) {
-		if (blogId == null) {
+		if (blogId == null)
 			return null;
-		}
+		if (blogId.isEmpty())
+			return null;
 		Blog blog = new Blog();
 		blog.setId(blogId);
 		return blog;
 	}
 
 	@Named("toQuizResponse")
-	@Mapping(target = "info", source = "quiz", qualifiedByName = "toInfoResponse")
+//	@Mapping(target = "info", source = "quiz", qualifiedByName = "toInfoResponse")
 	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "blog", source = "blog")
 	@Mapping(target = "questions", ignore = true)
 	QuizResponse toResponse(Quiz quiz);
 
-	@Mapping(target = "commentCount", source = "comments")
-	@Mapping(target = "info", source = "blog", qualifiedByName = "toInfoResponse")
+	@Mapping(target = "commentCount", expression = "java(blog.getComments().size())")
+//	@Mapping(target = "info", source = "blog", qualifiedByName = "toInfoResponse")
 	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "content", ignore = true)
 	@Mapping(target = "quizzes", ignore = true)
@@ -76,14 +77,14 @@ public interface QuizMapper {
 
 	@Named("toQuizDetailResponse")
 	@Mapping(target = "questions", source = "questions", qualifiedByName = "toQuestionDetailResponse")
-	@Mapping(target = "info", source = "quiz", qualifiedByName = "toInfoResponse")
+//	@Mapping(target = "info", source = "quiz", qualifiedByName = "toInfoResponse")
 	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "blog", source = "blog")
 	QuizResponse toDetailResponse(Quiz quiz);
 
 	@Named("toQuizQuestionDetailResponse")
 	@Mapping(target = "questions", source = "questions", qualifiedByName = "toQuestionAnswerDetailResponse")
-	@Mapping(target = "info", source = "quiz", qualifiedByName = "toInfoResponse")
+//	@Mapping(target = "info", source = "quiz", qualifiedByName = "toInfoResponse")
 	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "blog", source = "blog")
 	QuizResponse toQuizQuestionDetailResponse(Quiz quiz);

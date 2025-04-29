@@ -13,7 +13,7 @@ import lombok.experimental.FieldDefaults;
 @MappedSuperclass
 @EqualsAndHashCode(callSuper = false)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public abstract class EntityBaseString extends EntityBase {
+public abstract class EntityBaseString extends EntityBase<String> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	String id;

@@ -20,7 +20,7 @@ public interface ReportMapper {
 	Report toEntity(ReportRequest request);
 	
 	@Mapping(target = "target", ignore = true)
-	@Mapping(target = "info", source = "entity")
+//	@Mapping(target = "info", source = "entity")
 	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	ReportResponse toResponse(Report entity);
 	

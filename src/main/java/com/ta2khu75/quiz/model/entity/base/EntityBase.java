@@ -17,11 +17,13 @@ import java.time.Instant;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public abstract class EntityBase {
+public abstract class EntityBase<T> {
 	@CreatedDate
 	@Column(updatable = false, nullable = false)
 	Instant createdAt;
 	@LastModifiedDate
 	@Column(insertable = false)
 	Instant updatedAt;
+	public abstract T getId();
+    public abstract void setId(T id);
 }

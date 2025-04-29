@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ta2khu75.quiz.anotation.EndpointMapping;
-import com.ta2khu75.quiz.model.response.BooleanResponse;
 import com.ta2khu75.quiz.model.response.FollowResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
 import com.ta2khu75.quiz.service.FollowService;
@@ -37,8 +36,8 @@ public class FollowController extends BaseController<FollowService> {
 
 	@GetMapping("/account/{accountId}/check")
 	@EndpointMapping(name="Check follow account")
-	public ResponseEntity<BooleanResponse> check(@PathVariable Long accountId) {
-		return ResponseEntity.ok(new BooleanResponse(service.read(accountId)!=null));
+	public ResponseEntity<FollowResponse> check(@PathVariable Long accountId) {
+		return ResponseEntity.ok(service.read(accountId));
 	}
 
 	@GetMapping("/follower/{followingId}")

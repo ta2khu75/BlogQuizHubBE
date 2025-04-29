@@ -10,7 +10,6 @@ import com.ta2khu75.quiz.model.entity.Account;
 import com.ta2khu75.quiz.model.entity.AccountProfile;
 import com.ta2khu75.quiz.model.entity.AccountStatus;
 import com.ta2khu75.quiz.model.request.account.AccountProfileRequest;
-import com.ta2khu75.quiz.model.request.account.AccountRequest;
 import com.ta2khu75.quiz.model.request.account.AccountStatusRequest;
 import com.ta2khu75.quiz.model.response.PageResponse;
 import com.ta2khu75.quiz.model.response.account.AccountProfileResponse;
@@ -19,8 +18,8 @@ import com.ta2khu75.quiz.model.response.account.AccountStatusResponse;
 
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = { InfoMapper.class, RoleMapper.class })
-public interface AccountMapper{
+@Mapper(componentModel = "spring", uses = { RoleMapper.class })
+public interface AccountMapper extends PageMapper<Account, AccountResponse>, InfoMapper<Account, AccountResponse>{
 	@Mapping(target="birthday", source = "birthday")
 	@Mapping(target="lastName", source = "lastName")
 	@Mapping(target="firstName", source = "firstName")
@@ -56,7 +55,7 @@ public interface AccountMapper{
 	
 	
 	@Named("toAccountResponse")
-	@Mapping(target = "info", source = "entity", qualifiedByName = "toInfoResponse")
+//	@Mapping(target = "info", source = "entity", qualifiedByName = "toInfoResponse")
 	@Mapping(target = "profile" , source = "profile", qualifiedByName = "toProfileResponse")
 	AccountResponse toResponse(Account entity);
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ta2khu75.quiz.model.base.QuizBase;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -19,5 +20,6 @@ public class QuizRequest extends QuizBase{
 	@NotNull(message = "Exam category must not be null")
 	Long categoryId;
 	@NotEmpty(message = "Quizzzes must not be empty")
+	@Valid
 	List<QuestionRequest> questions;
 }

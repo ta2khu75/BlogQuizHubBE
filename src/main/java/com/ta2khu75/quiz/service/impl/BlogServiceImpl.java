@@ -118,7 +118,7 @@ public class BlogServiceImpl extends BaseFileService<BlogRepository, BlogMapper>
 	public PageResponse<BlogResponse> search(BlogSearch blogSearchRequest) {
 		if (!SecurityUtil.isAuthor(blogSearchRequest.getAuthorId()))
 			blogSearchRequest.setAccessModifier(AccessModifier.PUBLIC);
-		Pageable pageable = Pageable.ofSize(blogSearchRequest.getSize()).withPage(blogSearchRequest.getPage() - 1);
+		Pageable pageable = Pageable.ofSize(blogSearchRequest.getSize()).withPage(blogSearchRequest.getPage());
 		return mapper.toPageResponse(repository.search(blogSearchRequest.getTagNames(), blogSearchRequest.getKeyword(),
 				blogSearchRequest.getAuthorId(), blogSearchRequest.getMinView(), blogSearchRequest.getMaxView(),
 				blogSearchRequest.getAccessModifier(), pageable));

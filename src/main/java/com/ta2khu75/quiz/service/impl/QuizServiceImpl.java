@@ -147,7 +147,7 @@ public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper>
 	public PageResponse<QuizResponse> search(QuizSearch search) {
 		if (!SecurityUtil.isAuthor(search.getAuthorId()))
 			search.setAccessModifier(AccessModifier.PUBLIC);
-		Pageable pageable = Pageable.ofSize(search.getSize()).withPage(search.getPage() - 1);
+		Pageable pageable = Pageable.ofSize(search.getSize()).withPage(search.getPage());
 		return mapper.toPageResponse(repository.search(search.getKeyword(), search.getAuthorId(),
 				search.getQuizCategoryIds(), search.getQuizLevels(), search.getCompleted(), search.getMinDuration(),
 				search.getMaxDuration(), search.getAccessModifier(), pageable));

@@ -11,8 +11,8 @@ import com.ta2khu75.quiz.model.response.PageResponse;
 
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = { AccountMapper.class, BlogMapper.class, InfoMapper.class })
-public interface CommentMapper {
+@Mapper(componentModel = "spring", uses = { AccountMapper.class, BlogMapper.class})
+public interface CommentMapper extends PageMapper<Comment, CommentResponse>, InfoMapper<Comment, CommentResponse>{
 	@Mapping(target = "author", ignore = true)
 	@Mapping(target = "blog", ignore = true)
 	@Mapping(target = "createdAt", ignore = true)
@@ -27,7 +27,7 @@ public interface CommentMapper {
 	@Mapping(target = "updatedAt", ignore = true)
 	void update(CommentRequest request, @MappingTarget Comment entity);
 
-	@Mapping(target = "info", source = "comment", qualifiedByName = "toInfoResponse")
+//	@Mapping(target = "info", source = "comment", qualifiedByName = "toInfoResponse")
 	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	CommentResponse toResponse(Comment comment);
 

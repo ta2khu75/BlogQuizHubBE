@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.ta2khu75.quiz.anotation.ControllerConfig;
 import com.ta2khu75.quiz.anotation.EndpointMapping;
 import com.ta2khu75.quiz.model.group.Admin;
 import com.ta2khu75.quiz.model.request.account.AccountPasswordRequest;
@@ -22,8 +23,7 @@ import com.ta2khu75.quiz.model.response.account.AccountResponse;
 import com.ta2khu75.quiz.model.response.account.AccountStatusResponse;
 import com.ta2khu75.quiz.service.AccountService;
 
-@RestController
-@RequestMapping("${app.api-prefix}/accounts")
+@ControllerConfig("${app.api-prefix}/accounts")
 public class AccountController extends BaseController<AccountService> {
 	public AccountController(AccountService service) {
 		super(service);

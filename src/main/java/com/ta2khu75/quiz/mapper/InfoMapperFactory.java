@@ -14,10 +14,11 @@ public class InfoMapperFactory {
     @ObjectFactory
     public <T extends Serializable> InfoResponse<T> toResponse(EntityBaseCustom<T> entity) {
         if (entity == null) return null;
-        InfoResponse<T> response = new InfoResponse<>();
-        response.setId(entity.getId());
-        response.setCreatedAt(entity.getCreatedAt());
-        response.setUpdatedAt(entity.getUpdatedAt());
-        return response;
+//        InfoResponse<T> response = new InfoResponse<>();
+//        response.setId(entity.getId());
+//        response.setCreatedAt(entity.getCreatedAt());
+//        response.setUpdatedAt(entity.getUpdatedAt());
+//        return response;
+        return null;
     }
 }

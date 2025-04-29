@@ -1,7 +1,5 @@
 package com.ta2khu75.quiz.exception;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.*;
@@ -76,9 +74,9 @@ public class AdviceException implements ResponseBodyAdvice<Object> {
 		int statusCode = servletResponse.getStatus();
 		if (selectedContentType.includes(MediaType.APPLICATION_JSON)) {
 			if (statusCode < HttpStatus.BAD_REQUEST.value()) {
-				return new ApiResponse(body, null, statusCode);
+				return new ApiResponse(body, null,statusCode<HttpStatus.BAD_REQUEST.value(),  statusCode);
 			} else if (body instanceof ExceptionResponse exceptionResponse) {
-				return new ApiResponse(null, exceptionResponse.messageError, statusCode);
+				return new ApiResponse(null, exceptionResponse.messageError, statusCode<HttpStatus.BAD_REQUEST.value(), statusCode);
 			}
 		}
 		return body;
@@ -91,6 +89,7 @@ public class AdviceException implements ResponseBodyAdvice<Object> {
 	public static class ApiResponse {
 		Object data;
 		String message;
+		boolean success;
 		int statusCode;
 	}
 

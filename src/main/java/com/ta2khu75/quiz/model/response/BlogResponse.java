@@ -1,5 +1,6 @@
 package com.ta2khu75.quiz.model.response;
 
+import java.time.Instant;
 import java.util.Set;
 
 import com.ta2khu75.quiz.model.base.BlogBase;
@@ -11,14 +12,16 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BlogResponse extends BlogBase {
+public class BlogResponse extends BlogBase implements InfoResponse<String> {
+	String id;
+	Instant createdAt;
+	Instant updatedAt;
 	int viewCount;
 	int commentCount;
-	
+
 	AccountProfileResponse author;
-	InfoResponse<String> info;
 	String content;
 	Set<QuizResponse> quizzes;
 }
