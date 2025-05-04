@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BlogResponse extends BlogBase implements InfoResponse<String> {
+public class BlogResponse extends BlogBase implements BaseResponse<String> {
 	String id;
 	Instant createdAt;
 	Instant updatedAt;

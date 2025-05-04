@@ -30,7 +30,9 @@ import com.ta2khu75.quiz.repository.QuizRepository;
 import com.ta2khu75.quiz.service.BlogService;
 import com.ta2khu75.quiz.service.base.BaseFileService;
 import com.ta2khu75.quiz.service.util.FileUtil;
+import com.ta2khu75.quiz.util.Base62;
 import com.ta2khu75.quiz.util.FunctionUtil;
+import com.ta2khu75.quiz.util.SaltedType;
 import com.ta2khu75.quiz.util.SecurityUtil;
 
 import jakarta.validation.Valid;
@@ -57,7 +59,7 @@ public class BlogServiceImpl extends BaseFileService<BlogRepository, BlogMapper>
 	@Transactional
 	public BlogResponse create(@Valid BlogRequest request, MultipartFile file) throws IOException {
 		Blog blog = mapper.toEntity(request);
-		Set<Quiz> quizzes = request.getQuizIds().stream().map(quizId -> quizRepository.getReferenceById(quizId))
+		Set<Quiz> quizzes = request.getQuizIds().stream().map(quizId -> quizRepository.getReferenceById(Base62.decodeWithSalt(quizId, SaltedType.QUIZ)))
 				.collect(Collectors.toSet());
 		blog.setAuthor(SecurityUtil.getCurrentProfile());
 		blog.setTags(this.getTags(request.getTags()));
@@ -78,14 +80,14 @@ public class BlogServiceImpl extends BaseFileService<BlogRepository, BlogMapper>
 	@Validated({ Default.class })
 	@Transactional
 	public BlogResponse update(String id, @Valid BlogRequest request, MultipartFile file) throws IOException {
-		Blog blog = FunctionUtil.findOrThrow(id, Blog.class, repository::findById);
+		Blog blog = FunctionUtil.findOrThrow(Base62.decodeWithSalt(id, SaltedType.BLOG), Blog.class, repository::findById);
 		mapper.update(request, blog);
 		blog.setTags(this.getTags(request.getTags()));
-		this.updateBlogQuizzes(blog, request.getQuizIds());
+		this.updateBlogQuizzes(blog, request.getQuizIds().stream().map(quizId->Base62.decodeWithSalt(quizId, SaltedType.QUIZ)).collect(Collectors.toSet()));
 		return this.save(blog);
 	}
 
-	private void updateBlogQuizzes(Blog blog, Set<String> quizIds) {
+	private void updateBlogQuizzes(Blog blog, Set<Long> quizIds) {
 		for (Quiz quiz : new HashSet<>(blog.getQuizzes())) {
 			if (!quizIds.contains(quiz.getId())) {
 				blog.removeQuiz(quiz);
@@ -99,17 +101,19 @@ public class BlogServiceImpl extends BaseFileService<BlogRepository, BlogMapper>
 
 	@Override
 	public BlogResponse read(String id) {
-		return save(FunctionUtil.findOrThrow(id, Blog.class, repository::findById));
+		return save(FunctionUtil.findOrThrow(decodeId(id, SaltedType.BLOG), Blog.class, repository::findById));
 	}
 
 	@Override
 	public void delete(String id) {
-		repository.deleteById(id);
+		repository.deleteById(decodeId(id, SaltedType.BLOG));
 	}
-
+	private Long decodeId(String id, SaltedType saltedType) {
+		return Base62.decodeWithSalt(id, saltedType);
+	}
 	@Override
 	public BlogResponse readDetail(String id) {
-		Blog blog = FunctionUtil.findOrThrow(id, Blog.class, repository::findById);
+		Blog blog = FunctionUtil.findOrThrow(decodeId(id, SaltedType.BLOG), Blog.class, repository::findById);
 		blog.setViewCount(blog.getViewCount() + 1);
 		return mapper.toDetailsResponse(repository.save(blog));
 	}

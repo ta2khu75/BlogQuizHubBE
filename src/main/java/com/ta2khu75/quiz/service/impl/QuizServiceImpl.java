@@ -26,6 +26,8 @@ import com.ta2khu75.quiz.service.QuizService;
 import com.ta2khu75.quiz.service.base.BaseFileService;
 import com.ta2khu75.quiz.service.util.FileUtil;
 import com.ta2khu75.quiz.service.util.FileUtil.Folder;
+import com.ta2khu75.quiz.util.Base62;
+import com.ta2khu75.quiz.util.SaltedType;
 import com.ta2khu75.quiz.util.SecurityUtil;
 
 import java.io.IOException;
@@ -45,7 +47,7 @@ public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper>
 	}
 
 	private Quiz findById(String id) {
-		return repository.findById(id).orElseThrow(() -> new NotFoundException("Could not found quiz with id: " + id));
+		return repository.findById(decodeId(id)).orElseThrow(() -> new NotFoundException("Could not found quiz with id: " + id));
 	}
 
 	private QuizResponse save(Quiz quiz) {
@@ -81,7 +83,9 @@ public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper>
 //		applicationEventPublisher.publishEvent(new NotificationEvent(this, quizSaved.getId(), TargetType.QUIZ));
 //		return mapper.toResponse(repository.save(quizSaved));
 	}
-
+	private Long decodeId(String quizId) {
+		return Base62.decodeWithSalt(quizId, SaltedType.QUIZ);
+	}
 	@Override
 	@Transactional
 	@Validated(value = { Default.class })
@@ -119,8 +123,7 @@ public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper>
 
 	@Override
 	public QuizResponse read(String id) {
-		Quiz quiz = repository.findById(id)
-				.orElseThrow(() -> new NotFoundException("Could not found quiz with id: " + id));
+		Quiz quiz = this.findById(id);
 		return mapper.toDetailResponse(quiz);
 	}
 
@@ -138,8 +141,7 @@ public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper>
 
 	@Override
 	public QuizResponse readDetail(String id) {
-		Quiz quiz = repository.findById(id)
-				.orElseThrow(() -> new NotFoundException("Could not found quiz with id: " + id));
+		Quiz quiz =this.findById(id);
 		return mapper.toQuizQuestionDetailResponse(quiz);
 	}
 

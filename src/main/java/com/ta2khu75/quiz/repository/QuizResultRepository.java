@@ -15,7 +15,7 @@ import com.ta2khu75.quiz.model.entity.QuizResult;
 
 public interface QuizResultRepository extends JpaRepository<QuizResult, String> {
 
-	Optional<QuizResult> findByAccountIdAndQuizIdAndEndTimeAfterAndUpdatedAtIsNull(Long id, String examId,
+	Optional<QuizResult> findByAccountIdAndQuizIdAndEndTimeAfterAndUpdatedAtIsNull(Long id, Long quizId,
 			Instant now);
 
 	List<QuizResult> findByEndTimeBeforeAndUpdatedAtIsNull(Instant now);

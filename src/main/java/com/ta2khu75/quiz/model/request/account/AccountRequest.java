@@ -1,6 +1,5 @@
 package com.ta2khu75.quiz.model.request.account;
 
-import com.ta2khu75.quiz.model.entity.AccountProfile;
 import com.ta2khu75.quiz.model.group.Admin;
 
 import jakarta.validation.Valid;

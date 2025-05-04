@@ -7,7 +7,6 @@ import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -15,7 +14,7 @@ import com.ta2khu75.quiz.model.AccessModifier;
 import com.ta2khu75.quiz.model.QuizLevel;
 import com.ta2khu75.quiz.model.entity.Quiz;
 
-public interface QuizRepository extends JpaRepository<Quiz, String>, JpaSpecificationExecutor<Quiz> {
+public interface QuizRepository extends JpaRepository<Quiz, Long> {
 	@Query("SELECT q FROM Quiz q WHERE "
 			+ "(:keyword IS NULL OR q.title LIKE %:keyword% OR q.description LIKE %:keyword% OR q.author.displayName LIKE %:keyword% OR q.category.name LIKE %:keyword%) "
 			+ "AND (:authorId IS NULL OR q.author.id = :authorId) "
@@ -37,9 +36,7 @@ public interface QuizRepository extends JpaRepository<Quiz, String>, JpaSpecific
 
 	List<Quiz> findByAuthorIdAndTitleContainingIgnoreCaseAndBlogIsNull(Long authorId, String keyword);
 
-	Set<Quiz> findByBlogId(String blogId);
-
 	Long countByAuthorIdAndAccessModifier(Long authorId, AccessModifier accessModifier);
 
-	Optional<Quiz> findByIdAndAuthorId(String examId, Long authorId);
+	Optional<Quiz> findByIdAndAuthorId(Long quizId, Long authorId);
 }

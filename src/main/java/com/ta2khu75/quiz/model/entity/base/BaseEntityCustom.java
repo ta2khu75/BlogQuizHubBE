@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @MappedSuperclass
 @EqualsAndHashCode(callSuper = false)
-public class EntityBaseCustom<T extends Serializable> extends EntityBase<T> {
+public class BaseEntityCustom<T extends Serializable> extends BaseEntity<T> {
 	@Id
 	@EmbeddedId
 	T id;

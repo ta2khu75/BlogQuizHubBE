@@ -21,8 +21,11 @@ import com.ta2khu75.quiz.model.response.PageResponse;
 import com.ta2khu75.quiz.service.QuizService;
 import com.ta2khu75.quiz.util.SecurityUtil;
 
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 
@@ -38,9 +41,9 @@ public class QuizController extends BaseController<QuizService> {
 
 	@EndpointMapping(name = "Create quiz")
 	@PostMapping(consumes = "multipart/form-data")
-	public ResponseEntity<QuizResponse> create(@RequestPart("quiz") String quizString,
-			@RequestPart(name = "image", required = true) MultipartFile image) throws IOException {
-		QuizRequest quiz= objectMapper.readValue(quizString, QuizRequest.class);
+	public ResponseEntity<QuizResponse> create(@Valid @ModelAttribute QuizRequest quiz,
+			@RequestPart( required = true) MultipartFile image) throws IOException {
+//		QuizRequest quiz= objectMapper.readValue(quizString, QuizRequest.class);
 		return ResponseEntity.status(HttpStatus.CREATED).body(service.create(quiz, image));
 	}
 
@@ -59,8 +62,7 @@ public class QuizController extends BaseController<QuizService> {
 	@EndpointMapping(name = "Update quiz")
 	@PutMapping(path = "{id}", consumes = "multipart/form-data")
 	@PreAuthorize("@ownerSecurity.isExamOwner(#id)")
-	public ResponseEntity<QuizResponse> update(@PathVariable String id,
-			@RequestPart("quiz") String quizString,
+	public ResponseEntity<QuizResponse> update(@PathVariable String id, @RequestPart("quiz") String quizString,
 			@RequestPart(name = "image", required = false) MultipartFile image) throws IOException {
 		QuizRequest quiz = objectMapper.readValue(quizString, QuizRequest.class);
 		return ResponseEntity.ok(service.update(id, quiz, image));
@@ -112,4 +114,3 @@ public class QuizController extends BaseController<QuizService> {
 //				.ok(new CountResponse(service.countByAuthorIdAndAccessModifier(id, AccessModifier.PUBLIC)));
 //	}
 }
-	

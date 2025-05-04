@@ -10,9 +10,9 @@ import lombok.Getter;
 public class NotificationEvent extends ApplicationEvent {
 	private static final long serialVersionUID = 8205739888714076152L;
 	private TargetType targetType;
-	private String targetId;
+	private Long targetId;
 
-	public NotificationEvent(Object source, String targetId, TargetType targetType) {
+	public NotificationEvent(Object source, Long targetId, TargetType targetType) {
 		super(source);
 		this.targetType= targetType;
 		this.targetId = targetId;

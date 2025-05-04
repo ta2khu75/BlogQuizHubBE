@@ -53,7 +53,7 @@ public class AuthController extends BaseController<AuthService> {
 		return ResponseEntity.status(HttpStatus.CREATED).body(service.register(request));
 	}
 
-	@GetMapping("refresh")
+	@PostMapping("refresh")
 	@EndpointMapping(name = "Refresh token")
 	public ResponseEntity<AuthResponse> createRefreshToken(@CookieValue("refresh_token") String refreshToken) {
 		AuthResponse response = service.refreshToken(refreshToken);
@@ -68,7 +68,7 @@ public class AuthController extends BaseController<AuthService> {
 		return ResponseEntity.ok(service.changePassword(request));
 	}
 
-	@GetMapping("logout")
+	@PostMapping("logout")
 	@EndpointMapping(name = "Logout")
 	public ResponseEntity<Void> logout() {
 		service.logout();

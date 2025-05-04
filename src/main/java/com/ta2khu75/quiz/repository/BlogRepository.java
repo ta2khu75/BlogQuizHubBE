@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 import com.ta2khu75.quiz.model.AccessModifier;
 import com.ta2khu75.quiz.model.entity.Blog;
 
-public interface BlogRepository extends JpaRepository<Blog, String> {
+public interface BlogRepository extends JpaRepository<Blog, Long> {
 	@Query("SELECT b FROM Blog b LEFT JOIN b.tags t WHERE" + "(:blogTagNames IS NULL OR t.name IN (:blogTagNames)) "
 			+ "AND (:keyword IS NULL OR b.title LIKE %:keyword% OR b.author.displayName LIKE %:keyword%) "
 			+ "AND (:authorId IS NULL OR b.author.id = :authorId) "
@@ -27,5 +27,5 @@ public interface BlogRepository extends JpaRepository<Blog, String> {
 
 	Long countByAuthorIdAndAccessModifier(Long authorId, AccessModifier accessModifier);
 
-	Optional<Blog> findByIdAndAuthorId(String blogId, Long authorId);
+	Optional<Blog> findByIdAndAuthorId(Long blogId, Long authorId);
 }

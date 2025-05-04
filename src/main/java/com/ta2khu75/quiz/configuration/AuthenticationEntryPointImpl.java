@@ -10,7 +10,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ta2khu75.quiz.exception.AdviceException;
+import com.ta2khu75.quiz.model.response.ApiResponse;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,15 +27,8 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException authException) throws IOException, ServletException {
 		delegate.commence(request, response, authException);
-		String exceptionString = authException.getMessage();
-		AdviceException.ApiResponse apiResponse;
-		if (exceptionString.contains("Jwt expired at")) {
-			apiResponse = new AdviceException.ApiResponse(null, authException.getMessage(), false, 444);
-		} else {
-			apiResponse = new AdviceException.ApiResponse(null, authException.getMessage(), false, HttpStatus.UNAUTHORIZED.value());
-		}
+		ApiResponse apiResponse=ApiResponse.builder().message(authException.getMessage()).status(HttpStatus.UNAUTHORIZED.value()).build();
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-		response.setStatus(444);
 		objectMapper.writeValue(response.getWriter(), apiResponse);
 	}
 }

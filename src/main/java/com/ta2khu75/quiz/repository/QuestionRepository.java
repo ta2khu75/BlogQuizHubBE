@@ -6,5 +6,5 @@ import com.ta2khu75.quiz.model.entity.Question;
 
 import java.util.List;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
-    List<Question> findByQuizId(String id);
+    List<Question> findByQuizId(Long id);
 }

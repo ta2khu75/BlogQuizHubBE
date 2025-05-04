@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CommentResponse extends CommentBase implements InfoResponse<String> {
+public class CommentResponse extends CommentBase implements BaseResponse<String> {
 	String id;
 	Instant createdAt;
 	Instant updatedAt;

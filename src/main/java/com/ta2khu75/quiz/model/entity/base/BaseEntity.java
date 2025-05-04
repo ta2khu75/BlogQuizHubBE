@@ -17,7 +17,7 @@ import java.time.Instant;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public abstract class EntityBase<T> {
+public abstract class BaseEntity<T> {
 	@CreatedDate
 	@Column(updatable = false, nullable = false)
 	Instant createdAt;

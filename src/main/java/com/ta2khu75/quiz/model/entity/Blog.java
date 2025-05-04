@@ -6,7 +6,9 @@ import java.util.Set;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.ta2khu75.quiz.model.AccessModifier;
-import com.ta2khu75.quiz.model.entity.base.EntityBaseString;
+import com.ta2khu75.quiz.model.entity.base.BaseEntityLong;
+import com.ta2khu75.quiz.model.entity.base.SaltedIdentifiable;
+import com.ta2khu75.quiz.util.SaltedType;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -31,7 +33,7 @@ import lombok.experimental.FieldDefaults;
 @EqualsAndHashCode(callSuper = true, exclude = { "author", "quizzes", "comments", "tags" })
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @EntityListeners(AuditingEntityListener.class)
-public class Blog extends EntityBaseString {
+public class Blog extends BaseEntityLong implements SaltedIdentifiable {
 	@Column(nullable = false, columnDefinition = "NVARCHAR(255)")
 	String title;
 	@Column(nullable = false, columnDefinition = "NVARCHAR(MAX)")
@@ -59,5 +61,10 @@ public class Blog extends EntityBaseString {
 	public void removeQuiz(Quiz quiz) {
 		quizzes.remove(quiz);
 		quiz.setBlog(null);
+	}
+
+	@Override
+	public SaltedType getSaltedType() {
+		return SaltedType.BLOG;
 	}
 }

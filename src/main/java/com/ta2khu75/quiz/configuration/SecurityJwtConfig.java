@@ -18,7 +18,10 @@ import com.nimbusds.jose.util.Base64;
 @Configuration
 public class SecurityJwtConfig {
 	@Value("${jwt.secret}")
-	private String secret;
+	private String jwtSecret;
+	@Value("${jwt.refresh.secret}")
+	private String refreshSecret;
+	
 	public static final MacAlgorithm JWT_ALGORITHM=MacAlgorithm.HS512;
 	@Bean
 	JwtEncoder jwtEncoder() {
@@ -35,7 +38,7 @@ public class SecurityJwtConfig {
 	}
 
 	private SecretKey getSecretKey() {
-		byte[] keyBytes = Base64.from(secret).decode();
+		byte[] keyBytes = Base64.from(jwtSecret).decode();
 		return new SecretKeySpec(keyBytes, 0, keyBytes.length, MacAlgorithm.HS512.getName());
 	}
 }

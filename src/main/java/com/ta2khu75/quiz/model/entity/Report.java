@@ -3,7 +3,7 @@ package com.ta2khu75.quiz.model.entity;
 import com.ta2khu75.quiz.model.TargetType;
 import com.ta2khu75.quiz.model.ReportStatus;
 import com.ta2khu75.quiz.model.ReportType;
-import com.ta2khu75.quiz.model.entity.base.EntityBaseCustom;
+import com.ta2khu75.quiz.model.entity.base.BaseEntityCustom;
 import com.ta2khu75.quiz.model.entity.id.ReportId;
 
 import jakarta.persistence.Column;
@@ -25,7 +25,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Report extends EntityBaseCustom<ReportId> {
+public class Report extends BaseEntityCustom<ReportId> {
 	@ManyToOne
 	@MapsId("authorId")
 	AccountProfile author;

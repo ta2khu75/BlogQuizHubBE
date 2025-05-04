@@ -3,8 +3,7 @@ package com.ta2khu75.quiz.model.entity;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.ta2khu75.quiz.model.NotificationStatus;
-import com.ta2khu75.quiz.model.TargetType;
-import com.ta2khu75.quiz.model.entity.base.EntityBaseCustom;
+import com.ta2khu75.quiz.model.entity.base.BaseEntityCustom;
 import com.ta2khu75.quiz.model.entity.id.NotificationId;
 
 import jakarta.persistence.Column;
@@ -28,13 +27,11 @@ import lombok.experimental.FieldDefaults;
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @EntityListeners(AuditingEntityListener.class)
-public class Notification extends EntityBaseCustom<NotificationId> {
+public class Notification extends BaseEntityCustom<NotificationId> {
 	@ManyToOne
 	@MapsId("accountId")
 	AccountProfile account;
 	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	TargetType targetType;
 	@Enumerated(EnumType.STRING)
 	NotificationStatus status=NotificationStatus.UNREAD;
 }

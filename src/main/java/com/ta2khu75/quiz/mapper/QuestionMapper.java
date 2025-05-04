@@ -2,7 +2,6 @@ package com.ta2khu75.quiz.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 import com.ta2khu75.quiz.model.request.QuestionRequest;

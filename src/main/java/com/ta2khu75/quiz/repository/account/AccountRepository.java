@@ -21,7 +21,7 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 //	Optional<Account> findByEmailAndRefreshToken(String email, String refreshToken);
 
 //	Optional<Account> findByCodeVerify(String codeVerify);
-	
+	Optional<Account> findByEmail(String email);
 	@Query("SELECT a FROM Account a JOIN a.profile p JOIN a.status s JOIN s.role r WHERE "
 			+ "(:keyword IS NULL OR p.displayName LIKE %:keyword% OR a.email LIKE %:keyword%) "
 			+ "AND (:roleId IS NULL OR r.id = :roleId) "

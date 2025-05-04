@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class QuizResultResponse implements InfoResponse<String>{
+public class QuizResultResponse implements BaseResponse<String>{
 	String id;
 	Instant createdAt;
 	Instant updatedAt;

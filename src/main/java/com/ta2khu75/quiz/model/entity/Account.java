@@ -14,7 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.ta2khu75.quiz.model.entity.base.EntityBaseString;
+import com.ta2khu75.quiz.model.entity.base.BaseEntityString;
 
 @Data
 @Entity
@@ -25,7 +25,7 @@ import com.ta2khu75.quiz.model.entity.base.EntityBaseString;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @EntityListeners(AuditingEntityListener.class)
 @EqualsAndHashCode(callSuper = true, exclude = { "status", "profile"})
-public class Account extends EntityBaseString implements UserDetails {
+public class Account extends BaseEntityString implements UserDetails {
 	private static final long serialVersionUID = -6436446209727776976L;
 	@Column(unique = true, nullable = false)
 	String email;

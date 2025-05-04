@@ -49,7 +49,7 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 		this.quizRepository = quizRepository;
 		this.quizMapper = quizMapper;
 	}
-	private Object getTarget(String targetId,TargetType targetType) {
+	private Object getTarget(Long targetId,TargetType targetType) {
 		switch (targetType) {
 		case BLOG: {
 			return FunctionUtil.findOrThrow(targetId, Blog.class, blogRepository::findById);
@@ -60,6 +60,7 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + targetType);
 		}
+		
 	}
 	private ReportResponse toResponse(Report report, Object target) {
 		ReportResponse response = mapper.toResponse(report);
@@ -93,14 +94,15 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 	@Override
 	@Transactional
 	public ReportResponse create(ReportRequest request) {
-		AccountProfile account = SecurityUtil.getCurrentProfile();
-		Object target=getTarget(request.getTargetId(), request.getTargetType());
-		isAuthor(target, request.getTargetType(), account.getId());
-		Report report= mapper.toEntity(request);
-		report.setId(new ReportId(1L, request.getTargetId()));
-		report.setAuthor(account);
-		report=repository.save(report);
-		return toResponse(report, target);
+//		AccountProfile account = SecurityUtil.getCurrentProfile();
+//		Object target=getTarget(request.getTargetId(), request.getTargetType());
+//		isAuthor(target, request.getTargetType(), account.getId());
+//		Report report= mapper.toEntity(request);
+//		report.setId(new ReportId(1L, request.getTargetId()));
+//		report.setAuthor(account);
+//		report=repository.save(report);
+//		return toResponse(report, target);
+		return null;
 	}
 
 	@Override
@@ -110,11 +112,12 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 
 	@Override
 	public PageResponse<ReportResponse> search(ReportSearch search) {
-		Pageable pageable = Pageable.ofSize(search.getSize()).withPage(search.getPage() - 1);
-		Page<Report> page = repository.search(search.getAuthorId(), search.getTargetType(), search.getReportType(),
-				search.getReportStatus(), search.getFromDate(), search.getToDate(), pageable);
-		PageResponse<ReportResponse> response = mapper.toPageResponse(page.map(report -> toResponse(report, getTarget(report.getId().getTargetId(), report.getTargetType()))));
-		return response;
+//		Pageable pageable = Pageable.ofSize(search.getSize()).withPage(search.getPage() - 1);
+//		Page<Report> page = repository.search(search.getAuthorId(), search.getTargetType(), search.getReportType(),
+//				search.getReportStatus(), search.getFromDate(), search.getToDate(), pageable);
+//		PageResponse<ReportResponse> response = mapper.toPageResponse(page.map(report -> toResponse(report, getTarget(report.getId().getTargetId(), report.getTargetType()))));
+//		return response;
+		return null;
 	}
 	@Override
 	public ReportResponse update(String id, @Valid ReportRequest request) {
@@ -137,8 +140,9 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 	}
 	@Override
 	public ReportResponse updateStatus(ReportId id, ReportStatus status) {
-		Report report= FunctionUtil.findOrThrow(id, Report.class, repository::findById);
-		report.setReportStatus(status);
-		return toResponse(repository.save(report), getTarget(id.getTargetId(), report.getTargetType()));
+//		report report= functionutil.findorthrow(id, report.class, repository::findbyid);
+//		report.setReportStatus(status);
+//		return toResponse(repository.save(report), getTarget(id.getTargetId(), report.getTargetType()));
+		return null;
 	}
 }

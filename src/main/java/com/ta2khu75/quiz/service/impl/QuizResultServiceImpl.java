@@ -41,29 +41,33 @@ import com.ta2khu75.quiz.service.QuizResultService;
 import com.ta2khu75.quiz.service.base.BaseService;
 import com.ta2khu75.quiz.service.util.RedisUtil;
 import com.ta2khu75.quiz.service.util.RedisUtil.NameModel;
+import com.ta2khu75.quiz.util.Base62;
 import com.ta2khu75.quiz.util.FunctionUtil;
+import com.ta2khu75.quiz.util.SaltedType;
 import com.ta2khu75.quiz.util.SecurityUtil;
 
 @Service
 public class QuizResultServiceImpl extends BaseService<QuizResultRepository, QuizResultMapper>
 		implements QuizResultService {
-	private final QuizRepository examRepository;
+	private final QuizRepository quizRepository;
 	private final QuestionRepository questionRepository;
 	private final AnswerRepository answerRepository;
 	private final UserAnswerRepository userAnswerRepository;
 	private final RedisUtil redisUtil;
 
 	public QuizResultServiceImpl(QuizResultRepository repository, QuizResultMapper mapper,
-			QuizRepository examRepository, QuestionRepository questionRepository, AnswerRepository answerRepository,
+			QuizRepository quizRepository, QuestionRepository questionRepository, AnswerRepository answerRepository,
 			UserAnswerRepository userAnswerRepository, AccountRepository accountRepository, RedisUtil redisUtil) {
 		super(repository, mapper);
-		this.examRepository = examRepository;
+		this.quizRepository = quizRepository;
 		this.questionRepository= questionRepository;
 		this.answerRepository = answerRepository;
 		this.userAnswerRepository = userAnswerRepository;
 		this.redisUtil = redisUtil;
 	}
-
+	private Long decodeId(String id) {
+		return Base62.decodeWithSalt(id, SaltedType.QUIZ);
+	}
 	private void scoreExam(QuizResult quizResult, Set<UserAnswerRequest> userAnswerRequests) {
 		float totalScore = 0;
 
@@ -176,7 +180,7 @@ public class QuizResultServiceImpl extends BaseService<QuizResultRepository, Qui
 	@Override
 	public QuizResultResponse create(String quizId) {
 		AccountProfile account = SecurityUtil.getCurrentProfile();
-		Quiz quiz= FunctionUtil.findOrThrow(quizId, Quiz.class, examRepository::findById);
+		Quiz quiz= FunctionUtil.findOrThrow(decodeId(quizId), Quiz.class, quizRepository::findById);
 		QuizResult quizResult = QuizResult.builder().quiz(quiz).account(account)
 				.endTime(Instant.now().plusSeconds(quiz.getDuration() * 60L).plusSeconds(30)).build();
 		QuizResultResponse response=mapper.toResponse(repository.save(quizResult));

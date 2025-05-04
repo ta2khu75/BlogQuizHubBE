@@ -13,8 +13,8 @@ import lombok.experimental.FieldDefaults;
 @MappedSuperclass
 @EqualsAndHashCode(callSuper = false)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public abstract class EntityBaseString extends EntityBase<String> {
+public abstract class BaseEntityLong extends BaseEntity<Long> {
 	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
-	String id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	Long id;
 }

@@ -10,8 +10,8 @@ import com.ta2khu75.quiz.model.request.ReportRequest;
 import com.ta2khu75.quiz.model.response.PageResponse;
 import com.ta2khu75.quiz.model.response.ReportResponse;
 
-@Mapper(componentModel = "spring", uses = {AccountMapper.class, InfoMapperFactory.class})
-public interface ReportMapper {
+@Mapper(componentModel = "spring", uses = {AccountMapper.class})
+public interface ReportMapper extends BaseMapper<Report, ReportResponse> {
 	@Mapping(target="id", ignore = true)
 	@Mapping(target = "author", ignore = true)
 	@Mapping(target = "reportStatus", ignore = true)

@@ -6,15 +6,16 @@ import org.mapstruct.Named;
 import org.springframework.data.domain.Page;
 
 import com.ta2khu75.quiz.model.entity.Blog;
+import com.ta2khu75.quiz.model.entity.Quiz;
 import com.ta2khu75.quiz.model.request.BlogRequest;
 import com.ta2khu75.quiz.model.response.BlogResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
+import com.ta2khu75.quiz.model.response.QuizResponse;
 
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = { QuizMapper.class, AccountMapper.class })
-public interface BlogMapper extends PageMapper<Blog, BlogResponse>, InfoMapper<Blog, BlogResponse> {
-
+@Mapper(componentModel = "spring", uses = { AccountMapper.class , IdMapper.class})
+public interface BlogMapper extends PageMapper<Blog, BlogResponse> {
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "createdAt", ignore = true)
 	@Mapping(target = "updatedAt", ignore = true)
@@ -37,19 +38,24 @@ public interface BlogMapper extends PageMapper<Blog, BlogResponse>, InfoMapper<B
 	@Mapping(target = "tags", ignore = true)
 	void update(BlogRequest blogResponse, @MappingTarget Blog blog);
 
+	@Named("toQuizResponse")
+	@Mapping(target = "id", source = "quiz", qualifiedByName = "encodeId")
+	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
+	@Mapping(target = "blog", source = "blog", qualifiedByName = "toBlogResponse")
+	@Mapping(target = "questions", ignore = true)
+	QuizResponse toResponse(Quiz quiz);
+
 	@Named("toBlogResponse")
+	@Mapping(target = "id", source = "blog", qualifiedByName = "encodeId")
 	@Mapping(target = "commentCount", expression = "java(blog.getComments().size())")
-//	@Mapping(target = "commentCount", source = "comments", qualifiedByName = "commentCount")
-//	@Mapping(target = "info", source = "blog", qualifiedByName = "toInfoResponse")
 	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "content", ignore = true)
 	@Mapping(target = "quizzes", ignore = true)
 	BlogResponse toResponse(Blog blog);
 
 	@Named("toBlogDetailsResponse")
+	@Mapping(target = "id", source = "blog", qualifiedByName = "encodeId")
 	@Mapping(target = "commentCount", expression = "java(blog.getComments().size())")
-//	@Mapping(target = "commentCount", source = "comments", qualifiedByName = "commentCount")
-//	@Mapping(target = "info", source = "blog", qualifiedByName = "toInfoResponse")
 	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "quizzes", source = "quizzes", qualifiedByName = "toQuizResponse")
 	BlogResponse toDetailsResponse(Blog blog);

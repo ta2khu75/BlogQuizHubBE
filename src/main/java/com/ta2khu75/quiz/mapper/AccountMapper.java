@@ -19,7 +19,7 @@ import com.ta2khu75.quiz.model.response.account.AccountStatusResponse;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = { RoleMapper.class })
-public interface AccountMapper extends PageMapper<Account, AccountResponse>, InfoMapper<Account, AccountResponse>{
+public interface AccountMapper extends PageMapper<Account, AccountResponse>, BaseMapper<Account, AccountResponse>{
 	@Mapping(target="birthday", source = "birthday")
 	@Mapping(target="lastName", source = "lastName")
 	@Mapping(target="firstName", source = "firstName")

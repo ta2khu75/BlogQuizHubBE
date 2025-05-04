@@ -1,6 +1,6 @@
 package com.ta2khu75.quiz.model.entity;
 
-import com.ta2khu75.quiz.model.entity.base.EntityBaseString;
+import com.ta2khu75.quiz.model.entity.base.BaseEntityString;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Comment extends EntityBaseString {
+public class Comment extends BaseEntityString {
 	@Column(nullable = false, columnDefinition = "NVARCHAR(255)")
 	String content;
 	@ManyToOne

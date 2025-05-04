@@ -37,8 +37,7 @@ public class NotificationListener implements ApplicationListener<NotificationEve
 		Set<Follow> followers = followRepository.findByFollowingId(profileId);
 		Set<Notification> notificationSet = followers.stream().map(follow -> {
 			Notification notification = new Notification();
-			notification.setId(new NotificationId(follow.getId().getFollowerId(), event.getTargetId()));
-			notification.setTargetType(event.getTargetType());
+			notification.setId(new NotificationId(follow.getId().getFollowerId(), event.getTargetId(), event.getTargetType()));
 			notification.setAccount(follow.getFollower());
 			return notification;
 		}).collect(Collectors.toSet());

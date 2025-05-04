@@ -95,7 +95,7 @@ public class AuthServiceImpl extends BaseService<AccountRepository, AccountMappe
 
 		Account account = new Account();
 		account.setEmail(request.getEmail().toLowerCase());
-		account.setPassword(passwordEncoder.encode(account.getPassword()));
+		account.setPassword(passwordEncoder.encode(request.getPassword()));
 		account.setProfile(profile);
 		account.setStatus(status);
 		try {
@@ -119,7 +119,7 @@ public class AuthServiceImpl extends BaseService<AccountRepository, AccountMappe
 		AccountResponse response= mapper.toResponse(account);
 		TokenResponse refreshToken = jwtUtil.createRefreshToken(response);
 		this.updateRefreshToken(account.getStatus(), refreshToken.getToken());
-		return new AuthResponse(response.getProfile(), jwtUtil.createAccessToken(response), refreshToken);
+		return new AuthResponse(response.getProfile(),response.getStatus().getRole().getName() , jwtUtil.createAccessToken(response), refreshToken);
 	}
 
 	private void updateRefreshToken(AccountStatus status, String token) {

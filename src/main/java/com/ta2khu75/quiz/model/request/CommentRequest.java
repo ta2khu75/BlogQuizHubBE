@@ -12,5 +12,5 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CommentRequest extends CommentBase {
 	@NotNull(message = "Blog Id must not be null")
-	String blogId;
+	Long blogId;
 }

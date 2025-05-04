@@ -52,7 +52,7 @@ public class AccountServiceImpl extends BaseService<AccountRepository, AccountMa
 
 	public AccountServiceImpl(AccountRepository repository, AccountMapper mapper, RoleRepository roleRepository,
 			AccountProfileRepository profileRepository, AccountStatusReporitory statusRepository,
-			PasswordEncoder passwordEncoder, PageMapper pageMapper, RedisUtil redisUtil) {
+			PasswordEncoder passwordEncoder, RedisUtil redisUtil) {
 		super(repository, mapper);
 		this.roleRepository = roleRepository;
 		this.profileRepository = profileRepository;

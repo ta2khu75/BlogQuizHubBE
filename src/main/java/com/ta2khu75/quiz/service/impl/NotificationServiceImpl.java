@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ta2khu75.quiz.mapper.NotificationMapper;
+import com.ta2khu75.quiz.model.NotificationStatus;
 import com.ta2khu75.quiz.model.entity.Notification;
 import com.ta2khu75.quiz.model.response.NotificationResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
@@ -13,6 +14,8 @@ import com.ta2khu75.quiz.service.BlogService;
 import com.ta2khu75.quiz.service.QuizService;
 import com.ta2khu75.quiz.service.NotificationService;
 import com.ta2khu75.quiz.service.base.BaseService;
+import com.ta2khu75.quiz.util.Base62;
+import com.ta2khu75.quiz.util.SaltedType;
 
 @Service
 public class NotificationServiceImpl extends BaseService<NotificationRepository, NotificationMapper>
@@ -55,15 +58,14 @@ public class NotificationServiceImpl extends BaseService<NotificationRepository,
 		response.getContent().forEach(notification -> notification.setTarget(this.resolveTarget(notification)));
 		return response;
 	}
-
 	private Object resolveTarget(NotificationResponse notification) {
-		switch (notification.getTargetType()) {
+		switch (notification.getId().getTargetType()) {
 		case BLOG:
-			return blogService.read(notification.getId().getTargetId());
+			return blogService.read(Base62.encodeWithSalt(notification.getId().getTargetId(), SaltedType.BLOG));
 		case QUIZ:
-			return examService.read(notification.getId().getTargetId());
+			return blogService.read(Base62.encodeWithSalt(notification.getId().getTargetId(), SaltedType.QUIZ));
 		default:
-			throw new IllegalArgumentException("Unsupported target type: " + notification.getTargetType());
+			throw new IllegalArgumentException("Unsupported target type: " + notification.getId().getTargetType());
 		}
 	}
 }

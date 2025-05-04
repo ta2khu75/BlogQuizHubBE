@@ -14,14 +14,13 @@ import lombok.experimental.FieldDefaults;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class QuizResponse extends QuizBase implements InfoResponse<String> {
+public class QuizResponse extends QuizBase implements BaseResponse<String> {
 	String id;
 	Instant createdAt;
 	Instant updatedAt;
 	String imagePath;
 	AccountProfileResponse author;
 	QuizCategoryResponse category;
-//	InfoResponse<String> info;
 	BlogResponse blog;
 	List<QuestionResponse> questions;
 }

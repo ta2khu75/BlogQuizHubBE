@@ -3,7 +3,7 @@ package com.ta2khu75.quiz.model.entity;
 import java.time.Instant;
 import java.util.List;
 
-import com.ta2khu75.quiz.model.entity.base.EntityBaseString;
+import com.ta2khu75.quiz.model.entity.base.BaseEntityString;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -23,7 +23,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString(exclude = { "account", "quiz", "userAnswers"})
 @EqualsAndHashCode(callSuper = true, exclude = { "account", "quiz", "userAnswers"})
-public class QuizResult extends EntityBaseString {
+public class QuizResult extends BaseEntityString {
 	Float point;
 	Integer correctCount;
 	@Column(nullable = false)

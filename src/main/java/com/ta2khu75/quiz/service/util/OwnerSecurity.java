@@ -21,13 +21,13 @@ public class OwnerSecurity {
 	QuizRepository examRepository;
 	CommentRepository commentRepository;
 
-	public boolean isBlogOwner(String blogId) {
+	public boolean isBlogOwner(Long blogId) {
 		Optional<?> optional = blogRepository.findByIdAndAuthorId(blogId, SecurityUtil.getCurrentProfileId());
 		return optional.isPresent();
 	}
 
-	public boolean isExamOwner(String examId) {
-		Optional<?> optional = examRepository.findByIdAndAuthorId(examId, SecurityUtil.getCurrentProfileId());
+	public boolean isExamOwner(Long quizId) {
+		Optional<?> optional = examRepository.findByIdAndAuthorId(quizId, SecurityUtil.getCurrentProfileId());
 		return optional.isPresent();
 	}
 
