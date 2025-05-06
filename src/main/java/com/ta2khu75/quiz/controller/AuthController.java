@@ -19,10 +19,12 @@ import org.springframework.web.servlet.view.RedirectView;
 import com.ta2khu75.quiz.anotation.EndpointMapping;
 import com.ta2khu75.quiz.model.request.AuthRequest;
 import com.ta2khu75.quiz.model.request.account.AccountPasswordRequest;
+import com.ta2khu75.quiz.model.request.account.AccountProfileRequest;
 import com.ta2khu75.quiz.model.request.account.AccountRequest;
 import com.ta2khu75.quiz.model.response.AuthResponse;
 //import com.ta2khu75.quiz.model.response.BooleanResponse;
 import com.ta2khu75.quiz.model.response.TokenResponse;
+import com.ta2khu75.quiz.model.response.account.AccountProfileResponse;
 import com.ta2khu75.quiz.model.response.account.AccountResponse;
 import com.ta2khu75.quiz.service.AuthService;
 
@@ -48,9 +50,9 @@ public class AuthController extends BaseController<AuthService> {
 
 	@PostMapping("register")
 	@EndpointMapping(name = "Register")
-	public ResponseEntity<AccountResponse> register(@Valid @RequestBody AccountRequest request)
+	public ResponseEntity<Void> register(@Valid @RequestBody AccountRequest request)
 			throws MessagingException {
-		return ResponseEntity.status(HttpStatus.CREATED).body(service.register(request));
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@PostMapping("refresh")
@@ -64,8 +66,13 @@ public class AuthController extends BaseController<AuthService> {
 
 	@PutMapping("change-password")
 	@EndpointMapping(name = "Change password")
-	public ResponseEntity<AccountResponse> changePassword(@Valid @RequestBody AccountPasswordRequest request) {
-		return ResponseEntity.ok(service.changePassword(request));
+	public ResponseEntity<Void> changePassword(@Valid @RequestBody AccountPasswordRequest request) {
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+	@PutMapping("change-profile")
+	@EndpointMapping(name = "Change profile")
+	public ResponseEntity<AccountProfileResponse> changeProfile(@Valid @RequestBody AccountProfileRequest request) {
+		return ResponseEntity.ok(service.changeProfile(request));
 	}
 
 	@PostMapping("logout")

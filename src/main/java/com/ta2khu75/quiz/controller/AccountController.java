@@ -3,6 +3,7 @@ package com.ta2khu75.quiz.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.groups.Default;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -43,34 +44,34 @@ public class AccountController extends BaseController<AccountService> {
 		return ResponseEntity.noContent().build();
 	}
 
-	@GetMapping("{id}")
-	@EndpointMapping(name = "Read account")
+	@GetMapping("profile/{id}")
+	@EndpointMapping(name = "Read profile")
 	ResponseEntity<AccountProfileResponse> read(@PathVariable Long id) {
 		return ResponseEntity.ok(service.readProfile(id));
 	}
 
 	@GetMapping
-	@EndpointMapping(name = "Search account status")
+	@EndpointMapping(name = "Search account")
 	public ResponseEntity<PageResponse<AccountResponse>> search(@ModelAttribute AccountSearch search) {
 		return ResponseEntity.ok(service.search(search));
-	}
+}
 
-	@PutMapping("profile/{id}")
-	@EndpointMapping(name = "Update account profile")
+	@PutMapping("profile")
+	@EndpointMapping(name = "Update profile")
 	public ResponseEntity<AccountProfileResponse> updateProfile(@PathVariable Long id,
 			@Valid @RequestBody AccountProfileRequest request) {
 		return ResponseEntity.ok(service.updateProfile(id, request));
 	}
 
 	@PutMapping("status/{id}")
-	@EndpointMapping(name = "Update account status")
+	@EndpointMapping(name = "Update status")
 	public ResponseEntity<AccountStatusResponse> updateStatus(@PathVariable Long id,
 			@Valid @RequestBody AccountStatusRequest request) {
 		return ResponseEntity.ok(service.updateStatus(id, request));
 	}
 
 	@PutMapping("password/{id}")
-	@EndpointMapping(name = "Update account status")
+	@EndpointMapping(name = "Update password")
 	public ResponseEntity<AccountResponse> updateStatus(@PathVariable String id,
 			@Valid @RequestBody AccountPasswordRequest request) {
 		return ResponseEntity.ok(service.updatePassword(id, request));

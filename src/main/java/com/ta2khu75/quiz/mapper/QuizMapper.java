@@ -80,14 +80,14 @@ public interface QuizMapper extends PageMapper<Quiz, QuizResponse> {
 
 	@Named("toQuizDetailResponse")
 	@Mapping(target = "id", source = "quiz", qualifiedByName = "encodeId")
-	@Mapping(target = "questions", source = "questions", qualifiedByName = "toQuestionDetailResponse")
+	@Mapping(target = "questions", source = "questions", qualifiedByName = "toQuestionDetailDto")
 	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "blog", source = "blog", qualifiedByName = "toBlogResponse")
 	QuizResponse toDetailResponse(Quiz quiz);
 
 	@Named("toQuizQuestionDetailResponse")
 	@Mapping(target = "id", source = "quiz", qualifiedByName = "encodeId")
-	@Mapping(target = "questions", source = "questions", qualifiedByName = "toQuestionAnswerDetailResponse")
+	@Mapping(target = "questions", source = "questions", qualifiedByName = "toQuestionAnswerDetailDto")
 	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "blog", source = "blog", qualifiedByName = "toBlogResponse")
 	QuizResponse toQuizQuestionDetailResponse(Quiz quiz);

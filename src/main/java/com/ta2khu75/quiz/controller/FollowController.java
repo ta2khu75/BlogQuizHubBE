@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,23 +22,23 @@ public class FollowController extends BaseController<FollowService> {
 		super(service);
 	}
 
-	@GetMapping("/account/{accountId}")
-	@EndpointMapping(name="Follow account")
-	public ResponseEntity<FollowResponse> create(@PathVariable Long accountId) {
-		return ResponseEntity.ok(service.create(accountId));
+	@PostMapping("{profileId}")
+	@EndpointMapping(name="Follow profile")
+	public ResponseEntity<FollowResponse> create(@PathVariable Long profileId) {
+		return ResponseEntity.ok(service.create(profileId));
 	}
 
-	@DeleteMapping("/account/{accountId}")
-	@EndpointMapping(name="Unfollow account")
-	public ResponseEntity<Void> delete(@PathVariable Long accountId) {
-		service.delete(accountId);
+	@DeleteMapping("{profileId}")
+	@EndpointMapping(name="Unfollow profile")
+	public ResponseEntity<Void> delete(@PathVariable Long profileId) {
+		service.delete(profileId);
 		return ResponseEntity.noContent().build();
 	}
 
-	@GetMapping("/account/{accountId}/check")
-	@EndpointMapping(name="Check follow account")
-	public ResponseEntity<FollowResponse> check(@PathVariable Long accountId) {
-		return ResponseEntity.ok(service.read(accountId));
+	@GetMapping("{profileId}")
+	@EndpointMapping(name="Read follow")
+	public ResponseEntity<FollowResponse> read(@PathVariable Long profileId) {
+		return ResponseEntity.ok(service.read(profileId));
 	}
 
 	@GetMapping("/follower/{followingId}")

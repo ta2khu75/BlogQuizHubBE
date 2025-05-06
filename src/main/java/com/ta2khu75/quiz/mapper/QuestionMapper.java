@@ -4,28 +4,26 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-import com.ta2khu75.quiz.model.request.QuestionRequest;
-import com.ta2khu75.quiz.model.response.QuestionResponse;
+import com.ta2khu75.quiz.model.dto.QuestionDto;
 import com.ta2khu75.quiz.model.entity.Question;
 
 @Mapper(componentModel = "spring", uses = { AnswerMapper.class })
 public interface QuestionMapper {
 	@Named("toQuestion")
-	@Mapping(target = "filePath", ignore = true)
 	@Mapping(target = "quiz", ignore = true)
 	@Mapping(target = "userAnswers", ignore = true)
 	@Mapping(target = "answers", source = "answers", qualifiedByName = "toAnswer")
-	Question toEntity(QuestionRequest request);
+	Question toEntity(QuestionDto dto);
 	
-	@Named("toQuestionResponse")
+	@Named("toQuestionDto")
 	@Mapping(target = "answers", ignore = true)
-	QuestionResponse toResponse(Question question);
+	QuestionDto toDto(Question question);
 	
-	@Named("toQuestionDetailResponse")
-	@Mapping(target = "answers", source = "answers", qualifiedByName = "toAnswerResponse")
-	QuestionResponse toDetailResponse(Question question);
+	@Named("toQuestionDetailDto")
+	@Mapping(target = "answers", source = "answers", qualifiedByName = "toAnswerDto")
+	QuestionDto toDetailDto(Question question);
 	
-	@Named("toQuestionAnswerDetailResponse")
-	@Mapping(target = "answers", source = "answers", qualifiedByName = "toAnswerDetailResponse")
-	QuestionResponse toQuestionAnswerDetailResponse(Question question);
+	@Named("toQuestionAnswerDetailDto")
+	@Mapping(target = "answers", source = "answers", qualifiedByName = "toAnswerDetailDto")
+	QuestionDto toQuestionAnswerDetailDto(Question question);
 }

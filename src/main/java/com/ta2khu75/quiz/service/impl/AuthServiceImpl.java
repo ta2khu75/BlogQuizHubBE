@@ -12,9 +12,11 @@ import org.springframework.stereotype.Service;
 
 import com.ta2khu75.quiz.model.request.AuthRequest;
 import com.ta2khu75.quiz.model.request.account.AccountPasswordRequest;
+import com.ta2khu75.quiz.model.request.account.AccountProfileRequest;
 import com.ta2khu75.quiz.model.request.account.AccountRequest;
 import com.ta2khu75.quiz.model.response.AuthResponse;
 import com.ta2khu75.quiz.model.response.TokenResponse;
+import com.ta2khu75.quiz.model.response.account.AccountProfileResponse;
 import com.ta2khu75.quiz.model.response.account.AccountResponse;
 import com.ta2khu75.quiz.exception.ExistingException;
 import com.ta2khu75.quiz.exception.NotMatchesException;
@@ -44,6 +46,7 @@ public class AuthServiceImpl extends BaseService<AccountRepository, AccountMappe
 	private final PasswordEncoder passwordEncoder;
 	private final RoleRepository roleRepository;
 	private final AccountStatusReporitory statusRepository;
+	private final AccountProfileRepository profileRepository;
 	private final AuthenticationManager authenticationManager;
 	private final SendMailScheduling sendMailScheduling;
 
@@ -56,6 +59,7 @@ public class AuthServiceImpl extends BaseService<AccountRepository, AccountMappe
 		this.passwordEncoder = passwordEncoder;
 		this.roleRepository = roleRepository;
 		this.statusRepository = statusRepository;
+		this.profileRepository = profileRepository;
 		this.authenticationManager= authenticationManager;
 		this.sendMailScheduling = sendMailScheduling;
 	}
@@ -69,7 +73,7 @@ public class AuthServiceImpl extends BaseService<AccountRepository, AccountMappe
 	}
 
 	@Override
-	public AccountResponse changePassword(AccountPasswordRequest request) {
+	public void changePassword(AccountPasswordRequest request) {
 		if (!request.getPassword().equals(request.getConfirmPassword()))
 			throw new NotMatchesException("New password and confirm password not matches");
 		Account account = findById();
@@ -77,11 +81,10 @@ public class AuthServiceImpl extends BaseService<AccountRepository, AccountMappe
 			throw new NotMatchesException("Password not matches");
 		account.setPassword(passwordEncoder.encode(request.getNewPassword()));
 		account = repository.save(account);
-		return mapper.toResponse(account);
 	}
 
 	@Override
-	public AccountResponse register(AccountRequest request) throws MessagingException {
+	public void register(AccountRequest request) throws MessagingException {
 		if (!request.getPassword().equals(request.getConfirmPassword()))
 			throw new NotMatchesException("password and confirm password not matches");
 		if (repository.existsByEmail(request.getEmail()))
@@ -105,7 +108,6 @@ public class AuthServiceImpl extends BaseService<AccountRepository, AccountMappe
 		}
 		sendMailScheduling.addMail(account.getEmail(), "Confirm your email",
 				EmailTemplateUtil.getVerify(status.getCodeVerify()), true);
-		return mapper.toResponse(account);
 	}
 
 	@Override
@@ -162,5 +164,13 @@ public class AuthServiceImpl extends BaseService<AccountRepository, AccountMappe
 	@Override
 	public boolean checkAdmin() {
 		return SecurityUtil.getCurrentRole().equals(RoleDefault.ADMIN.name());
+	}
+
+	@Override
+	public AccountProfileResponse changeProfile(AccountProfileRequest request) {
+		Long profileId = SecurityUtil.getCurrentProfileId();
+		AccountProfile profile = FunctionUtil.findOrThrow(profileId, AccountProfile.class, profileRepository::findById);
+		mapper.update(request, profile);
+		return mapper.toResponse(profileRepository.save(profile));
 	}
 }

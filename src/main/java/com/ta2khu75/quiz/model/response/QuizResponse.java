@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 
 import com.ta2khu75.quiz.model.base.QuizBase;
+import com.ta2khu75.quiz.model.dto.QuestionDto;
 import com.ta2khu75.quiz.model.response.account.AccountProfileResponse;
 
 import lombok.AccessLevel;
@@ -22,5 +23,5 @@ public class QuizResponse extends QuizBase implements BaseResponse<String> {
 	AccountProfileResponse author;
 	QuizCategoryResponse category;
 	BlogResponse blog;
-	List<QuestionResponse> questions;
+	List<QuestionDto> questions;
 }

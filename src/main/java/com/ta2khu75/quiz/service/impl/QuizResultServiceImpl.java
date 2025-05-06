@@ -18,13 +18,13 @@ import com.ta2khu75.quiz.model.request.QuizResultRequest;
 import com.ta2khu75.quiz.model.request.search.QuizResultSearch;
 import com.ta2khu75.quiz.model.request.UserAnswerRequest;
 import com.ta2khu75.quiz.model.response.QuizResultResponse;
-import com.ta2khu75.quiz.model.response.AnswerResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
-import com.ta2khu75.quiz.model.response.QuestionResponse;
 import com.ta2khu75.quiz.model.response.QuizResponse;
 import com.ta2khu75.quiz.mapper.QuizResultMapper;
 import com.ta2khu75.quiz.model.QuestionType;
 import com.ta2khu75.quiz.model.QuizResultMode;
+import com.ta2khu75.quiz.model.dto.AnswerDto;
+import com.ta2khu75.quiz.model.dto.QuestionDto;
 import com.ta2khu75.quiz.model.entity.AccountProfile;
 import com.ta2khu75.quiz.model.entity.Answer;
 import com.ta2khu75.quiz.model.entity.Quiz;
@@ -186,12 +186,11 @@ public class QuizResultServiceImpl extends BaseService<QuizResultRepository, Qui
 		QuizResultResponse response=mapper.toResponse(repository.save(quizResult));
 		if(quiz.isShuffleQuestion()) {
 			QuizResponse quizResponse = response.getQuiz();
-			List<QuestionResponse> questions = new ArrayList<>(quizResponse.getQuestions());
+			List<QuestionDto> questions = new ArrayList<>(quizResponse.getQuestions());
 			questions.stream().forEach(question->{
-				if(question.isShuffleAnswer()) {
-					List<AnswerResponse> answers = question.getAnswers();
+				if(question.shuffleAnswer()) {
+					List<AnswerDto> answers = question.answers();
 					Collections.shuffle(answers);
-					question.setAnswers(answers);
 				}
 			});
 			Collections.shuffle(questions);

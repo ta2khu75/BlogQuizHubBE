@@ -2,6 +2,9 @@ package com.ta2khu75.quiz.model.response;
 
 import java.util.List;
 
+import com.ta2khu75.quiz.model.dto.AnswerDto;
+import com.ta2khu75.quiz.model.dto.QuestionDto;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -10,6 +13,6 @@ import lombok.experimental.FieldDefaults;
 public class UserAnswerResponse {
 	Long id;
 	boolean correct;
-	QuestionResponse question;
-	List<AnswerResponse> answers;
+	QuestionDto question;
+	List<AnswerDto> answers;
 }

@@ -23,7 +23,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addCorsMappings(@NonNull CorsRegistry registry) {
-		registry.addMapping("/api/**").allowedOrigins("http://localhost:3000").allowedMethods("*").allowedHeaders("*")
+		registry.addMapping("/api/**").allowedOrigins("http://localhost:3000").allowedMethods("*").allowedHeaders("*").exposedHeaders("WWW-Authenticate")
 				.allowCredentials(true);
 	}
 	

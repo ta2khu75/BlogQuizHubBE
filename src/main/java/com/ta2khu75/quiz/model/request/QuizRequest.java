@@ -3,6 +3,7 @@ package com.ta2khu75.quiz.model.request;
 import java.util.List;
 
 import com.ta2khu75.quiz.model.base.QuizBase;
+import com.ta2khu75.quiz.model.dto.QuestionDto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -21,5 +22,5 @@ public class QuizRequest extends QuizBase{
 	Long categoryId;
 	@NotEmpty(message = "Quizzzes must not be empty")
 	@Valid
-	List<QuestionRequest> questions;
+	List<QuestionDto> questions;
 }

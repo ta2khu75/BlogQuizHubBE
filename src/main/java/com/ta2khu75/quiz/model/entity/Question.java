@@ -23,7 +23,7 @@ public class Question {
     Long id;
     @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
     String content;
-    String filePath;
+    String imagePath;
 	boolean shuffleAnswer;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
