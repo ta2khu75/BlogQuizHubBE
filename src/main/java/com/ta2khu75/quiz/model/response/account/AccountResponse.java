@@ -13,6 +13,6 @@ public class AccountResponse implements BaseResponse<String>{
 	String id;
 	Instant createdAt;
 	Instant updatedAt;
+	String  createdBy;
 	AccountProfileResponse profile;
-	AccountStatusResponse status;
-}
+	AccountStatusResponse status;}

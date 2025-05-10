@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public abstract class ReportBase {
 	@NotNull
-	ReportType reportType;
+	ReportType type;
 	@NotNull
 	TargetType targetType;
 }

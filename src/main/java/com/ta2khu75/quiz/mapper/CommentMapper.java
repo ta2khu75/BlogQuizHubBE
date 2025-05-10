@@ -12,7 +12,7 @@ import com.ta2khu75.quiz.model.response.PageResponse;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = { AccountMapper.class, BlogMapper.class})
-public interface CommentMapper extends PageMapper<Comment, CommentResponse>, BaseMapper<Comment, CommentResponse>{
+public interface CommentMapper extends PageMapper<Comment, CommentResponse>{
 	@Mapping(target = "author", ignore = true)
 	@Mapping(target = "blog", ignore = true)
 	@Mapping(target = "createdAt", ignore = true)

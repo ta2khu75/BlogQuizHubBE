@@ -1,5 +1,9 @@
 package com.ta2khu75.quiz.model.request.search;
 
+import java.time.Instant;
+
+import com.ta2khu75.quiz.model.request.account.AccountStatusRequest;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -9,4 +13,6 @@ public class AccountSearch extends Search {
 	private Boolean nonLocked;
 	private Boolean enabled;
 	private Long roleId;
+	private Instant createdFrom;
+	private Instant createdTo;
 }

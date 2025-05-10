@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public abstract class QuizBase {
+public abstract class QuizBase{
 	@NotBlank(message = "Title must not be blank")
 	String title;
 	@NotNull(message = "Time must not be null")

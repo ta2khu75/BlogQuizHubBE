@@ -4,7 +4,9 @@ import com.ta2khu75.quiz.model.TargetType;
 import com.ta2khu75.quiz.model.ReportStatus;
 import com.ta2khu75.quiz.model.ReportType;
 import com.ta2khu75.quiz.model.entity.base.BaseEntityCustom;
+import com.ta2khu75.quiz.model.entity.base.SaltedIdentifiable;
 import com.ta2khu75.quiz.model.entity.id.ReportId;
+import com.ta2khu75.quiz.util.SaltedType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,17 +27,30 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Report extends BaseEntityCustom<ReportId> {
+public class Report extends BaseEntityCustom<ReportId> implements SaltedIdentifiable {
 	@ManyToOne
 	@MapsId("authorId")
 	AccountProfile author;
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	ReportType reportType;
+	ReportType type;
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	TargetType targetType;
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	ReportStatus reportStatus=ReportStatus.PENDING;
+	ReportStatus status= ReportStatus.PENDING;
+
+	@Override
+	public SaltedType getSaltedType() {
+		switch (targetType) {
+		case QUIZ:
+			return SaltedType.QUIZ;
+		case BLOG:
+			return SaltedType.BLOG;
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + targetType);
+		}
+	}
+
 }

@@ -139,8 +139,7 @@ public class AccountServiceImpl extends BaseService<AccountRepository, AccountMa
 	@Override
 	public PageResponse<AccountResponse> search(AccountSearch search) {
 		Pageable pageable = Pageable.ofSize(search.getSize()).withPage(search.getPage());
-		Page<Account> page = repository.search(search.getKeyword(), search.getRoleId(), search.getEnabled(),
-				search.getNonLocked(), pageable);
+		Page<Account> page = repository.search(search, pageable);
 		return mapper.toPageResponse(page);
 	}
 }

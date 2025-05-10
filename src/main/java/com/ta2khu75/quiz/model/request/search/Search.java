@@ -2,10 +2,8 @@ package com.ta2khu75.quiz.model.request.search;
 
 public class Search {
 	private String keyword;
-	private int page;
-	private int size;
-	private final int defalutPage = 0;
-	private final int defalutSize = 10;
+	private int page=0;
+	private int size=10;
 
 	public String getKeyword() {
 		return keyword;
@@ -20,21 +18,18 @@ public class Search {
 	}
 
 	public void setPage(int page) {
-		if (page < 1) {
-			this.page = defalutPage;
-		} else {
-			this.page = page - 1;
-		}
+		if (page > 0) {
+			this.page = page-1;
+		} 
 	}
 
 	public int getSize() {
-		if (size < 1 || size > 50) {
-			return defalutSize;
-		}
 		return size;
 	}
 
 	public void setSize(int size) {
+		if(size>0 && size<51) {
 		this.size = size;
+		}
 	}
 }

@@ -5,27 +5,32 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.data.domain.Page;
 
+import com.ta2khu75.quiz.model.dto.ReportIdDto;
 import com.ta2khu75.quiz.model.entity.Report;
+import com.ta2khu75.quiz.model.entity.id.ReportId;
 import com.ta2khu75.quiz.model.request.ReportRequest;
 import com.ta2khu75.quiz.model.response.PageResponse;
 import com.ta2khu75.quiz.model.response.ReportResponse;
 
 @Mapper(componentModel = "spring", uses = {AccountMapper.class})
-public interface ReportMapper extends BaseMapper<Report, ReportResponse> {
+public interface ReportMapper  extends IdMapper{
+	@Mapping(target = "targetId", expression = "java(decode(dto, dto.targetId()))")
+	ReportId toEntity(ReportIdDto dto);
+	
 	@Mapping(target="id", ignore = true)
 	@Mapping(target = "author", ignore = true)
-	@Mapping(target = "reportStatus", ignore = true)
+	@Mapping(target = "status", ignore = true)
 	@Mapping(target = "createdAt", ignore = true)
 	@Mapping(target = "updatedAt", ignore = true)
 	Report toEntity(ReportRequest request);
 	
 	@Mapping(target = "target", ignore = true)
-//	@Mapping(target = "info", source = "entity")
+//	@Mapping(target = "targetType", source = "id", qualifiedByName = "encodeId")
 	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	ReportResponse toResponse(Report entity);
 	
 	@Mapping(target="id", ignore = true)
-	@Mapping(target = "reportStatus", ignore = true)
+	@Mapping(target = "status", ignore = true)
 	@Mapping(target = "createdAt", ignore = true)
 	@Mapping(target = "updatedAt", ignore = true)
 	@Mapping(target="author", ignore = true)

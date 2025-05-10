@@ -18,6 +18,7 @@ import com.ta2khu75.quiz.model.entity.Report;
 import com.ta2khu75.quiz.model.entity.id.ReportId;
 import com.ta2khu75.quiz.model.request.ReportRequest;
 import com.ta2khu75.quiz.model.request.search.ReportSearch;
+import com.ta2khu75.quiz.model.request.update.ReportStatusRequest;
 import com.ta2khu75.quiz.model.response.PageResponse;
 import com.ta2khu75.quiz.model.response.ReportResponse;
 import com.ta2khu75.quiz.repository.BlogRepository;
@@ -26,7 +27,9 @@ import com.ta2khu75.quiz.repository.ReportRepository;
 import com.ta2khu75.quiz.repository.account.AccountRepository;
 import com.ta2khu75.quiz.service.ReportService;
 import com.ta2khu75.quiz.service.base.BaseService;
+import com.ta2khu75.quiz.util.Base62;
 import com.ta2khu75.quiz.util.FunctionUtil;
+import com.ta2khu75.quiz.util.SaltedType;
 import com.ta2khu75.quiz.util.SecurityUtil;
 
 import jakarta.validation.Valid;
@@ -35,21 +38,23 @@ import lombok.experimental.FieldDefaults;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class ReportServiceImpl extends BaseService<ReportRepository, ReportMapper> implements ReportService{
+public class ReportServiceImpl extends BaseService<ReportRepository, ReportMapper> implements ReportService {
 	BlogRepository blogRepository;
 	BlogMapper blogMapper;
 	QuizRepository quizRepository;
 	QuizMapper quizMapper;
 
 	public ReportServiceImpl(ReportRepository repository, ReportMapper mapper, AccountRepository accountRepository,
-			BlogRepository blogRepository, BlogMapper blogMapper, QuizRepository quizRepository, QuizMapper quizMapper) {
+			BlogRepository blogRepository, BlogMapper blogMapper, QuizRepository quizRepository,
+			QuizMapper quizMapper) {
 		super(repository, mapper);
 		this.blogRepository = blogRepository;
 		this.blogMapper = blogMapper;
 		this.quizRepository = quizRepository;
 		this.quizMapper = quizMapper;
 	}
-	private Object getTarget(Long targetId,TargetType targetType) {
+
+	private Object getTarget(Long targetId, TargetType targetType) {
 		switch (targetType) {
 		case BLOG: {
 			return FunctionUtil.findOrThrow(targetId, Blog.class, blogRepository::findById);
@@ -60,19 +65,19 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + targetType);
 		}
-		
 	}
+
 	private ReportResponse toResponse(Report report, Object target) {
 		ReportResponse response = mapper.toResponse(report);
-		if(response.getTargetType().equals(TargetType.BLOG)) {
+		if (response.getTargetType().equals(TargetType.BLOG)) {
 			response.setTarget(blogMapper.toResponse((Blog) target));
-		}else {
+		} else {
 			response.setTarget(quizMapper.toResponse((Quiz) target));
 		}
 		return response;
 	}
-	
-	private void isAuthor(Object target, TargetType targetType, Long accountId) {
+
+	private void checkAuthor(Object target, TargetType targetType, Long profileId) {
 		Long authorId;
 		switch (targetType) {
 		case BLOG: {
@@ -86,63 +91,74 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + targetType);
 		}
-		if(authorId.equals(authorId)) {
+		if (authorId.equals(authorId)) {
 			throw new InvalidDataException("You can't report your own content");
 		}
 	}
-	
-	@Override
-	@Transactional
-	public ReportResponse create(ReportRequest request) {
-//		AccountProfile account = SecurityUtil.getCurrentProfile();
-//		Object target=getTarget(request.getTargetId(), request.getTargetType());
-//		isAuthor(target, request.getTargetType(), account.getId());
-//		Report report= mapper.toEntity(request);
-//		report.setId(new ReportId(1L, request.getTargetId()));
-//		report.setAuthor(account);
-//		report=repository.save(report);
-//		return toResponse(report, target);
-		return null;
+
+	private Long decodeTargetId(String targetId, TargetType targetType) {
+		switch (targetType) {
+		case BLOG: {
+			return Base62.decodeWithSalt(targetId, SaltedType.BLOG);
+		}
+		case QUIZ: {
+			return Base62.decodeWithSalt(targetId, SaltedType.QUIZ);
+		}
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + targetType);
+		}
 	}
 
 	@Override
-	public void delete(String id) {
-		repository.deleteById(new ReportId(SecurityUtil.getCurrentProfileId(), id));
+	@Transactional
+	public ReportResponse create(ReportRequest request) {
+		AccountProfile profile= SecurityUtil.getCurrentProfile();
+		Long targetId = decodeTargetId(request.getTargetId(), request.getTargetType());
+		Object target = getTarget(targetId, request.getTargetType());
+		checkAuthor(target, request.getTargetType(), profile.getId());
+		Report report = mapper.toEntity(request);
+		report.setId(new ReportId(profile.getId(), targetId, request.getTargetType()));
+		report.setAuthor(profile);
+		report = repository.save(report);
+		return toResponse(report, target);
+	}
+	@Override
+	public ReportResponse update(@Valid ReportRequest request) {
+		Long profileId= SecurityUtil.getCurrentProfileId();
+		Long targetId = decodeTargetId(request.getTargetId(), request.getTargetType());
+		Report report = FunctionUtil.findOrThrow(new ReportId(profileId, targetId, request.getTargetType()), Report.class, repository::findById);
+		checkAuthor(getTarget(targetId, request.getTargetType()), report.getTargetType(), profileId);
+		if (report.getStatus().equals(ReportStatus.PENDING)) {
+			mapper.update(request, report);
+			report = repository.save(report);
+			return mapper.toResponse(report);
+		} else {
+			throw new InvalidDataException("You can't update report with status " + report.getStatus());
+		}
 	}
 
 	@Override
 	public PageResponse<ReportResponse> search(ReportSearch search) {
-//		Pageable pageable = Pageable.ofSize(search.getSize()).withPage(search.getPage() - 1);
-//		Page<Report> page = repository.search(search.getAuthorId(), search.getTargetType(), search.getReportType(),
-//				search.getReportStatus(), search.getFromDate(), search.getToDate(), pageable);
-//		PageResponse<ReportResponse> response = mapper.toPageResponse(page.map(report -> toResponse(report, getTarget(report.getId().getTargetId(), report.getTargetType()))));
-//		return response;
-		return null;
+		Pageable pageable = Pageable.ofSize(search.getSize()).withPage(search.getPage() - 1);
+		Page<Report> page = repository.search(search.getAuthorId(), search.getTargetType(), search.getReportType(),
+				search.getReportStatus(), search.getFromDate(), search.getToDate(), pageable);
+		PageResponse<ReportResponse> response = mapper.toPageResponse(page.map(report -> toResponse(report, getTarget(report.getId().getTargetId(), report.getTargetType()))));
+		return response;
 	}
+
+
+//	@Override
+//	public ReportResponse read(String id) {
+//		Long authorId = SecurityUtil.getCurrentProfileId();
+//		Report report = FunctionUtil.findOrThrow(new ReportId(authorId, id), Report.class, repository::findById);
+//		return mapper.toResponse(report);
+//	}
+//
 	@Override
-	public ReportResponse update(String id, @Valid ReportRequest request) {
-		Long authorId=SecurityUtil.getCurrentProfileId();
-		Report report= FunctionUtil.findOrThrow(new ReportId(authorId, id), Report.class, repository::findById);
-		if(report.getReportStatus().equals(ReportStatus.REJECTED)) {
-			throw new InvalidDataException("You can't update rejected report");
-		}else {
-			mapper.update(request, report);
-			report=repository.save(report);
-			return mapper.toResponse(report);
-		}
-	}
-	
-	@Override
-	public ReportResponse read(String id) {
-		Long authorId=SecurityUtil.getCurrentProfileId();
-		Report report= FunctionUtil.findOrThrow(new ReportId(authorId, id), Report.class, repository::findById);
-		return mapper.toResponse(report);
-	}
-	@Override
-	public ReportResponse updateStatus(ReportId id, ReportStatus status) {
-//		report report= functionutil.findorthrow(id, report.class, repository::findbyid);
-//		report.setReportStatus(status);
-//		return toResponse(repository.save(report), getTarget(id.getTargetId(), report.getTargetType()));
-		return null;
+	public ReportResponse updateStatus(ReportStatusRequest request) {
+		ReportId reportId= mapper.toEntity(request.getId());
+		Report report= FunctionUtil.findOrThrow(reportId, Report.class, repository::findById);
+		report.setStatus(request.getStatus());
+		return toResponse(repository.save(report), getTarget(reportId.getTargetId(), report.getTargetType()));
 	}
 }

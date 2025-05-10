@@ -1,8 +1,9 @@
 package com.ta2khu75.quiz.model.request.update;
 
 import com.ta2khu75.quiz.model.ReportStatus;
-import com.ta2khu75.quiz.model.entity.id.ReportId;
+import com.ta2khu75.quiz.model.dto.ReportIdDto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -11,7 +12,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReportStatusRequest {
 	@NotNull
-	ReportId id;
+	@Valid
+	ReportIdDto id;
 	@NotNull
-	ReportStatus reportStatus;
+	ReportStatus status;
 }

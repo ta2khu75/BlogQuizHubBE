@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.ta2khu75.quiz.anotation.ControllerConfig;
 import com.ta2khu75.quiz.anotation.EndpointMapping;
+import com.ta2khu75.quiz.anotation.SnakeCaseModelAttribute;
 import com.ta2khu75.quiz.model.group.Admin;
 import com.ta2khu75.quiz.model.request.account.AccountPasswordRequest;
 import com.ta2khu75.quiz.model.request.account.AccountProfileRequest;
@@ -52,9 +53,9 @@ public class AccountController extends BaseController<AccountService> {
 
 	@GetMapping
 	@EndpointMapping(name = "Search account")
-	public ResponseEntity<PageResponse<AccountResponse>> search(@ModelAttribute AccountSearch search) {
+	public ResponseEntity<PageResponse<AccountResponse>> search (@SnakeCaseModelAttribute AccountSearch search) {
 		return ResponseEntity.ok(service.search(search));
-}
+	}
 
 	@PutMapping("profile")
 	@EndpointMapping(name = "Update profile")

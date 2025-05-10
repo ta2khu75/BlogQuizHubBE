@@ -10,7 +10,7 @@ import com.ta2khu75.quiz.model.response.QuizResultResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
 
 @Mapper(componentModel = "spring", uses = {  QuizMapper.class, AccountMapper.class, UserAnswerMapper.class })
-public interface QuizResultMapper extends PageMapper<QuizResult, QuizResultResponse>, BaseMapper<QuizResult, QuizResultResponse> {
+public interface QuizResultMapper extends PageMapper<QuizResult, QuizResultResponse> {
 	@Named("toQuizResultResponse")
 //	@Mapping(target = "info", source = "quizResult", qualifiedByName = "toInfoResponse")
 	@Mapping(target = "account", source = "account", qualifiedByName = "toProfileResponse")
