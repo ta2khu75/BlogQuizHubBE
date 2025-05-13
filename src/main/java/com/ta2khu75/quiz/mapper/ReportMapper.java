@@ -1,5 +1,6 @@
 package com.ta2khu75.quiz.mapper;
 
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -7,15 +8,16 @@ import org.springframework.data.domain.Page;
 
 import com.ta2khu75.quiz.model.dto.ReportIdDto;
 import com.ta2khu75.quiz.model.entity.Report;
+import com.ta2khu75.quiz.model.entity.base.SaltedIdentifiable;
 import com.ta2khu75.quiz.model.entity.id.ReportId;
 import com.ta2khu75.quiz.model.request.ReportRequest;
 import com.ta2khu75.quiz.model.response.PageResponse;
 import com.ta2khu75.quiz.model.response.ReportResponse;
 
-@Mapper(componentModel = "spring", uses = {AccountMapper.class})
-public interface ReportMapper  extends IdMapper{
-	@Mapping(target = "targetId", expression = "java(decode(dto, dto.targetId()))")
-	ReportId toEntity(ReportIdDto dto);
+@Mapper(componentModel = "spring", uses = {AccountMapper.class, IdMapper.class})
+public interface ReportMapper  {
+	@Mapping(target = "targetId", source = "targetId", qualifiedByName = "decode")
+	ReportId toEntity(ReportIdDto dto, @Context SaltedIdentifiable salted);
 	
 	@Mapping(target="id", ignore = true)
 	@Mapping(target = "author", ignore = true)
@@ -25,9 +27,9 @@ public interface ReportMapper  extends IdMapper{
 	Report toEntity(ReportRequest request);
 	
 	@Mapping(target = "target", ignore = true)
-//	@Mapping(target = "targetType", source = "id", qualifiedByName = "encodeId")
+	@Mapping(target="id.targetId", source = "id.targetId", qualifiedByName = "encode")
 	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
-	ReportResponse toResponse(Report entity);
+	ReportResponse toResponse(Report entity, @Context SaltedIdentifiable salted);
 	
 	@Mapping(target="id", ignore = true)
 	@Mapping(target = "status", ignore = true)

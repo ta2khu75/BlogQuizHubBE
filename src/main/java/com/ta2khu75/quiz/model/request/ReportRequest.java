@@ -1,6 +1,6 @@
 package com.ta2khu75.quiz.model.request;
 
-import com.ta2khu75.quiz.model.ReportStatus;
+import com.ta2khu75.quiz.model.TargetType;
 import com.ta2khu75.quiz.model.base.ReportBase;
 
 import jakarta.validation.constraints.NotNull;
@@ -15,4 +15,6 @@ import lombok.experimental.FieldDefaults;
 public class ReportRequest extends ReportBase{
 	@NotNull
 	String targetId;
+	@NotNull
+	TargetType targetType;
 }

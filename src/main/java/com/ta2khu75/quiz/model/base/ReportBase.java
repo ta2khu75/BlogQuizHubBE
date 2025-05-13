@@ -12,6 +12,4 @@ import lombok.experimental.FieldDefaults;
 public abstract class ReportBase {
 	@NotNull
 	ReportType type;
-	@NotNull
-	TargetType targetType;
 }

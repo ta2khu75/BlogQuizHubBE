@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ta2khu75.quiz.anotation.EndpointMapping;
+import com.ta2khu75.quiz.anotation.SnakeCaseModelAttribute;
 import com.ta2khu75.quiz.model.entity.id.ReportId;
 import com.ta2khu75.quiz.model.group.Update;
 import com.ta2khu75.quiz.model.request.ReportRequest;
@@ -50,7 +51,7 @@ public class ReportController extends BaseController<ReportService> {
 	
 	@GetMapping
 	@EndpointMapping(name = "Search report")
-	public ResponseEntity<PageResponse<ReportResponse>> get(@ModelAttribute ReportSearch search) {
+	public ResponseEntity<PageResponse<ReportResponse>> get(@SnakeCaseModelAttribute ReportSearch search) {
 		return ResponseEntity.ok(service.search(search));
 	}
 	

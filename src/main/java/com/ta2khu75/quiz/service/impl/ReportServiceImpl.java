@@ -68,8 +68,8 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 	}
 
 	private ReportResponse toResponse(Report report, Object target) {
-		ReportResponse response = mapper.toResponse(report);
-		if (response.getTargetType().equals(TargetType.BLOG)) {
+		ReportResponse response = mapper.toResponse(report,report);
+		if (response.getId().targetType().equals(TargetType.BLOG)) {
 			response.setTarget(blogMapper.toResponse((Blog) target));
 		} else {
 			response.setTarget(quizMapper.toResponse((Quiz) target));
@@ -91,7 +91,7 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + targetType);
 		}
-		if (authorId.equals(authorId)) {
+		if (authorId.equals(profileId)) {
 			throw new InvalidDataException("You can't report your own content");
 		}
 	}
@@ -127,11 +127,11 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 		Long profileId= SecurityUtil.getCurrentProfileId();
 		Long targetId = decodeTargetId(request.getTargetId(), request.getTargetType());
 		Report report = FunctionUtil.findOrThrow(new ReportId(profileId, targetId, request.getTargetType()), Report.class, repository::findById);
-		checkAuthor(getTarget(targetId, request.getTargetType()), report.getTargetType(), profileId);
+		checkAuthor(getTarget(targetId, request.getTargetType()), report.getId().getTargetType(), profileId);
 		if (report.getStatus().equals(ReportStatus.PENDING)) {
 			mapper.update(request, report);
 			report = repository.save(report);
-			return mapper.toResponse(report);
+			return mapper.toResponse(report, report);
 		} else {
 			throw new InvalidDataException("You can't update report with status " + report.getStatus());
 		}
@@ -139,10 +139,10 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 
 	@Override
 	public PageResponse<ReportResponse> search(ReportSearch search) {
-		Pageable pageable = Pageable.ofSize(search.getSize()).withPage(search.getPage() - 1);
+		Pageable pageable = Pageable.ofSize(search.getSize()).withPage(search.getPage());
 		Page<Report> page = repository.search(search.getAuthorId(), search.getTargetType(), search.getReportType(),
 				search.getReportStatus(), search.getFromDate(), search.getToDate(), pageable);
-		PageResponse<ReportResponse> response = mapper.toPageResponse(page.map(report -> toResponse(report, getTarget(report.getId().getTargetId(), report.getTargetType()))));
+		PageResponse<ReportResponse> response = mapper.toPageResponse(page.map(report -> toResponse(report, getTarget(report.getId().getTargetId(), report.getId().getTargetType()))));
 		return response;
 	}
 
@@ -156,9 +156,9 @@ public class ReportServiceImpl extends BaseService<ReportRepository, ReportMappe
 //
 	@Override
 	public ReportResponse updateStatus(ReportStatusRequest request) {
-		ReportId reportId= mapper.toEntity(request.getId());
+		ReportId reportId= mapper.toEntity(request.getId(),request.getId());
 		Report report= FunctionUtil.findOrThrow(reportId, Report.class, repository::findById);
 		report.setStatus(request.getStatus());
-		return toResponse(repository.save(report), getTarget(reportId.getTargetId(), report.getTargetType()));
+		return toResponse(repository.save(report), getTarget(reportId.getTargetId(), report.getId().getTargetType()));
 	}
 }

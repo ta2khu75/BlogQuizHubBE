@@ -36,20 +36,17 @@ public class Report extends BaseEntityCustom<ReportId> implements SaltedIdentifi
 	ReportType type;
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	TargetType targetType;
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
 	ReportStatus status= ReportStatus.PENDING;
 
 	@Override
 	public SaltedType getSaltedType() {
-		switch (targetType) {
+		switch (getId().getTargetType()) {
 		case QUIZ:
 			return SaltedType.QUIZ;
 		case BLOG:
 			return SaltedType.BLOG;
 		default:
-			throw new IllegalArgumentException("Unexpected value: " + targetType);
+			throw new IllegalArgumentException("Unexpected value: " + getId().getTargetType());
 		}
 	}
 
