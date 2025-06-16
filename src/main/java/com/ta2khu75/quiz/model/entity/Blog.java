@@ -48,7 +48,7 @@ public class Blog extends BaseEntityLong implements SaltedIdentifiable {
 	Set<Quiz> quizzes;
 	@OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	List<Comment> comments;
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@ManyToMany(cascade = { CascadeType.PERSIST })
 	Set<BlogTag> tags;
 	@ManyToOne
 	AccountProfile author;

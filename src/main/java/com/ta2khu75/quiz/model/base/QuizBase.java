@@ -25,5 +25,4 @@ public abstract class QuizBase{
 	QuizResultMode quizResultMode=QuizResultMode.ANSWER_VISIBLE;
 	boolean shuffleQuestion=true;
 	boolean completed;
-	
 }

@@ -2,6 +2,11 @@ package com.ta2khu75.quiz.exception;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,6 +19,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,9 +43,22 @@ public class HandleException implements ResponseBodyAdvice<Object> {
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ExceptionResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new ExceptionResponse(ex.getBindingResult().getFieldError().getDefaultMessage()));
+	public ResponseEntity<ApiResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+		Map<String, String> errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .collect(Collectors.toMap(
+                        FieldError::getField,
+                        FieldError::getDefaultMessage,
+                        (existing, replacement) -> existing // Nếu trùng field, giữ lại lỗi đầu tiên
+                ));
+
+        ApiResponse response = ApiResponse.builder()
+                .status(HttpStatus.UNPROCESSABLE_ENTITY.value())
+                .message("Validation failed")
+                .error(errors)
+                .build();
+        return ResponseEntity.badRequest().body(response);
 	}
 
 	@ExceptionHandler(UnAuthorizedException.class)
@@ -85,6 +104,8 @@ public class HandleException implements ResponseBodyAdvice<Object> {
 		return body;
 	}
 	public record ExceptionResponse(String messageError) {
+	}
+	public record FieldErrorResponse(String field, String message) {
 	}
 
 }

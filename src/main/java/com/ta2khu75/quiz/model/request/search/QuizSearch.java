@@ -10,8 +10,8 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class QuizSearch extends Search {
-    private List<QuizLevel> quizLevels;
-    private List<Long> quizCategoryIds;
+    private List<QuizLevel> levels;
+    private List<Long> categories;
     private Integer minDuration;
 	private Integer maxDuration;
 	private Long authorId;

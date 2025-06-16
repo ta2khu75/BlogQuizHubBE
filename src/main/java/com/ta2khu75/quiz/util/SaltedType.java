@@ -1,5 +1,6 @@
 package com.ta2khu75.quiz.util;
 
+
 public enum SaltedType {
 	BLOG(47, 113), QUIZ(71, 13);
 	private final int salt;

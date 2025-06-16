@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ta2khu75.quiz.anotation.EndpointMapping;
+import com.ta2khu75.quiz.anotation.SnakeCaseModelAttribute;
 import com.ta2khu75.quiz.model.request.QuizRequest;
 import com.ta2khu75.quiz.model.request.search.QuizSearch;
 import com.ta2khu75.quiz.model.response.QuizResponse;
@@ -41,9 +42,9 @@ public class QuizController extends BaseController<QuizService> {
 
 	@EndpointMapping(name = "Create quiz")
 	@PostMapping(consumes = "multipart/form-data")
-	public ResponseEntity<QuizResponse> create(@Valid @ModelAttribute QuizRequest quiz,
+	public ResponseEntity<QuizResponse> create( @RequestPart("quiz") String quizString,
 			@RequestPart( required = true) MultipartFile image) throws IOException {
-//		QuizRequest quiz= objectMapper.readValue(quizString, QuizRequest.class);
+		QuizRequest quiz= objectMapper.readValue(quizString, QuizRequest.class);
 		return ResponseEntity.status(HttpStatus.CREATED).body(service.create(quiz, image));
 	}
 

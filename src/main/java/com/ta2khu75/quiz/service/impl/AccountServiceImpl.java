@@ -77,13 +77,14 @@ public class AccountServiceImpl extends BaseService<AccountRepository, AccountMa
 
 		Account account = new Account();
 		account.setEmail(request.getEmail().toLowerCase());
-		account.setPassword(passwordEncoder.encode(account.getPassword()));
+		account.setPassword(passwordEncoder.encode(request .getPassword()));
 		account.setProfile(profile);
 		account.setStatus(status);
 		try {
 			account = repository.save(account);
 		} catch (DataIntegrityViolationException e) {
-			throw new ExistingException("Email already exists");
+			e.printStackTrace();
+			throw new ExistingException(e.getMessage());
 		}
 		return mapper.toResponse(account);
 	}

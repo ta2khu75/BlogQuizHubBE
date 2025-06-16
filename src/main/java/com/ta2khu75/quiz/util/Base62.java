@@ -6,7 +6,10 @@ public class Base62 {
 
 	public static String encodeWithSalt(Long id, SaltedType saltedType) {
 		long salted = (id * saltedType.getSalt() + saltedType.getOffset());
-		return Base62.encode(salted);
+		System.out.println(salted);
+		String base62=Base62.encode(salted);
+		System.out.println(base62);
+		return base62;
 	}
 
 	public static long decodeWithSalt(String str, SaltedType saltedType) {

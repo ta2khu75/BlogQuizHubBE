@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ApiResponse {
 	Object data;
+	Object error;
 	String message;
 	int status;
 }

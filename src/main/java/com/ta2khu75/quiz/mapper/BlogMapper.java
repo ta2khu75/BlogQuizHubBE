@@ -1,11 +1,14 @@
 package com.ta2khu75.quiz.mapper;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.springframework.data.domain.Page;
 
 import com.ta2khu75.quiz.model.entity.Blog;
+import com.ta2khu75.quiz.model.entity.Comment;
 import com.ta2khu75.quiz.model.entity.Quiz;
 import com.ta2khu75.quiz.model.request.BlogRequest;
 import com.ta2khu75.quiz.model.response.BlogResponse;
@@ -16,6 +19,9 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = { AccountMapper.class , IdMapper.class})
 public interface BlogMapper extends PageMapper<Blog, BlogResponse> {
+	default int mapCommentCount(List<Comment> comments) {
+	    return comments != null ? comments.size() : 0;
+	}
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "createdAt", ignore = true)
 	@Mapping(target = "updatedAt", ignore = true)
@@ -47,7 +53,7 @@ public interface BlogMapper extends PageMapper<Blog, BlogResponse> {
 
 	@Named("toBlogResponse")
 	@Mapping(target = "id", source = "blog", qualifiedByName = "encodeId")
-	@Mapping(target = "commentCount", expression = "java(blog.getComments().size())")
+	@Mapping(target = "commentCount", source = "comments")
 	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "content", ignore = true)
 	@Mapping(target = "quizzes", ignore = true)
@@ -55,7 +61,7 @@ public interface BlogMapper extends PageMapper<Blog, BlogResponse> {
 
 	@Named("toBlogDetailsResponse")
 	@Mapping(target = "id", source = "blog", qualifiedByName = "encodeId")
-	@Mapping(target = "commentCount", expression = "java(blog.getComments().size())")
+	@Mapping(target = "commentCount", source = "comments")
 	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "quizzes", source = "quizzes", qualifiedByName = "toQuizResponse")
 	BlogResponse toDetailsResponse(Blog blog);

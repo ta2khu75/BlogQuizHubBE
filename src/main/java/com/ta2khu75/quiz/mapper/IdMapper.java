@@ -7,14 +7,14 @@ import org.mapstruct.Named;
 import com.ta2khu75.quiz.model.entity.base.BaseEntityLong;
 import com.ta2khu75.quiz.model.entity.base.SaltedIdentifiable;
 import com.ta2khu75.quiz.model.response.BaseResponse;
-import com.ta2khu75.quiz.util.Base62;
+import com.ta2khu75.quiz.util.SqidsUtil;
 
 @Mapper(componentModel = "spring")
 public interface IdMapper {
 	@Named("encodeId")
 	default String encodeId(BaseEntityLong entity) {
 		if (entity instanceof SaltedIdentifiable salted) {
-			return Base62.encodeWithSalt(entity.getId(), salted.getSaltedType());
+			return SqidsUtil.encodeWithSalt(entity.getId(), salted.getSaltedType());
 		}
 		throw new IllegalArgumentException("Entity is not an instance of SaltedIdentifiable: " + entity.getClass().getName());
 	}
@@ -22,7 +22,7 @@ public interface IdMapper {
 	@Named("decodeId")
 	default String encodeId(BaseResponse<Long> entity) {
 		if (entity instanceof SaltedIdentifiable salted) {
-			return Base62.encodeWithSalt(entity.getId(), salted.getSaltedType());
+			return SqidsUtil.encodeWithSalt(entity.getId(), salted.getSaltedType());
 		}
 		throw new IllegalArgumentException("Entity is not an instance of SaltedIdentifiable: " + entity.getClass().getName());
 	}
@@ -31,11 +31,11 @@ public interface IdMapper {
 
 	@Named("encode")
 	default String encode(Long id, @Context SaltedIdentifiable salted) {
-		return Base62.encodeWithSalt(id, salted.getSaltedType());
+		return SqidsUtil.encodeWithSalt(id, salted.getSaltedType());
 	}
 
 	@Named("decode")
 	default Long decode(String value, @Context SaltedIdentifiable salted) {
-		return Base62.decodeWithSalt(value, salted.getSaltedType());
+		return SqidsUtil.decodeWithSalt(value, salted.getSaltedType());
 	}
 }

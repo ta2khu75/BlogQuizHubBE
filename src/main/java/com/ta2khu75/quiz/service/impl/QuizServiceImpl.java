@@ -5,6 +5,7 @@ import jakarta.validation.groups.Default;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ import com.ta2khu75.quiz.service.util.FileUtil.Folder;
 import com.ta2khu75.quiz.util.Base62;
 import com.ta2khu75.quiz.util.SaltedType;
 import com.ta2khu75.quiz.util.SecurityUtil;
+import com.ta2khu75.quiz.util.SqidsUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -47,7 +49,8 @@ public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper>
 	}
 
 	private Quiz findById(String id) {
-		return repository.findById(decodeId(id)).orElseThrow(() -> new NotFoundException("Could not found quiz with id: " + id));
+		Long idDecode= decodeId(id);
+		return repository.findById(idDecode).orElseThrow(() -> new NotFoundException("Could not found quiz with id: " + idDecode));
 	}
 
 	private QuizResponse save(Quiz quiz) {
@@ -84,7 +87,7 @@ public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper>
 //		return mapper.toResponse(repository.save(quizSaved));
 	}
 	private Long decodeId(String quizId) {
-		return Base62.decodeWithSalt(quizId, SaltedType.QUIZ);
+		return SqidsUtil.decodeWithSalt(quizId, SaltedType.QUIZ);
 	}
 	@Override
 	@Transactional
@@ -150,9 +153,8 @@ public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper>
 		if (!SecurityUtil.isAuthor(search.getAuthorId()))
 			search.setAccessModifier(AccessModifier.PUBLIC);
 		Pageable pageable = Pageable.ofSize(search.getSize()).withPage(search.getPage());
-		return mapper.toPageResponse(repository.search(search.getKeyword(), search.getAuthorId(),
-				search.getQuizCategoryIds(), search.getQuizLevels(), search.getCompleted(), search.getMinDuration(),
-				search.getMaxDuration(), search.getAccessModifier(), pageable));
+		Page<Quiz> page =repository.search(search, pageable);
+		return mapper.toPageResponse(page);
 	}
 
 	@Override

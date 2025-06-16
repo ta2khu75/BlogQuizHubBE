@@ -34,6 +34,7 @@ import com.ta2khu75.quiz.util.Base62;
 import com.ta2khu75.quiz.util.FunctionUtil;
 import com.ta2khu75.quiz.util.SaltedType;
 import com.ta2khu75.quiz.util.SecurityUtil;
+import com.ta2khu75.quiz.util.SqidsUtil;
 
 import jakarta.validation.Valid;
 import jakarta.validation.groups.Default;
@@ -59,7 +60,7 @@ public class BlogServiceImpl extends BaseFileService<BlogRepository, BlogMapper>
 	@Transactional
 	public BlogResponse create(@Valid BlogRequest request, MultipartFile file) throws IOException {
 		Blog blog = mapper.toEntity(request);
-		Set<Quiz> quizzes = request.getQuizIds().stream().map(quizId -> quizRepository.getReferenceById(Base62.decodeWithSalt(quizId, SaltedType.QUIZ)))
+		Set<Quiz> quizzes = request.getQuizIds().stream().map(quizId -> quizRepository.getReferenceById(SqidsUtil.decodeWithSalt(quizId, SaltedType.QUIZ)))
 				.collect(Collectors.toSet());
 		blog.setAuthor(SecurityUtil.getCurrentProfile());
 		blog.setTags(this.getTags(request.getTags()));
