@@ -65,6 +65,7 @@ public class DynamicallySecurityConfig implements AuthorizationManager<HttpServl
 			return new AuthorizationDecision(true);
 		}
 		Role role = roleService.readByName(roleName);
+//		boolean isAllowed = isAllowedEndpoint(role, requestUrl, httpMethod);
 		if (isAllowedEndpoint(role, requestUrl, httpMethod)) {
 			return new AuthorizationDecision(true);
 		}

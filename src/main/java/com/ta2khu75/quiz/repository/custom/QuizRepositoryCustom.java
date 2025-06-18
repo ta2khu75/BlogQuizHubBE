@@ -7,5 +7,5 @@ import com.ta2khu75.quiz.model.entity.Quiz;
 import com.ta2khu75.quiz.model.request.search.QuizSearch;
 
 public interface QuizRepositoryCustom {
-	Page<Quiz> search(QuizSearch search, Pageable pageable);
+	Page<Quiz> search(QuizSearch search);
 }

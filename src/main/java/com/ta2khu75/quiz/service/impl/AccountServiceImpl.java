@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +23,6 @@ import com.ta2khu75.quiz.exception.InvalidDataException;
 import com.ta2khu75.quiz.exception.NotMatchesException;
 import com.ta2khu75.quiz.exception.UnAuthorizedException;
 import com.ta2khu75.quiz.mapper.AccountMapper;
-import com.ta2khu75.quiz.mapper.PageMapper;
 import com.ta2khu75.quiz.model.entity.Account;
 import com.ta2khu75.quiz.model.entity.AccountProfile;
 import com.ta2khu75.quiz.model.entity.AccountStatus;
@@ -139,8 +137,7 @@ public class AccountServiceImpl extends BaseService<AccountRepository, AccountMa
 
 	@Override
 	public PageResponse<AccountResponse> search(AccountSearch search) {
-		Pageable pageable = Pageable.ofSize(search.getSize()).withPage(search.getPage());
-		Page<Account> page = repository.search(search, pageable);
+		Page<Account> page = repository.search(search);
 		return mapper.toPageResponse(page);
 	}
 }

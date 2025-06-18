@@ -3,7 +3,6 @@ package com.ta2khu75.quiz.exception;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
 
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -76,7 +75,7 @@ public class HandleException implements ResponseBodyAdvice<Object> {
 	}
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ExceptionResponse> handleException(Exception ex) {
-		ex.printStackTrace();
+//		ex.printStackTrace();
 		return ResponseEntity.internalServerError().body(new ExceptionResponse(ex.getMessage()));
 	}
 

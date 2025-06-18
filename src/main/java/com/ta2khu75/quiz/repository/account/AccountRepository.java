@@ -2,8 +2,6 @@ package com.ta2khu75.quiz.repository.account;
 
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +12,7 @@ import com.ta2khu75.quiz.repository.custom.AccountRepositoryCustom;
 public interface AccountRepository extends JpaRepository<Account, String>, AccountRepositoryCustom {
 	@Query("SELECT a FROM Account a JOIN FETCH a.profile JOIN FETCH a.status WHERE a.email = :email")
 	Optional<Account> findByEmailWithProfileWithStatus(@Param("email") String email);
-
+	Optional<Account> findByStatusId(Long id);
 //	boolean existsByIdAndRoleName(String accountId, String roleName);
 
 	boolean existsByEmail(String email);

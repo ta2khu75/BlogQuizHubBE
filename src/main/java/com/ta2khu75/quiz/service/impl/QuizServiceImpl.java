@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -27,7 +26,6 @@ import com.ta2khu75.quiz.service.QuizService;
 import com.ta2khu75.quiz.service.base.BaseFileService;
 import com.ta2khu75.quiz.service.util.FileUtil;
 import com.ta2khu75.quiz.service.util.FileUtil.Folder;
-import com.ta2khu75.quiz.util.Base62;
 import com.ta2khu75.quiz.util.SaltedType;
 import com.ta2khu75.quiz.util.SecurityUtil;
 import com.ta2khu75.quiz.util.SqidsUtil;
@@ -152,8 +150,7 @@ public class QuizServiceImpl extends BaseFileService<QuizRepository, QuizMapper>
 	public PageResponse<QuizResponse> search(QuizSearch search) {
 		if (!SecurityUtil.isAuthor(search.getAuthorId()))
 			search.setAccessModifier(AccessModifier.PUBLIC);
-		Pageable pageable = Pageable.ofSize(search.getSize()).withPage(search.getPage());
-		Page<Quiz> page =repository.search(search, pageable);
+		Page<Quiz> page =repository.search(search);
 		return mapper.toPageResponse(page);
 	}
 

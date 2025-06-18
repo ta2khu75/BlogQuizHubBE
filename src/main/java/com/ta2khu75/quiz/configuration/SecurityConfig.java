@@ -20,6 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
+import com.ta2khu75.quiz.model.TokenType;
 import com.ta2khu75.quiz.repository.account.AccountRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,6 +34,7 @@ public class SecurityConfig {
 	private final AccountRepository accountRepository;
 	private final AuthorizationManager<HttpServletRequest> authorizationManager;
 	private final AuthenticationEntryPoint authenticationEntryPoint;
+	private final JwtProviderFactory jwtProviderFactory;
 
 	@Bean
 	PasswordEncoder passwordEncoder() {
@@ -46,7 +48,7 @@ public class SecurityConfig {
 				.exceptionHandling(exception -> exception.accessDeniedHandler(accessDeniedHandler))
 				.authorizeHttpRequests(authz ->
 				authz.anyRequest().permitAll())
-				.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
+				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt->jwt.decoder(jwtProviderFactory.getDecoder(TokenType.ACCESS)))
 						.authenticationEntryPoint(authenticationEntryPoint))
 				.formLogin(login -> login.disable());
 		return http.build();

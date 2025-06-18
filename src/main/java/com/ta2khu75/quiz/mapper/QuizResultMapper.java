@@ -36,7 +36,7 @@ public interface QuizResultMapper extends PageMapper<QuizResult, QuizResultRespo
 	@Mapping(target = "userAnswers", source = "userAnswers", qualifiedByName = "toUserAnswerDetailResponse")
 	QuizResultResponse toDetailResponse(QuizResult quizResult);
 
-	@Mapping(target = "content", qualifiedByName = "toQuizResultResponse")
-	@Mapping(target = "page", source = "number")
-	PageResponse<QuizResultResponse> toPageResponse(Page<QuizResult> page);
+//	@Mapping(target = "content", qualifiedByName = "toQuizResultResponse")
+//	@Mapping(target = "page", source = "number")
+//	PageResponse<QuizResultResponse> toPageResponse(Page<QuizResult> page);
 }

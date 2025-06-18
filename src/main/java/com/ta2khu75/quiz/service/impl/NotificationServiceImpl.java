@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ta2khu75.quiz.mapper.NotificationMapper;
-import com.ta2khu75.quiz.model.NotificationStatus;
 import com.ta2khu75.quiz.model.entity.Notification;
 import com.ta2khu75.quiz.model.response.NotificationResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
@@ -22,13 +21,13 @@ public class NotificationServiceImpl extends BaseService<NotificationRepository,
 		implements NotificationService {
 
 	private final BlogService blogService;
-	private final QuizService examService;
+	private final QuizService quizService;
 
 	public NotificationServiceImpl(NotificationRepository repository, NotificationMapper mapper,
-			BlogService blogService, QuizService examService) {
+			BlogService blogService, QuizService quizService) {
 		super(repository, mapper);
 		this.blogService = blogService;
-		this.examService = examService;
+		this.quizService= quizService;
 	}
 
 //	@Override
@@ -63,7 +62,7 @@ public class NotificationServiceImpl extends BaseService<NotificationRepository,
 		case BLOG:
 			return blogService.read(Base62.encodeWithSalt(notification.getId().getTargetId(), SaltedType.BLOG));
 		case QUIZ:
-			return blogService.read(Base62.encodeWithSalt(notification.getId().getTargetId(), SaltedType.QUIZ));
+			return quizService.read(Base62.encodeWithSalt(notification.getId().getTargetId(), SaltedType.QUIZ));
 		default:
 			throw new IllegalArgumentException("Unsupported target type: " + notification.getId().getTargetType());
 		}

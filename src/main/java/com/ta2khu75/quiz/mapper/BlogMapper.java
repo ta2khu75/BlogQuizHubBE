@@ -66,7 +66,7 @@ public interface BlogMapper extends PageMapper<Blog, BlogResponse> {
 	@Mapping(target = "quizzes", source = "quizzes", qualifiedByName = "toQuizResponse")
 	BlogResponse toDetailsResponse(Blog blog);
 
-	@Mapping(target = "page", source = "number")
-	@Mapping(target = "content", source = "content", qualifiedByName = "toBlogResponse")
-	PageResponse<BlogResponse> toPageResponse(Page<Blog> blogs);
+//	@Mapping(target = "page", source = "number")
+//	@Mapping(target = "content", source = "content", qualifiedByName = "toBlogResponse")
+//	PageResponse<BlogResponse> toPageResponse(Page<Blog> blogs);
 }

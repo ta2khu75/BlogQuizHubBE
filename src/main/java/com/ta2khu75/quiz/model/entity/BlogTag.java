@@ -1,5 +1,8 @@
 package com.ta2khu75.quiz.model.entity;
 
+import java.time.Instant;
+
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Column;
@@ -28,6 +31,9 @@ public class BlogTag {
 	Long id;
 	@Column(nullable = false, unique = true)
 	String name;
+	@CreatedDate
+	@Column(nullable = false)
+	Instant createdAt;
 	@PrePersist
     @PreUpdate
     public void normalizeName() {

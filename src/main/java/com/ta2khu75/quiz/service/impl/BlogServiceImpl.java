@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -123,10 +122,7 @@ public class BlogServiceImpl extends BaseFileService<BlogRepository, BlogMapper>
 	public PageResponse<BlogResponse> search(BlogSearch blogSearchRequest) {
 		if (!SecurityUtil.isAuthor(blogSearchRequest.getAuthorId()))
 			blogSearchRequest.setAccessModifier(AccessModifier.PUBLIC);
-		Pageable pageable = Pageable.ofSize(blogSearchRequest.getSize()).withPage(blogSearchRequest.getPage());
-		return mapper.toPageResponse(repository.search(blogSearchRequest.getTagNames(), blogSearchRequest.getKeyword(),
-				blogSearchRequest.getAuthorId(), blogSearchRequest.getMinView(), blogSearchRequest.getMaxView(),
-				blogSearchRequest.getAccessModifier(), pageable));
+		return mapper.toPageResponse(repository.search(blogSearchRequest));
 	}
 
 	private BlogResponse save(Blog blog) {

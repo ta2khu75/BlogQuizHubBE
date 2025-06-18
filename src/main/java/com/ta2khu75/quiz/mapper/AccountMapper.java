@@ -55,11 +55,10 @@ public interface AccountMapper extends PageMapper<Account, AccountResponse>{
 	
 	
 	@Named("toAccountResponse")
-//	@Mapping(target = "info", source = "entity", qualifiedByName = "toInfoResponse")
 	@Mapping(target = "profile" , source = "profile", qualifiedByName = "toProfileResponse")
 	AccountResponse toResponse(Account entity);
 
-	@Mapping(target = "page", source = "number")
-	@Mapping(target="content", source = "content", qualifiedByName = "toAccountResponse")
-	PageResponse<AccountResponse> toPageResponse(Page<Account> response);
+//	@Mapping(target = "page", source = "number")
+//	@Mapping(target="content", source = "content", qualifiedByName = "toAccountResponse")
+//	PageResponse<AccountResponse> toPageResponse(Page<Account> response);
 }

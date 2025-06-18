@@ -2,14 +2,20 @@ package com.ta2khu75.quiz.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ta2khu75.quiz.anotation.EndpointMapping;
+import com.ta2khu75.quiz.anotation.SnakeCaseModelAttribute;
 import com.ta2khu75.quiz.model.entity.BlogTag;
+import com.ta2khu75.quiz.model.request.search.Search;
+import com.ta2khu75.quiz.model.response.PageResponse;
 import com.ta2khu75.quiz.service.BlogTagService;
 
 @RestController
@@ -21,13 +27,15 @@ public class BlogTagController extends BaseController<BlogTagService> {
 	}
 
 	@GetMapping
-	@EndpointMapping(name = "Read all blog tags")
-	public ResponseEntity<List<BlogTag>> readAll() {
-		return ResponseEntity.ok(service.readAll());
+	@EndpointMapping(name = "Search blog tags")
+	public ResponseEntity<PageResponse<BlogTag>> search(@SnakeCaseModelAttribute Search search) {
+		return ResponseEntity.ok(service.search(search));
 	}
-	@GetMapping("/{keyword}")
-	@EndpointMapping(name = "Read all blog tags by keyword")
-	public ResponseEntity<List<BlogTag>> readAllKeyword(@PathVariable String keyword){
-		return ResponseEntity.ok(service.readAll(keyword));
+
+	@DeleteMapping("/{id}")
+	@EndpointMapping(name = "Delete blog tag")
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
+		service.delete(id);
+		return ResponseEntity.noContent().build();
 	}
 }

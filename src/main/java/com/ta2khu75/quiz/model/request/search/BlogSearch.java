@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class BlogSearch extends Search {
-	private List<String> tagNames;
+	private List<Long> tagIds;
 	private Integer minView;
 	private Integer maxView;
 	private Long authorId;

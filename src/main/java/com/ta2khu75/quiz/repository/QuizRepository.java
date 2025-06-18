@@ -2,16 +2,8 @@ package com.ta2khu75.quiz.repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
 import com.ta2khu75.quiz.model.AccessModifier;
-import com.ta2khu75.quiz.model.QuizLevel;
 import com.ta2khu75.quiz.model.entity.Quiz;
 import com.ta2khu75.quiz.repository.custom.QuizRepositoryCustom;
 

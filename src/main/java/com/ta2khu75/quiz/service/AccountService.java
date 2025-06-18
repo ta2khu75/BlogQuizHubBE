@@ -6,7 +6,6 @@ import com.ta2khu75.quiz.model.request.account.AccountProfileRequest;
 import com.ta2khu75.quiz.model.request.account.AccountRequest;
 import com.ta2khu75.quiz.model.request.account.AccountStatusRequest;
 import com.ta2khu75.quiz.model.request.search.AccountSearch;
-import com.ta2khu75.quiz.model.response.PageResponse;
 import com.ta2khu75.quiz.model.response.account.AccountProfileResponse;
 import com.ta2khu75.quiz.model.response.account.AccountResponse;
 import com.ta2khu75.quiz.model.response.account.AccountStatusResponse;

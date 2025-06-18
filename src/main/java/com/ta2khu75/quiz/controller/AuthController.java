@@ -22,10 +22,8 @@ import com.ta2khu75.quiz.model.request.account.AccountPasswordRequest;
 import com.ta2khu75.quiz.model.request.account.AccountProfileRequest;
 import com.ta2khu75.quiz.model.request.account.AccountRequest;
 import com.ta2khu75.quiz.model.response.AuthResponse;
-//import com.ta2khu75.quiz.model.response.BooleanResponse;
 import com.ta2khu75.quiz.model.response.TokenResponse;
 import com.ta2khu75.quiz.model.response.account.AccountProfileResponse;
-import com.ta2khu75.quiz.model.response.account.AccountResponse;
 import com.ta2khu75.quiz.service.AuthService;
 
 import jakarta.mail.MessagingException;

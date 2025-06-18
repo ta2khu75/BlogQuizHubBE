@@ -96,6 +96,8 @@ public class RoleServiceImpl extends BaseService<RoleRepository, RoleMapper> imp
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		System.out.println(role.toString());
 		if (role == null) {
 			role = repository.findByName(roleName)
 					.orElseThrow(() -> new NotFoundException("Could not found role with name: " + roleName));
@@ -106,7 +108,6 @@ public class RoleServiceImpl extends BaseService<RoleRepository, RoleMapper> imp
 				e.printStackTrace();
 			}
 		}
-		System.out.println(role.toString());
 		return role;
 	}
 

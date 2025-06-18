@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,21 +21,29 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ta2khu75.quiz.anotation.EndpointMapping;
 import com.ta2khu75.quiz.model.request.BlogRequest;
+import com.ta2khu75.quiz.model.request.CommentRequest;
 import com.ta2khu75.quiz.model.request.search.BlogSearch;
+import com.ta2khu75.quiz.model.request.search.Search;
 import com.ta2khu75.quiz.model.response.BlogResponse;
+import com.ta2khu75.quiz.model.response.CommentResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
 import com.ta2khu75.quiz.service.BlogService;
+import com.ta2khu75.quiz.service.CommentService;
 import com.ta2khu75.quiz.util.SecurityUtil;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("${app.api-prefix}/blogs")
 public class BlogController extends BaseController<BlogService> {
 
 	private final ObjectMapper objectMapper;
+	private final CommentService commentService;
 
-	public BlogController(BlogService service, ObjectMapper objectMapper) {
+	public BlogController(BlogService service, ObjectMapper objectMapper, CommentService commentService) {
 		super(service);
 		this.objectMapper = objectMapper;
+		this.commentService = commentService;
 	}
 
 	@GetMapping
@@ -42,7 +51,7 @@ public class BlogController extends BaseController<BlogService> {
 	public ResponseEntity<PageResponse<BlogResponse>> search(@ModelAttribute BlogSearch blogSearch) {
 		return ResponseEntity.ok(service.search(blogSearch));
 	}
-	
+
 	@GetMapping("mine/{keywork}")
 	@EndpointMapping(name = "Search my blog by keyword")
 	public ResponseEntity<List<BlogResponse>> searchMyBlog(@PathVariable String keywork) {
@@ -51,20 +60,34 @@ public class BlogController extends BaseController<BlogService> {
 		return ResponseEntity.ok(service.readAllByAuthorIdAndKeywork(authorId, keywork));
 	}
 
+	@GetMapping("{id}/comments")
+	@EndpointMapping(name = "Read blog comments")
+	public ResponseEntity<PageResponse<CommentResponse>> readPageComment(@PathVariable String id,
+			@ModelAttribute Search search) {
+		return ResponseEntity.ok(commentService.readPageByBlogId(id, search));
+	}
+
+	@PostMapping("{id}/comments")
+	@EndpointMapping(name = "Create blog comment")
+	public ResponseEntity<CommentResponse> createComment(@PathVariable String id,
+			@Valid @RequestBody CommentRequest request) {
+		return ResponseEntity.ok(commentService.create(id, request));
+	}
+
 	@GetMapping("/{id}")
-	@EndpointMapping(name="Read blog")
+	@EndpointMapping(name = "Read blog")
 	public ResponseEntity<BlogResponse> read(@PathVariable String id) {
 		return ResponseEntity.ok(service.read(id));
 	}
 
 	@GetMapping("/{id}/detail")
-	@EndpointMapping(name="Read blog detail")
+	@EndpointMapping(name = "Read blog detail")
 	public ResponseEntity<BlogResponse> readDetail(@PathVariable String id) {
 		return ResponseEntity.ok(service.readDetail(id));
 	}
 
 	@PostMapping(consumes = "multipart/form-data")
-	@EndpointMapping(name="Create blog")
+	@EndpointMapping(name = "Create blog")
 	public ResponseEntity<BlogResponse> create(@RequestPart("blog") String request,
 			@RequestPart(name = "image", required = false) MultipartFile file) throws IOException {
 		BlogRequest blogRequest = objectMapper.readValue(request, BlogRequest.class);
@@ -73,7 +96,7 @@ public class BlogController extends BaseController<BlogService> {
 
 	@PreAuthorize("@ownerSecurity.isBlogOwner(#id)")
 	@PutMapping(path = "/{id}", consumes = "multipart/form-data")
-	@EndpointMapping(name="Update blog")
+	@EndpointMapping(name = "Update blog")
 	public ResponseEntity<BlogResponse> update(@PathVariable String id, @RequestPart("blog") String request,
 			@RequestPart(name = "image", required = false) MultipartFile file) throws IOException {
 		BlogRequest blogRequest = objectMapper.readValue(request, BlogRequest.class);
@@ -81,7 +104,7 @@ public class BlogController extends BaseController<BlogService> {
 	}
 
 	@DeleteMapping("/{id}")
-	@EndpointMapping(name="Delete blog")
+	@EndpointMapping(name = "Delete blog")
 	@PreAuthorize("@ownerSecurity.isBlogOwner(#id) or hasRole('ROOT')")
 	public ResponseEntity<BlogResponse> delete(@PathVariable String id) {
 		service.delete(id);

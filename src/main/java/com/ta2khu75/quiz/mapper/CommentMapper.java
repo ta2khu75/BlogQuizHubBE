@@ -20,17 +20,10 @@ public interface CommentMapper extends PageMapper<Comment, CommentResponse>{
 	@Mapping(target = "updatedAt", ignore = true)
 	Comment toEntity(CommentRequest request);
 
-	@Mapping(target = "author", ignore = true)
-	@Mapping(target = "blog", ignore = true)
-	@Mapping(target = "createdAt", ignore = true)
-	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "updatedAt", ignore = true)
-	void update(CommentRequest request, @MappingTarget Comment entity);
 
-//	@Mapping(target = "info", source = "comment", qualifiedByName = "toInfoResponse")
 	@Mapping(target = "author", source = "author", qualifiedByName = "toProfileResponse")
 	CommentResponse toResponse(Comment comment);
 
-	@Mapping(target = "page", source = "number")
-	PageResponse<CommentResponse> toPageResponse(Page<Comment> commentPage);
+//	@Mapping(target = "page", source = "number")
+//	PageResponse<CommentResponse> toPageResponse(Page<Comment> commentPage);
 }

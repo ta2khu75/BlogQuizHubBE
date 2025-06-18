@@ -9,6 +9,7 @@ import com.ta2khu75.quiz.model.AccessModifier;
 import com.ta2khu75.quiz.model.entity.base.BaseEntityLong;
 import com.ta2khu75.quiz.model.entity.base.SaltedIdentifiable;
 import com.ta2khu75.quiz.util.SaltedType;
+import com.ta2khu75.quiz.util.SqidsUtil;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -66,5 +67,11 @@ public class Blog extends BaseEntityLong implements SaltedIdentifiable {
 	@Override
 	public SaltedType getSaltedType() {
 		return SaltedType.BLOG;
+	}
+	public static Blog fromEncodedId(String encodedId) {
+		Long idNumber = SqidsUtil.decodeWithSalt(encodedId, SaltedType.BLOG);
+		Blog blog = new Blog();
+		blog.setId(idNumber);
+		return blog;
 	}
 }

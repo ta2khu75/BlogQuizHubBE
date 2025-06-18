@@ -92,7 +92,7 @@ public interface QuizMapper extends PageMapper<Quiz, QuizResponse> {
 	@Mapping(target = "blog", source = "blog", qualifiedByName = "toBlogResponse")
 	QuizResponse toQuizQuestionDetailResponse(Quiz quiz);
 
-	@Mapping(target = "page", source = "number")
-	@Mapping(target = "content", source = "content", qualifiedByName = "toQuizResponse")
-	PageResponse<QuizResponse> toPageResponse(Page<Quiz> page);
+//	@Mapping(target = "page", source = "number")
+//	@Mapping(target = "content", source = "content", qualifiedByName = "toQuizResponse")
+//	PageResponse<QuizResponse> toPageResponse(Page<Quiz> page);
 }

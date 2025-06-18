@@ -7,5 +7,5 @@ import com.ta2khu75.quiz.model.entity.Account;
 import com.ta2khu75.quiz.model.request.search.AccountSearch;
 
 public interface AccountRepositoryCustom {
-	Page<Account> search(AccountSearch search, Pageable pageable);
+	Page<Account> search(AccountSearch search);
 }

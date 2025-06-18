@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import com.ta2khu75.quiz.model.request.AuthRequest;
@@ -22,6 +23,7 @@ import com.ta2khu75.quiz.exception.ExistingException;
 import com.ta2khu75.quiz.exception.NotMatchesException;
 import com.ta2khu75.quiz.mapper.AccountMapper;
 import com.ta2khu75.quiz.model.RoleDefault;
+import com.ta2khu75.quiz.model.TokenType;
 import com.ta2khu75.quiz.model.entity.Account;
 import com.ta2khu75.quiz.model.entity.AccountProfile;
 import com.ta2khu75.quiz.model.entity.AccountStatus;
@@ -60,13 +62,14 @@ public class AuthServiceImpl extends BaseService<AccountRepository, AccountMappe
 		this.roleRepository = roleRepository;
 		this.statusRepository = statusRepository;
 		this.profileRepository = profileRepository;
-		this.authenticationManager= authenticationManager;
+		this.authenticationManager = authenticationManager;
 		this.sendMailScheduling = sendMailScheduling;
 	}
 
 	@Override
 	public AuthResponse login(AuthRequest request) {
-		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+		Authentication authentication = authenticationManager
+				.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		Account account = (Account) authentication.getPrincipal();
 		return this.makeAuthResponse(account);
@@ -112,16 +115,18 @@ public class AuthServiceImpl extends BaseService<AccountRepository, AccountMappe
 
 	@Override
 	public AuthResponse refreshToken(String token) {
-		jwtUtil.validateToken(token);
-		Account account = validateRefreshToken(token);
+		Jwt jwt = jwtUtil.validateToken(token, TokenType.REFRESH);
+		Long statusId = jwtUtil.getClaim(jwt, "statusId", Long.class);
+		Account account = validateRefreshToken(statusId, token);
 		return this.makeAuthResponse(account);
 	}
 
 	private AuthResponse makeAuthResponse(Account account) {
-		AccountResponse response= mapper.toResponse(account);
+		AccountResponse response = mapper.toResponse(account);
 		TokenResponse refreshToken = jwtUtil.createRefreshToken(response);
 		this.updateRefreshToken(account.getStatus(), refreshToken.getToken());
-		return new AuthResponse(response.getProfile(),response.getStatus().getRole().getName() , jwtUtil.createAccessToken(response), refreshToken);
+		return new AuthResponse(response.getProfile(), response.getStatus().getRole().getName(),
+				jwtUtil.createAccessToken(response), refreshToken);
 	}
 
 	private void updateRefreshToken(AccountStatus status, String token) {
@@ -129,8 +134,8 @@ public class AuthServiceImpl extends BaseService<AccountRepository, AccountMappe
 		statusRepository.save(status);
 	}
 
-	private Account validateRefreshToken(String refreshToken) {
-		Account account=findById();
+	private Account validateRefreshToken(Long staticId, String refreshToken) {
+		Account account = FunctionUtil.findOrThrow(staticId, Account.class, repository::findByStatusId);
 		if (!account.getStatus().getRefreshToken().equals(refreshToken))
 			throw new NotMatchesException("Refresh token not invalid");
 		return account;

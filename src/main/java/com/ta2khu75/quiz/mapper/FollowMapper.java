@@ -9,12 +9,12 @@ import com.ta2khu75.quiz.model.response.FollowResponse;
 import com.ta2khu75.quiz.model.response.PageResponse;
 
 @Mapper(componentModel = "spring", uses = { AccountMapper.class})
-public interface FollowMapper  {
+public interface FollowMapper  extends PageMapper<Follow, FollowResponse> {
 	
 	@Mapping(target = "follower", source = "follower", qualifiedByName = "toProfileResponse")
 	@Mapping(target = "following", source = "following", qualifiedByName = "toProfileResponse")
 	FollowResponse toResponse(Follow entity);
 
-	@Mapping(target = "page", source = "number")
-	PageResponse<FollowResponse> toPageResponse(Page<Follow> page);
+//	@Mapping(target = "page", source = "number")
+//	PageResponse<FollowResponse> toPageResponse(Page<Follow> page);
 }
