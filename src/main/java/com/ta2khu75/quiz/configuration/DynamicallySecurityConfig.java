@@ -39,9 +39,12 @@ public class DynamicallySecurityConfig implements AuthorizationManager<HttpServl
 	}
 
 	private boolean isAllowedEndpoint(Role role, String requestUrl, String httpMethod) {
+		
 		return role.getPermissions().stream()
-				.anyMatch(permission -> httpMethod.equals(permission.getHttpMethod().name())
-						&& pathMatcher.match(permission.getPath(), requestUrl));
+				.anyMatch(permission -> {boolean resultHppt=httpMethod.equals(permission.getHttpMethod().name());
+						boolean pathResult= pathMatcher.match(permission.getPath(), requestUrl);
+						return  resultHppt&&pathResult;
+				});
 	}
 
 	@Override
@@ -65,7 +68,7 @@ public class DynamicallySecurityConfig implements AuthorizationManager<HttpServl
 			return new AuthorizationDecision(true);
 		}
 		Role role = roleService.readByName(roleName);
-//		boolean isAllowed = isAllowedEndpoint(role, requestUrl, httpMethod);
+		boolean isAllowed = isAllowedEndpoint(role, requestUrl, httpMethod);
 		if (isAllowedEndpoint(role, requestUrl, httpMethod)) {
 			return new AuthorizationDecision(true);
 		}

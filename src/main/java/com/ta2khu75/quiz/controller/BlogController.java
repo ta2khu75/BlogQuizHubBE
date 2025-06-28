@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ta2khu75.quiz.anotation.EndpointMapping;
+import com.ta2khu75.quiz.anotation.SnakeCaseModelAttribute;
 import com.ta2khu75.quiz.model.request.BlogRequest;
 import com.ta2khu75.quiz.model.request.CommentRequest;
 import com.ta2khu75.quiz.model.request.search.BlogSearch;
@@ -48,7 +49,7 @@ public class BlogController extends BaseController<BlogService> {
 
 	@GetMapping
 	@EndpointMapping(name = "Search blog")
-	public ResponseEntity<PageResponse<BlogResponse>> search(@ModelAttribute BlogSearch blogSearch) {
+	public ResponseEntity<PageResponse<BlogResponse>> search(@SnakeCaseModelAttribute BlogSearch blogSearch) {
 		return ResponseEntity.ok(service.search(blogSearch));
 	}
 

@@ -37,18 +37,4 @@ public class JwtProviderFactory {
 	        byte[] keyBytes = Base64.from(base64Secret).decode();
 	        return new SecretKeySpec(keyBytes, MacAlgorithm.HS512.getName());
 	    }
-
-//	@Bean
-//	JwtDecoder jwtDecoder() {
-//		NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(getSecretKey()).macAlgorithm(MacAlgorithm.HS512)
-//				.build();
-//		return token -> {
-//			return decoder.decode(token);
-//		};
-//	}
-
-//	private SecretKey getSecretKey() {
-//		byte[] keyBytes = Base64.from(jwtSecret).decode();
-//		return new SecretKeySpec(keyBytes, 0, keyBytes.length, MacAlgorithm.HS512.getName());
-//	}
 }

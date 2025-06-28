@@ -69,7 +69,7 @@ public class BlogServiceImpl extends BaseFileService<BlogRepository, BlogMapper>
 	private Set<BlogTag> getTags(Set<BlogTag> tags){
 	return 	tags.stream().map(tag -> {
 			if (tag.getId() != null) {
-				return blogTagRepository.getReferenceById(tag.getId());
+				return FunctionUtil.findOrThrow(tag.getId(), BlogTag.class, blogTagRepository::findById);
 			} else {
 				return new BlogTag(tag.getName());
 			}
